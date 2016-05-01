@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<!-- Permettre la configuration via des annotations -->
+	<mvc:annotation-driven />
+	<context:component-scan base-package="net.fenyo.franceconnect" />
+
+	<!-- Handles HTTP GET requests for /static/** by efficiently serving up static resources in the ${webappRoot}/static directory -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <property name="prefix" value="/WEB-INF/views/" />
+          <property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- Inject the UserInfo into the current context -->
+	<mvc:interceptors>
+          <bean class="org.mitre.openid.connect.web.UserInfoInterceptor" />
+	</mvc:interceptors>
+	
+	<security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
+
+	<bean id="openIdConnectAuthenticationProvider" class="org.mitre.openid.connect.client.OIDCAuthenticationProvider" />
+
+	<security:authentication-manager alias="authenticationManager">
+	  <security:authentication-provider ref="openIdConnectAuthenticationProvider" />
+	</security:authentication-manager>
+
+	<bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
+
+	<bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
+		<property name="issuer" value="https://fcp.integ01.dev-franceconnect.fr" />
+	</bean>	
+
+	<bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
+		<property name="servers">
+			<map>
+				<entry key="https://fcp.integ01.dev-franceconnect.fr">
+					<bean class="org.mitre.openid.connect.config.ServerConfiguration">
+						<property name="issuer" value="https://fcp.integ01.dev-franceconnect.fr" />
+						<property name="authorizationEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize" />
+						<property name="tokenEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/token" />
+						<property name="userInfoUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService" id="staticClientConfigurationService">
+		<property name="clients">
+			<map>
+				<entry key="https://fcp.integ01.dev-franceconnect.fr">
+					<bean class="org.mitre.oauth2.model.RegisteredClient">
+						<property name="scope">
+						  <set value-type="java.lang.String">
+						    <value>openid</value><value>gender</value><value>birthdate</value><value>birthcountry</value><value>birthplace</value><value>given_name</value><value>family_name</value><value>email</value><value>address</value><value>preferred_username</value><value>phone</value><!-- <value>profile</value> -->
+						  </set>
+						</property>
+ 						<property name="tokenEndpointAuthMethod" value="SECRET_POST" />
+						<property name="clientId" value="" />
+						<property name="clientSecret" value="" />
+						<property name="redirectUris">
+						<set>
+						  <value>http://127.0.0.1/simple-web-app/openid_connect_login</value>
+					        </set>
+						</property>
+				</bean>
+				</entry>
+			</map>
+  		</property>
+	</bean>
+
+	<bean id="openIdConnectAuthenticationFilter" class="org.mitre.openid.connect.client.OIDCAuthenticationFilter">
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="issuerService" ref="staticIssuerService" />
+ 		<property name="serverConfigurationService" ref="staticServerConfigurationService" />
+		<property name="clientConfigurationService" ref="staticClientConfigurationService" />
+		<property name="authRequestUrlBuilder" ref="plainAuthRequestUrlBuilder" />
+	</bean>
+
+	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+          <property name="loginFormUrl" value="/openid_connect_login" />
+	</bean>
+
+	<security:http auto-config="false" use-expressions="true" disable-url-rewriting="true" entry-point-ref="authenticationEntryPoint" pattern="/**">
+	  <security:custom-filter before="PRE_AUTH_FILTER" ref="openIdConnectAuthenticationFilter" />
+	  <security:logout />
+	</security:http>
+
+</beans>
