@@ -68,8 +68,22 @@
                <jetty-maven-plugin-version>9.3.8.v20160314</jetty-maven-plugin-version>
 	</properties>
 
+<!--   <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>1.2.3.RELEASE</version>
+  </parent>
+ -->
+
         <!-- déclaration des dépendances avec MITREid Connect, les composants Spring, les framework de traces et les API servlet -->
 	<dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    <version>1.3.3.RELEASE</version>
+    </dependency>
+
 		<!-- MITREid Connect -->
 		<dependency>
 			<groupId>org.mitre</groupId>
@@ -152,6 +166,12 @@
 			<scope>provided</scope>
 		</dependency>
 	
+<!-- 	<dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>1.3.3.RELEASE</version>
+    </dependency>
+ -->    
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -164,6 +184,13 @@
         <!-- configuration des plug-in -->
 	<build>
 		<plugins>
+
+<!--       <plugin>
+        <groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+ -->
+
                         <!-- produire du bytecode au format Java 1.7 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
