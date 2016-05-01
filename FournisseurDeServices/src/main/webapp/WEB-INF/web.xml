@@ -1,25 +1,25 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
 <!-- CONTENEUR SPRING -->
 
-        <!-- Création du conteneur Spring qui va gérer la servlet qui orchestre la cinématique France Connect et le filtrage des accès -->
+        <!-- CrÃ©ation du conteneur Spring qui va gÃ©rer la servlet qui orchestre la cinÃ©matique France Connect et le filtrage des accÃ¨s -->
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
 <!-- SERVLET -->
 
-	<!-- Création de la servlet de gestion de la cinématique France Connect -->
+	<!-- CrÃ©ation de la servlet de gestion de la cinÃ©matique France Connect -->
 	<servlet>
 		<servlet-name>franceconnect</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
-	<!-- Tous les accès au contexte sont gérés au travers de la servlet -->
+	<!-- Tous les accÃ¨s au contexte sont gÃ©rÃ©s au travers de la servlet -->
 	<servlet-mapping>
 		<servlet-name>franceconnect</servlet-name>
 		<url-pattern>/</url-pattern>
@@ -27,7 +27,7 @@
 
 <!-- FILTRE -->
 
-	<!-- Création du filtre des accès au contexte -->
+	<!-- CrÃ©ation du filtre des accÃ¨s au contexte -->
 	<filter>
 	    <filter-name>springSecurityFilterChain</filter-name>
 	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -37,7 +37,7 @@
 	    </init-param>
 	</filter>
 
-	<!-- Tous les accès au contexte sont traités par le filtre -->
+	<!-- Tous les accÃ¨s au contexte sont traitÃ©s par le filtre -->
 	<filter-mapping>
 	    <filter-name>springSecurityFilterChain</filter-name>
 	    <url-pattern>/*</url-pattern>

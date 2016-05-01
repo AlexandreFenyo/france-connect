@@ -9,7 +9,7 @@
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
-		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
@@ -18,6 +18,9 @@
 	<!-- Permettre la configuration via des annotations -->
 	<mvc:annotation-driven />
 	<context:component-scan base-package="net.fenyo.franceconnect" />
+
+<!-- http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
+<context:property-placeholder location="META-INF/config.properties"/>
 
 	<!-- Handles HTTP GET requests for /static/** by efficiently serving up static resources in the ${webappRoot}/static directory -->
 	<mvc:resources mapping="/static/**" location="/static/" />
@@ -44,18 +47,18 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
 
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
-		<property name="issuer" value="https://fcp.integ01.dev-franceconnect.fr" />
+		<property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
 	</bean>	
 
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
 		<property name="servers">
 			<map>
-				<entry key="https://fcp.integ01.dev-franceconnect.fr">
+				<entry key="${net.fenyo.franceconnect.config.oidc.issuer}">
 					<bean class="org.mitre.openid.connect.config.ServerConfiguration">
-						<property name="issuer" value="https://fcp.integ01.dev-franceconnect.fr" />
-						<property name="authorizationEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize" />
-						<property name="tokenEndpointUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/token" />
-						<property name="userInfoUri" value="https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo" />
+						<property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
+						<property name="authorizationEndpointUri" value="${net.fenyo.franceconnect.config.oidc.authorizationendpointuri}" />
+						<property name="tokenEndpointUri" value="${net.fenyo.franceconnect.config.oidc.tokenendpointuri}" />
+						<property name="userInfoUri" value="${net.fenyo.franceconnect.config.oidc.userinfouri}" />
 					</bean>
 				</entry>
 			</map>
@@ -65,19 +68,30 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService" id="staticClientConfigurationService">
 		<property name="clients">
 			<map>
-				<entry key="https://fcp.integ01.dev-franceconnect.fr">
+				<entry key="${net.fenyo.franceconnect.config.oidc.issuer}">
 					<bean class="org.mitre.oauth2.model.RegisteredClient">
 						<property name="scope">
 						  <set value-type="java.lang.String">
-						    <value>openid</value><value>gender</value><value>birthdate</value><value>birthcountry</value><value>birthplace</value><value>given_name</value><value>family_name</value><value>email</value><value>address</value><value>preferred_username</value><value>phone</value><!-- <value>profile</value> -->
+						    <value>openid</value>
+						    <value>gender</value>
+						    <value>birthdate</value>
+						    <value>birthcountry</value>
+						    <value>birthplace</value>
+						    <value>given_name</value>
+						    <value>family_name</value>
+						    <value>email</value>
+						    <value>address</value>
+						    <value>preferred_username</value>
+						    <value>phone</value>
+						    <!-- <value>profile</value> -->
 						  </set>
 						</property>
  						<property name="tokenEndpointAuthMethod" value="SECRET_POST" />
-						<property name="clientId" value="" />
-						<property name="clientSecret" value="" />
+						<property name="clientId" value="${net.fenyo.franceconnect.config.oidc.clientid}" />
+						<property name="clientSecret" value="${net.fenyo.franceconnect.config.oidc.clientsecret}" />
 						<property name="redirectUris">
 						<set>
-						  <value>http://127.0.0.1/simple-web-app/openid_connect_login</value>
+						  <value>${net.fenyo.franceconnect.config.oidc.redirecturi}</value>
 					        </set>
 						</property>
 				</bean>
@@ -95,12 +109,17 @@
 	</bean>
 
 	<bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-          <property name="loginFormUrl" value="/openid_connect_login" />
+<!--           <property name="loginFormUrl" value="/openid_connect_login" />
+ --><!-- avec Spring security 4 https://stackoverflow.com/questions/33969587/getting-exceptions-after-upgrade-from-spring-security-3-to-spring-security-4 -->
+          <constructor-arg value="/openid_connect_login" />
 	</bean>
 
 	<security:http auto-config="false" use-expressions="true" disable-url-rewriting="true" entry-point-ref="authenticationEntryPoint" pattern="/**">
 	  <security:custom-filter before="PRE_AUTH_FILTER" ref="openIdConnectAuthenticationFilter" />
-	  <security:logout />
+<!-- 	  <security:logout /> -->
+ 
+ <security:logout logout-url="/j_spring_security_logout" /> 
+
 	</security:http>
 
 </beans>

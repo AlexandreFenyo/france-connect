@@ -1,0 +1,8 @@
+net.fenyo.franceconnect.config.oidc.clientid=
+net.fenyo.franceconnect.config.oidc.clientsecret=
+
+net.fenyo.franceconnect.config.oidc.issuer=https://fcp.integ01.dev-franceconnect.fr
+net.fenyo.franceconnect.config.oidc.authorizationendpointuri=https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize
+net.fenyo.franceconnect.config.oidc.tokenendpointuri=https://fcp.integ01.dev-franceconnect.fr/api/v1/token
+net.fenyo.franceconnect.config.oidc.userinfouri=https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo
+net.fenyo.franceconnect.config.oidc.redirecturi=http://127.0.0.1/simple-web-app/openid_connect_login
