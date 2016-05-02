@@ -20,7 +20,7 @@
 				<ul>
 					<li><a href="user">User</a>, requires the user to be logged in with the <code>ROLE_USER</code> Spring Security authority.</li>
 					<security:authorize access="hasRole('ROLE_USER')">
-						<li><a href="j_spring_security_logout">Logout</a>, log out directly and return to this page.</li>
+						<li><a href="logout">Logout</a>, log out directly and return to this page.</li>
 					</security:authorize>
 				</ul>
 			</div>

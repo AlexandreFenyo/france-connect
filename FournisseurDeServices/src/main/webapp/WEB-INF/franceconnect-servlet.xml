@@ -92,7 +92,7 @@
 						<property name="redirectUris">
 						<set>
 						  <value>${net.fenyo.franceconnect.config.oidc.redirecturi}</value>
-					        </set>
+					    </set>
 						</property>
 				</bean>
 				</entry>

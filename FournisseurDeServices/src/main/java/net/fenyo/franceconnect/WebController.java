@@ -40,8 +40,8 @@ public class WebController {
     // http://websystique.com/spring-security/spring-security-4-logout-example/
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	if (auth != null) {
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    	if (auth != null) {
 	    new SecurityContextLogoutHandler().logout(request, response, auth);
 	}
 	return "redirect:/";
