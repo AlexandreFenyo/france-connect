@@ -32,14 +32,38 @@ public class WebController {
 	}
 
 	@RequestMapping("/user")
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public String user(Principal p) {
+	@PreAuthorize("isFullyAuthenticated()")
+	public String user(final Principal p) {
 		return "user";
 	}
 
+	@RequestMapping(value="/set-attribute-in-session", method=RequestMethod.GET)
+	public String setAttributeInSession(final HttpSession session, final HttpServletRequest request) {
+		session.setAttribute("valeur", session.toString());
+		return request.getParameter("target");
+	}
+
+	@RequestMapping(value="/remove-attribute-from-session", method=RequestMethod.GET)
+	public String removeAttributeFromSession(final HttpSession session, final HttpServletRequest request) {
+		session.removeAttribute("valeur");
+		return request.getParameter("target");
+	}
+
+	@RequestMapping(value="/invalidate-spring-session", method=RequestMethod.GET)
+	public String invalidateSpringSession(final HttpSession session, final HttpServletRequest request) {
+		session.invalidate();
+		return request.getParameter("target");
+	}
+	
+//	@RequestMapping("/user2")
+//	@PreAuthorize("hasRole('ROLE_USER')")
+//	public String user2(Principal p) {
+//		return "user";
+//	}
+
     // http://websystique.com/spring-security/spring-security-4-logout-example/
     @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+    public String logoutPage(final HttpServletRequest request, final HttpServletResponse response) {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     	if (auth != null) {
 	    new SecurityContextLogoutHandler().logout(request, response, auth);
