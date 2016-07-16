@@ -38,7 +38,7 @@ get $LOC
 get $LOC
 
 # étape 4
-get "https://fcp.integ01.dev-franceconnect.fr/call?provider=dgfip"
+get 'https://fcp.integ01.dev-franceconnect.fr/call?provider=dgfip'
 
 # étape 5
 get $LOC
