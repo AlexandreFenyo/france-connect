@@ -5,68 +5,72 @@ I=0
 setopt NULLGLOB
 rm -f tmp/{cookies-,output-,logs-}*.txt
 
-prepare() {
+preproc() {
   I=$(( I + 1 ))
-  echo "step $I GET: $1"
-  echo $1 | sed 's%\(^[a-z]*://[^/]*\).*%\1%' | read BASE
+  echo "step $I $1: $2"
+  echo $2 | sed 's%\(^[a-z]*://[^/]*\).*%\1%' | read BASE
+}
+
+postproc() {
+  egrep '^Location:' tmp/headers-$I.txt | sed 's/^Location: //' | read LOC
+  echo $LOC | egrep '^https?://' >& /dev/null || LOC=$BASE$LOC
 }
 
 get() {
-  prepare $1
+  preproc GET $1
   curl -vvvv -b tmp/cookies-$(( I - 1 )).txt -c tmp/cookies-$I.txt -D tmp/headers-$I.txt -o tmp/output-$I.txt "$1" >& tmp/logs-$I.txt
-  egrep '^Location:' tmp/headers-$I.txt | sed 's/^Location: //' | read LOC
+  postproc
 }
 
 post() {
-  prepare $1
+  preproc POST $1
   curl -vvvv -b tmp/cookies-$(( I - 1 )).txt -c tmp/cookies-$I.txt -D tmp/headers-$I.txt -o tmp/output-$I.txt --data-binary "$2" "$1" >& tmp/logs-$I.txt
-  egrep '^Location:' tmp/headers-$I.txt | sed 's/^Location: //' | read LOC
+  postproc
 }
 
-# step 1
+# étape 1
 get http://127.0.0.1/user
 
-# step 2
-get http://127.0.0.1/openid_connect_login
-
-# step 3
+# étape 2
 get $LOC
 
-# step 4
+# étape 3
+get $LOC
+
+# étape 4
 get "https://fcp.integ01.dev-franceconnect.fr/call?provider=dgfip"
 
-# step 5
+# étape 5
 get $LOC
 
-# step 6
-URL=$BASE$LOC
+# étape 6
+URL=$LOC
 get $URL
 
-# step 7
+# étape 7
 post $URL 'identifier=1234567891011&password=123'
 
-# step 8
-get $BASE$LOC
-
-# step 9
+# étape 8
 get $LOC
 
-# step 10
-get $BASE$LOC
+# étape 9
+get $LOC
 
-# step 11
-get $BASE$LOC
+# étape 10
+get $LOC
 
-# step 12
-get $BASE$LOC
+# étape 11
+get $LOC
 
-# step 13
+# étape 12
+get $LOC
+
+# étape 13
 post $BASE/confirm-redirect-client 'accept=Continuer+sur+RSI'
 
-# step 14
+# étape 14
 get $LOC
 
-# step 15
+# étape 15
 get $LOC
 fgrep 'userInfo =' tmp/output-$I.txt || echo ERREUR
-
