@@ -13,7 +13,7 @@
 
       Démarrage dans un Tomcat embarqué :
       - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
-        mvn clean tomcat7:run 
+        mvn clean tomcat7:run
       - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet :
         mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run 
         (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web)
@@ -68,7 +68,7 @@
         <jetty-maven-plugin-version>9.3.8.v20160314</jetty-maven-plugin-version>
 	</properties>
 
-    <!-- déclaration des dépendances avec MITREid Connect, les composants Spring, les framework de traces et les API servlet -->
+    <!-- déclaration des dépendances avec MITREid Connect, les composants Spring, les frameworks de traces et les API servlet -->
 	<dependencies>
 
 		<!-- MITREid Connect -->
