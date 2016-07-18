@@ -1,40 +1,55 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ page session="false" %>
-<div class="container-fluid main">
-	<div class="row-fluid">
-		<div class="span10 offset1">
-			<div>
-				<p class="well">
-					<security:authorize access="isFullyAuthenticated()">
-						<b><span class="text-success">You are currently logged in.</span></b>
-<div id="fconnect-profile" data-fc-logout-url="/logout"><a href="#"> le nom de l'utilisateur connect�* </a></div>
-<script src="http://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js"></script>
 
-					</security:authorize>
-					<security:authorize access="!isFullyAuthenticated()">
-						<b><span class="text-error">You are <em>NOT</em> currently logged in.</span></b>			
-<a href="user"><img src="static/FCboutons-10.png"/></a>
-					</security:authorize>
-				</p>
-			
-				<ul>
-					<li><a href="user">User</a>, requires the user to be logged in with the <code>ROLE_USER</code> Spring Security authority.</li>
-					<security:authorize access="isFullyAuthenticated()">
-						<li><a href="logout">Logout</a>, log out directly and return to this page.</li>
-					</security:authorize>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Fournisseur de services France Connect</title>
+    <!-- fonts -->
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css" media="screen,projection"/>
+    <!-- icône keyboard_arrow_down -->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
 
-<a href="/invalidate-spring-session?target=redirect:/html-noauth/infos.html">/invalidate-spring-session => /html-noauth/infos.html</a><br/>
-<a href="/invalidate-spring-session?target=redirect:/jsp-noauth/infos.jsp">/invalidate-spring-session => /jsp-noauth/infos.jsp</a><br/>
+  <body>
 
-<a href="/set-attribute-in-session?target=redirect:/html-noauth/infos.html">/set-attribute-in-session => /html-noauth/infos.html</a><br/>
-<a href="/set-attribute-in-session?target=redirect:/jsp-noauth/infos.jsp">/set-attribute-in-session => /jsp-noauth/infos.jsp</a><br/>
+    <security:authorize access="isFullyAuthenticated()">
+      <!--
+        La configuration de l'intercepteur Spring MVC UserInfoInterceptor permet de s'affranchir de la déclaration suivante :
+        <security:authentication property="userInfo" var="userInfo" />
+      -->
 
-<a href="/remove-attribute-from-session?target=redirect:/html-noauth/infos.html">/remove-attribute-from-session => /html-noauth/infos.html</a><br/>
-<a href="/remove-attribute-from-session?target=redirect:/jsp-noauth/infos.jsp">/remove-attribute-from-session => /jsp-noauth/infos.jsp</a><br/>
+      <!-- inclusion du code JavaScript de France Connect.
+           Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
+           Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
+      <script src="${ oidcAttributes.fcbuttonuri }"></script>
+      <!-- inclusion du bouton France Connect -->
+      <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
+      <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
+    </security:authorize>
 
-				</ul>
-			</div>
-		</div>
-	</div>
-</div>
+    <H1>Page d'accueil du service</H1>
+    Cette page d'accueil du service est accessible à tous les internautes, authentifiés ou non,
+    contrairement à la page de fourniture du service, qui est uniquement accessible aux utilisateurs authentifiés.
+    
+    <HR/>
 
+    <security:authorize access="isFullyAuthenticated()">
+      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
+      <p/>
+      Pour accéder à la page de fourniture du service, cliquez sur le lien suivant : <a href="<c:url value="/user" />">service</a>.<br/>
+      <p/>
+      Pour vous déconnecter de ce service (vous pourrez aussi choisir de vous déconnecter de France Connect) et retourner à la page publique d'accueil du service, utilisez le menu en haut de la page ou cliquez sur le lien suivant : <a href="<c:url value="/${ oidcAttributes.startlogouturi }" />">déconnexion</a>.
+    </security:authorize>
+
+    <security:authorize access="!isFullyAuthenticated()">
+      Vous n'êtes <b>pas</b> authentifié à ce fournisseur de services.<br/>
+      <p/>
+      Pour vous authentifier sur ce service via France Connect et accéder à la page de fourniture du service, veuillez cliquer sur le lien suivant :<br/> 
+      <a href="user"><img alt="France Connect" src="static/FCboutons-10.png" /></a>
+    </security:authorize>
+
+  </body>
+</html>

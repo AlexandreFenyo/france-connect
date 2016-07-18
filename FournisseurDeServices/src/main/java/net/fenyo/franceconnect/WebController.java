@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.mitre.openid.connect.client.OIDCAuthenticationFilter;
 import org.mitre.openid.connect.client.SubjectIssuerGrantedAuthority;
+import org.mitre.openid.connect.model.OIDCAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.*;
 import org.springframework.security.core.*;
@@ -26,48 +28,30 @@ import org.springframework.security.web.authentication.logout.*;
 public class WebController {
 	private static final Logger logger = LoggerFactory.getLogger(WebController.class);
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model, Principal p) {
-		return "home";
-	}
-
-	@RequestMapping("/user")
-	@PreAuthorize("isFullyAuthenticated()")
-	public String user(final Principal p) {
-		return "user";
-	}
-
-	@RequestMapping(value="/set-attribute-in-session", method=RequestMethod.GET)
-	public String setAttributeInSession(final HttpSession session, final HttpServletRequest request) {
-		session.setAttribute("valeur", session.toString());
-		return request.getParameter("target");
-	}
-
-	@RequestMapping(value="/remove-attribute-from-session", method=RequestMethod.GET)
-	public String removeAttributeFromSession(final HttpSession session, final HttpServletRequest request) {
-		session.removeAttribute("valeur");
-		return request.getParameter("target");
-	}
-
-	@RequestMapping(value="/invalidate-spring-session", method=RequestMethod.GET)
-	public String invalidateSpringSession(final HttpSession session, final HttpServletRequest request) {
-		session.invalidate();
-		return request.getParameter("target");
-	}
+	@Autowired
+    private OidcAttributes oidcAttributes;
 	
-//	@RequestMapping("/user2")
-//	@PreAuthorize("hasRole('ROLE_USER')")
-//	public String user2(Principal p) {
-//		return "user";
-//	}
-
-    // http://websystique.com/spring-security/spring-security-4-logout-example/
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String logoutPage(final HttpServletRequest request, final HttpServletResponse response) {
-    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    	if (auth != null) {
-	    new SecurityContextLogoutHandler().logout(request, response, auth);
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public ModelAndView home() {
+		final ModelAndView mav = new ModelAndView("home");
+		mav.addObject("oidcAttributes", oidcAttributes);
+		return mav;
 	}
-	return "redirect:/";
-    }
+
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@PreAuthorize("isFullyAuthenticated()")
+	public ModelAndView user(final Principal p) {
+    	final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
+
+		// exemples d'accès en Java aux informations d'authentification :
+		//   oidcauth.getIdToken().getJWTClaimsSet().getIssuer()
+		//   oidcauth.getUserInfo().getAddress().getPostalCode()
+		
+		final ModelAndView mav = new ModelAndView("user");
+		mav.addObject("oidcBirthplace", oidcauth.getUserInfo().getSource().get("birthplace"));
+		mav.addObject("oidcBirthcountry", oidcauth.getUserInfo().getSource().get("birthcountry"));
+		mav.addObject("oidcAttributes", oidcAttributes);
+		return mav;
+	}
 }
