@@ -2,6 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+<!-- context root : hp% git diff FournisseurDeServices/.settings/org.eclipse.wst.common.component
+diff --git a/FournisseurDeServices/.settings/org.eclipse.wst.common.component b/FournisseurDeServices/.settings/org.eclipse.wst.common.component
+index 01049c5..f96bcaf 100644
+--- a/FournisseurDeServices/.settings/org.eclipse.wst.common.component
++++ b/FournisseurDeServices/.settings/org.eclipse.wst.common.component
+@@ -5,6 +5,6 @@
+         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+         <property name="java-output-path" value="/franceconnect/target/classes"/>
+-        <property name="context-root" value=""/>
++        <property name="context-root" value="franceconnect-demo"/>^M
+     </wb-module>
+ </project-modules>
+ -->
+
 <!--
       Démarrage sous Eclipse avec un serveur Tomcat embarqué :
       - A chaque modification de ce fichier pom, sélectionner l'élément racine du projet dans l'explorateur de projet,
