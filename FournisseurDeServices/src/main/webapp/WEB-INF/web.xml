@@ -15,6 +15,10 @@
 	     depuis le bean oidcAttributes créé dans le root context de Spring par le listener ContextLoaderListener.
 	     Néanmoins, il n'y a pas de race-condition possible car l'accès au root context par le SessionListener ne se fait pas dans une méthode statique mais dans
 	     une méthode invoquée au moment de la création d'une session et une session ne peut pas être créée avant la fin de la création de tous les listeners.
+	     
+	     Plutôt que d'utiliser un SessionListener, on aurait plus simplement pu intégrer directement la configuration dans ce fichier, par ex. comme ceci :
+	       <session-config><session-timeout>60</session-timeout></session-config>
+	     mais il n'aurait alors pas été possible de configurer la durée spécifiée à partir du contenu du fichier config.properties.
 	     --> 
 	<listener>
 		<listener-class>net.fenyo.franceconnect.SessionListener</listener-class>

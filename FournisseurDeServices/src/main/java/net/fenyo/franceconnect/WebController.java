@@ -43,4 +43,11 @@ public class WebController {
 		mav.addObject("oidcAttributes", oidcAttributes);
 		return mav;
 	}
+
+	@RequestMapping(value = "/authenticationError", method = RequestMethod.GET)
+	public ModelAndView authenticationError() {
+		final ModelAndView mav = new ModelAndView("authenticationError");
+		mav.addObject("oidcAttributes", oidcAttributes);
+		return mav;
+	}
 }

@@ -122,6 +122,16 @@
     </property>
   </bean>
 
+  <!-- URI vers lesquelles l'utilisateur est redirigé en cas d'erreur d'authentification -->
+  <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+    <property name="defaultFailureUrl" value="${net.fenyo.franceconnect.config.oidc.authenticationerroruri}" />
+	<property name="exceptionMappings">
+	  <props>
+		<prop key="org.springframework.security.authentication.AuthenticationServiceException">${net.fenyo.franceconnect.config.oidc.authenticationerroruri}</prop>
+      </props>
+    </property>
+  </bean>
+
   <!-- création d'un filtre de pré-authentification Spring Security implémenté par MitreID Connect et configuré en référençant les beans MitreID Connect de configuration définis précédemment -->
   <bean id="openIdConnectAuthenticationFilter" class="org.mitre.openid.connect.client.OIDCAuthenticationFilter">
     <property name="authenticationManager" ref="authenticationManager" />
@@ -129,6 +139,9 @@
     <property name="serverConfigurationService" ref="staticServerConfigurationService" />
     <property name="clientConfigurationService" ref="staticClientConfigurationService" />
     <property name="authRequestUrlBuilder" ref="plainAuthRequestUrlBuilder" />
+    <!-- propriété propre à Spring Security, proposée par la classe parente de OIDCAuthenticationFilter : org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
+         le comportement en cas d'erreur est défini par le bean authenticationFailureHandler, défini précédemment -->
+    <property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
   </bean>
 
   <!-- création d'un bean servant à stocker l'URI correspondant au point d'entrée d'authentification via Spring Security (ce n'est pas un endpoint au sens OpenID Connect) -->

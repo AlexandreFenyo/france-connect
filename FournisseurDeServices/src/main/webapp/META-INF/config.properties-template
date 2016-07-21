@@ -1,9 +1,10 @@
 net.fenyo.franceconnect.config.oidc.debug=true
 
+# paramètres d'authentification pour les échanges entre ce fournisseur de services et France Connect
 net.fenyo.franceconnect.config.oidc.clientid=
 net.fenyo.franceconnect.config.oidc.clientsecret=
 
-# sans activite pendant ce délai (en minutes), la session expire donc l'acces a une page protegee necessite une nouvelle authentification via France Connect.
+# sans activite pendant ce delai (en minutes), la session expire donc l'acces a une page protegee necessite une nouvelle authentification via France Connect.
 # Si cette valeur est inferieure a la duree de session de France Connect (30 minutes), la reconnexion pourra dans certains cas etre transparente.
 # Ex. :
 # - sessiontimeout vaut 10 minutes
@@ -30,9 +31,16 @@ net.fenyo.franceconnect.config.oidc.redirecturi.resource=openid_connect_login
 
 # URI declaree par le fournisseur de services chez France Connect dans la section "Urls de redirection de deconnexion"
 # URI ou l'utilisateur est renvoye apres deconnexion du service, qu'il ait accepte ou pas la deconnexion de France Connect. Pas forcement sur le fournisseur de services, potentiellement sur le site institutionnel associe.
+# Cette URI est aussi utilisee en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel.
 net.fenyo.franceconnect.config.oidc.afterlogouturi=http://127.0.0.1/
+
+# URI ou l'utilisateur est renvoye en cas d'erreur d'authentification
+# Si cette URI pointe vers /authenticationError sur le fournisseur de service,
+# l'utilisateur se verra alors propose de continuer sa navigation sur l'URL definie par net.fenyo.franceconnect.config.oidc.afterlogouturi.
+net.fenyo.franceconnect.config.oidc.authenticationerroruri=http://127.0.0.1/authenticationError
 
 # URI de logout utilisee par le bouton France Connect ou le fournisseur de service pour initier la sequence de logout
 net.fenyo.franceconnect.config.oidc.startlogouturi=j_spring_security_logout
 
+# URI du code JavaScript du bouton France Connect
 net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js

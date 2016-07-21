@@ -15,6 +15,7 @@
     <!-- fourniture de paramètres aux vues Spring MVC -->
     <bean id="oidcAttributes" class="net.fenyo.franceconnect.OidcAttributes">
     	<property name="startlogouturi" value="${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
+	    <property name="afterlogouturi" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
 	    <property name="fcbuttonuri" value="${net.fenyo.franceconnect.config.oidc.fcbuttonuri}" />
 	    <property name="sessionTimeout" value="${net.fenyo.franceconnect.config.oidc.sessiontimeout}" />
   	</bean>
