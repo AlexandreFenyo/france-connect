@@ -41,14 +41,16 @@ public class LogoutHandler implements LogoutSuccessHandler {
 			throws IOException, ServletException {
 		final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
 
-		final UriComponents uriComponents =
-	            UriComponentsBuilder.fromHttpUrl(getLogoutUri())
-	            	.queryParam("id_token_hint", oidcauth.getIdToken().serialize())
-	            	.queryParam("post_logout_redirect_uri", getAfterLogoutUri())
-	                .build()
-	                .encode();
-
-		request.getSession().invalidate();
-		response.sendRedirect(uriComponents.toUriString());
+		// Traitement du cas où on se déconnecte via le bouton France Connect alors qu'on n'est pas ou plus authentifié.
+		// Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session,
+		// et que l'un des onglets a réalisé une déconnexion via le bouton France Connect.
+		// Si une déconnexion est alors initiée par le bouton France Connect du second onglet, il n'y a pas de contexte d'authentification,
+		// donc on ne peut ni ne doit renvoyer vers France Connect pour une déconnexion.
+		if (oidcauth == null || oidcauth.getIdToken() == null) response.sendRedirect(getAfterLogoutUri());
+		else response.sendRedirect(UriComponentsBuilder.fromHttpUrl(getLogoutUri())
+			 .queryParam("id_token_hint", oidcauth.getIdToken().serialize())
+	         .queryParam("post_logout_redirect_uri", getAfterLogoutUri())
+	         .build()
+	         .encode().toUriString());
 	}
 }

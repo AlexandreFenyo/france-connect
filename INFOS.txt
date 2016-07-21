@@ -1,0 +1,52 @@
+
+Comptes de test France Connect :
+  sur l'IdP DGFIP :
+    - 123 / 123
+    - 1234567891011 / 123
+
+Faire expirer la session et en recréer une : supprimer le cookie JSESSIONID et aller sur une page qui en recrée un : http://127.0.0.1/jsp-noauth/infos.jsp
+
+https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize?response_type=code&client_id=9ebf1ad9084207c5e4939bcc6c758c80f260ee70177a424e94754becefcb457e&scope=openid%20gender%20birthdate%20birthcountry%20birthplace%20given_name%20family_name%20email%20address%20preferred_username%20phone&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&nonce=318c7e3638ee1&state=3a84b6919fea6&fc_internal=true
+http://127.0.0.1/openid_connect_login?code=c9e3497985bdf1a6db6d9a87279f4aad54964942e3455ab9a6aa5808b94fc2fa&state=3a84b6919fea6
+
+https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize?response_type=code&client_id=9ebf1ad9084207c5e4939bcc6c758c80f260ee70177a424e94754becefcb457e&scope=openid+gender+birthdate+birthcountry+birthplace+given_name+family_name+email+address+preferred_username+phone&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&nonce=3821711c9410d&state=347514d1b7c0
+http://127.0.0.1/openid_connect_login?code=c9e3497985bdf1a6db6d9a87279f4aad54964942e3455ab9a6aa5808b94fc2fa&state=3a84b6919fea6
+
+Définition : session expirée = le cookie de session du fournisseur de services n'est plus valable, n'est plus présent, ou une autre session a été crée avec un nouveau cookie de session
+- phase d'authentification :
+
+  - Si la session a expiré entre l'envoi vers France Connect et le retour avec le code d'autorisation (ex. de retour : http://127.0.0.1/openid_connect_login?code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7b&state=2f3e7b5c97c0c), alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c".
+    La valeur null indique que l'état associé à la session n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via France Connect.
+
+  - Si un état ne correspondant pas à celui envoyé à France Connect dans le cadre de l'authentification de cette session (ex de retour : http://127.0.0.1/openid_connect_login?code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7b&state=2f3e7b5c97c0c), alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c".
+    La valeur attendue (3f3222875114b) est celle du code envoyé à France Connect et le faux code reçu est 2f3e7b5c97c0c.
+  - Si le code utilisé est faux ou a déjà été utilisé (pour le simuler, on crée par ex. "à la main" une URL avec le bon état mais on modifie le code : http://127.0.0.1/openid_connect_login?code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&state=3f3222875114b), alors se produit l'échange suivant avec France Connect :
+      - le fournisseur de service émet la requête suivante au token endpoint de France Connect :
+          POST /api/v1/token HTTP/1.1
+          Accept: text/plain, application/json, application/*+json, */*
+          Content-Type: application/x-www-form-urlencoded
+          Content-Length: 312
+          Host: fcp.integ01.dev-franceconnect.fr
+          Accept-Encoding: gzip,deflate
+
+          grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
+
+       - France Connect signale que le code est invalide :
+         HTTP/1.1 400 Bad Request
+         Server: nginx
+         Date: Wed, 20 Jul 2016 17:09:24 GMT
+         Content-Type: application/json; charset=utf-8
+         Content-Length: 27
+         Connection: keep-alive
+         ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
+         Vary: Accept-Encoding
+
+       - le fournisseur de service répond donc au navigateur par une erreur 401 avec le message d'erreur suivant :
+         "Authentication Failed: Unable to obtain Access Token: 400 Bad Request"
+
+- phase de déconnexion (http://127.0.0.1/j_spring_security_logout) :
+  Si la session a déjà expiré ou si une déconnexion s'est déjà produite, on renvoie vers l'URL configurée après déconnexion sans passer par France Connect puisqu'on ne dispose plus d'id token à lui indiquer.
+  Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton France Connect. Si une déconnexion est alors initiée par le bouton France Connect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers France Connect pour une déconnexion.
+
+
+http://127.0.0.1/jsp-needauth/infos.jsp?toto=tata

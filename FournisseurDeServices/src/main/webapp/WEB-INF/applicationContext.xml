@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<!-- Ressources du contexte racine (root context) : composants visibles partout, donc notamment dans le contexte Spring associé à la servlet franceconnect -->
 	
-	<!-- Root Context: defines shared resources visible to all other web components -->
-		
+    <!-- importer les valeurs des paramètres de configuration de l'accès à France Connect -->
+    <context:property-placeholder location="META-INF/config.properties" />
+	
+    <!-- fourniture de paramètres aux vues Spring MVC -->
+    <bean id="oidcAttributes" class="net.fenyo.franceconnect.OidcAttributes">
+    	<property name="startlogouturi" value="${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
+	    <property name="fcbuttonuri" value="${net.fenyo.franceconnect.config.oidc.fcbuttonuri}" />
+	    <property name="sessionTimeout" value="${net.fenyo.franceconnect.config.oidc.sessiontimeout}" />
+  	</bean>
+	
 	<!-- Permettre la configuration de la sécurité par les annotations -->
 	<security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager">
 		<!--you could also wire in the expression handler up at the layer of the http filters. See https://jira.springsource.org/browse/SEC-1452 -->
 	</security:global-method-security>
 
+    <!--
+         Support des expressions dans les tags authorize des pages jsp.
+         ex.: <security:authorize access="isFullyAuthenticated()"> affiché uniquement si authentifié </security:authorize>
+    -->
 	<bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" /> 
 
 </beans>

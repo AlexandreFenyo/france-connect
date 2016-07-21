@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -19,11 +19,10 @@
     <mvc:annotation-driven />
     <context:component-scan base-package="net.fenyo.franceconnect" />
 
-    <!-- importer les valeurs des paramètres de configuration de l'accès à France Connect -->
-    <!-- http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html -->
+    <!-- importer les valeurs des paramÃ¨tres de configuration de l'accÃ¨s Ã  France Connect -->
     <context:property-placeholder location="META-INF/config.properties" />
 
-    <!-- mappings d'URI directs, sans nécessiter de passer par un contrôleur -->
+    <!-- mappings d'URI directs, sans nÃ©cessiter de passer par un contrÃ´leur -->
     <mvc:resources mapping="/static/**" location="/static/" />
     <mvc:resources mapping="/js/**" location="/js/" />
     <mvc:resources mapping="/css/**" location="/css/" />
@@ -32,11 +31,11 @@
     <mvc:resources mapping="/html/**" location="/html-noauth/" />
     <mvc:resources mapping="/jsp-noauth/**" location="/jsp-noauth/" />
 
-    <!-- mappings directs dont les URI sont déclarées, à la fin de ce fichier de configuration, comme nécessitant une authentification valide -->
+    <!-- mappings directs dont les URI sont dÃ©clarÃ©es, Ã  la fin de ce fichier de configuration, comme nÃ©cessitant une authentification valide -->
     <mvc:resources mapping="/html-needauth/**" location="/html-needauth/" />
     <mvc:resources mapping="/jsp-needauth/**" location="/jsp-needauth/" />
 
-    <!-- indiquer à Spring MVC comment résoudre l'emplacement des vues à partir de leur nom -->
+    <!-- indiquer Ã  Spring MVC comment rÃ©soudre l'emplacement des vues Ã  partir de leur nom -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
       <property name="prefix" value="/WEB-INF/views/" />
       <property name="suffix" value=".jsp" />
@@ -47,8 +46,8 @@
       <bean class="org.mitre.openid.connect.web.UserInfoInterceptor" />
     </mvc:interceptors>
 	
-    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
-    <!-- OIDCAuthenticationProvider se charge de contacter le user info endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
+    <!-- signaler Ã  Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
+    <!-- OIDCAuthenticationProvider se charge de contacter le user info endpoint avec l'authorization bearer pour rÃ©cupÃ©rer les informations dÃ©taillÃ©es concernant l'utilisateur -->
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
 
     <bean id="openIdConnectAuthenticationProvider" class="org.mitre.openid.connect.client.OIDCAuthenticationProvider" />
@@ -57,15 +56,15 @@
       <security:authentication-provider ref="openIdConnectAuthenticationProvider" />
     </security:authentication-manager>
 
-    <!-- création du authRequestUrlBuilder, utilisé par le filtre de pré-authentification MitreID Connect fourni à Spring Security -->
+    <!-- crÃ©ation du authRequestUrlBuilder, utilisÃ© par le filtre de prÃ©-authentification MitreID Connect fourni Ã  Spring Security -->
     <bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
 
-    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- crÃ©ation d'un bean servant Ã  stocker l'URI correspondant au fournisseur d'identitÃ© (provider reprÃ©sentant l'issuer) France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean Ã©tant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
       <property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
     </bean>	
 
-    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- crÃ©ation d'un bean stockant les trois enpoints du fournisseur d'identitÃ© France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean Ã©tant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
       <property name="servers">
         <map>
@@ -81,7 +80,7 @@
       </property>
     </bean>
 
-    <!-- création d'un bean stockant les paramètres et le endpoint du fournisseur de service, ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- crÃ©ation d'un bean stockant les paramÃ¨tres et le endpoint du fournisseur de service, ce bean Ã©tant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService" id="staticClientConfigurationService">
       <property name="clients">
         <map>
@@ -109,8 +108,8 @@
             <property name="clientId" value="${net.fenyo.franceconnect.config.oidc.clientid}" />
             <property name="clientSecret" value="${net.fenyo.franceconnect.config.oidc.clientsecret}" />
 
-            <!-- l'URI de redirection est imposée par MitreID Connect (en dur dans le code source de MitreID Connect) : /openid_connect_login -->
-            <!-- cette configuration ne sert qu'aux validations de sécurité -->
+            <!-- l'URI de redirection est imposÃ©e par MitreID Connect (en dur dans le code source de MitreID Connect) : /openid_connect_login -->
+            <!-- cette configuration ne sert qu'aux validations de sÃ©curitÃ© -->
             <property name="redirectUris">
               <set>
                 <value>${net.fenyo.franceconnect.config.oidc.redirecturi.base}${net.fenyo.franceconnect.config.oidc.redirecturi.resource}</value>
@@ -123,7 +122,7 @@
     </property>
   </bean>
 
-  <!-- création d'un filtre de pré-authentification Spring Security implémenté par MitreID Connect et configuré en référençant les beans MitreID Connect de configuration définis précédemment -->
+  <!-- crÃ©ation d'un filtre de prÃ©-authentification Spring Security implÃ©mentÃ© par MitreID Connect et configurÃ© en rÃ©fÃ©renÃ§ant les beans MitreID Connect de configuration dÃ©finis prÃ©cÃ©demment -->
   <bean id="openIdConnectAuthenticationFilter" class="org.mitre.openid.connect.client.OIDCAuthenticationFilter">
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="issuerService" ref="staticIssuerService" />
@@ -132,36 +131,36 @@
     <property name="authRequestUrlBuilder" ref="plainAuthRequestUrlBuilder" />
   </bean>
 
-  <!-- création d'un bean servant à stocker l'URI correspondant au point d'entrée d'authentification via Spring Security (ce n'est pas un endpoint au sens OpenID Connect) -->
+  <!-- crÃ©ation d'un bean servant Ã  stocker l'URI correspondant au point d'entrÃ©e d'authentification via Spring Security (ce n'est pas un endpoint au sens OpenID Connect) -->
   <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
     <constructor-arg value="/${net.fenyo.franceconnect.config.oidc.redirecturi.resource}" />
   </bean>
 
-  <!-- fourniture de paramètres aux vues Spring MVC -->
-  <bean id="oidcAttributes" class="net.fenyo.franceconnect.OidcAttributes">
-    <property name="startlogouturi" value="${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
-    <property name="fcbuttonuri" value="${net.fenyo.franceconnect.config.oidc.fcbuttonuri}" />
-  </bean>
-
-  <!-- implémentation de la séquence de déconnexion France Connect -->
+  <!-- implÃ©mentation de la sÃ©quence de dÃ©connexion France Connect -->
   <bean id="logoutHandler" class="net.fenyo.franceconnect.LogoutHandler">
     <property name="logoutUri" value="${net.fenyo.franceconnect.config.oidc.logouturi}" />
     <property name="afterLogoutUri" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
   </bean>
 
   <!-- configuration de Spring Security
-       note : l'attribut entry-point-ref sert à déclarer le point d'entrée d'authentification en cas d'accès à une URI nécessitant un rôle authentifié -->
+       note : l'attribut entry-point-ref sert Ã  dÃ©clarer le point d'entrÃ©e d'authentification en cas d'accÃ¨s Ã  une URI nÃ©cessitant un rÃ´le authentifiÃ© -->
   <security:http auto-config="false" use-expressions="true" disable-url-rewriting="true" entry-point-ref="authenticationEntryPoint" pattern="/**">
 
-    <!-- déclaration du filtre MitreID Connect -->
+    <!-- dÃ©claration du filtre MitreID Connect -->
     <security:custom-filter before="PRE_AUTH_FILTER" ref="openIdConnectAuthenticationFilter" />
 
-    <!-- déclaration de l'URI de logout utilisée par le bouton France Connect ou le fournisseur de service pour initier la séquence de logout -->
+    <!--
+     configuration de Spring Security avec :
+     - l'URI de logout utilisÃ©e par le bouton France Connect ou le fournisseur de service pour initier la sÃ©quence de logout, afin que Spring Security puisse dÃ©tecter la demande de logout
+     - le bean Ã  invoquer aprÃ¨s le logout effectif de l'application : ce bean se charge d'implÃ©menter la cinÃ©matique de logout de France Connect :
+       - redirection de l'utilisateur chez France Connect, qui lui propose aussi de se dÃ©loguer de France Connect,
+       - retour vers le fournisseur de service
+    -->
     <security:logout success-handler-ref="logoutHandler" logout-url="/${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
-    <!-- France Connect réalise le logout via GET et non POST ; pour que Spring Security le supporte, il faut désactiver le filtre anti-csrf. Il n'y a néanmoins pas de vulnérabilité csrf permettant de déloguer l'utilisateur à son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa déconnexion, donc France Connect présente une mire de demande de déconnexion. -->
+    <!-- France Connect rÃ©alise le logout via GET et non POST ; pour que Spring Security le supporte, il faut dÃ©sactiver le filtre anti-csrf. Il n'y a nÃ©anmoins pas de vulnÃ©rabilitÃ© csrf permettant de dÃ©loguer l'utilisateur Ã  son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa dÃ©connexion, donc France Connect prÃ©sente une mire de demande de dÃ©connexion. -->
     <security:csrf disabled="true" />
 
-    <!-- déclaration des URI nécessitant une authentification valide -->
+    <!-- dÃ©claration des URI nÃ©cessitant une authentification valide -->
     <security:intercept-url pattern="/html-needauth/*" access="isFullyAuthenticated()" />
     <security:intercept-url pattern="/jsp-needauth/*" access="isFullyAuthenticated()" />
 
