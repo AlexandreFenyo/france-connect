@@ -33,6 +33,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - type : booléen
  - valeurs par défaut : `true` (fonction KIF-SP activée)
  - action :
+
    Activation/désactivation de la fonction KIF-SP (POC de fournisseur de service).
    Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai).
  
