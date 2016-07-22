@@ -1,7 +1,29 @@
 
+# **KIF** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
+
+## Introduction
+
+ Ce produit atteint deux objectifs :
+
+1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/) :**
+  - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html)
+  - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
+
+2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
+  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, etc.)
+  - en raccordant cette application à l'IdP (Identity Provider) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect.
+
+KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services FranceConnect en environnement JEE et un IdP relai entre une application existante (*legacy application*) et l'IdP FranceConnect.
+
+L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provider*) et l'implémentation de la fonction relai est dénommée **KIF-IdP** (*Identity Provider*).
+
+
+
 ----------
 
 aller directement à un lien : [stack edit](#welcome-to-stackedit)
+
+<font color="red">ou directment du html</h1>
 
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 https://help.github.com/articles/basic-writing-and-formatting-syntax/
