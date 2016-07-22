@@ -54,7 +54,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
-     l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
+    - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
     - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
@@ -64,9 +64,10 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
 - `net.fenyo.franceconnect.config.oidc.issuer`
 
-- type : chaîne de caractères
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le token id reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match`.
+ - type : chaîne de caractères
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+
 
 
 
