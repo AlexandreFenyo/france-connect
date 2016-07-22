@@ -24,12 +24,16 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé depuis le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
 
-- variable : `net.fenyo.franceconnect.config.oidc.debug`
+- `net.fenyo.franceconnect.config.oidc.debug`
 
- - true:
- - false:
+ - type : booléen
+ - action :
+   Activation/désactivation de la fonction KIF-SP (POC de fournisseur de service).
+   Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai).
+ - valeurs par défaut : `true` (fonction KIF-SP activée)
+ 
 
-- variable : `net.fenyo.franceconnect.config.oidc.debug`
+- `net.fenyo.franceconnect.config.oidc.debug`
 
  - true:
  - false:
