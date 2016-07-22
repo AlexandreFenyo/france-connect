@@ -11,11 +11,22 @@
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, etc.)
-  - en raccordant cette application à l'IdP (Identity Provider) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect.
+  - en raccordant cette application à l'IdP (Identity Provider) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
 KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services FranceConnect en environnement JEE et un IdP relai entre une application existante (*legacy application*) et l'IdP FranceConnect.
 
 L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provider*) et l'implémentation de la fonction relai est dénommée **KIF-IdP** (*Identity Provider*).
+
+## Configuration
+
+La configuration consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF`à partir du template `config.properties-template` déjà présent dans ce même répertoire.
+
+Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé depuis le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
+
+
+
+----------
+
 
 à rédiger :
 KIF :
@@ -31,14 +42,16 @@ migration en production
 traces
 performances
 déconnexion
+fonctionnement interne
 
 KIT-IdP :
 configuration
 lancement
 tâches de migration en production
+fonctionnement interne
 
 
-## Configuration
+
 
 
 
