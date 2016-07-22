@@ -29,6 +29,8 @@ Mais on peut aussi numéroter :
   1. :arrows_counterclockwise: et ceci le niveau 2
   2. :arrows_counterclockwise:
 
+:arrows_counterclockwise: intéressant
+
 http://www.webpagefx.com/tools/emoji-cheat-sheet/
 
 
