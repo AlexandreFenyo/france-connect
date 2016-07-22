@@ -68,7 +68,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr
  - usage : identifiant de l'émetteur des token id JWT, présent dans le claim *iss* de ces jetons.  
 ````
-INFO : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]
+**INFO** : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]
 ````
 
 
