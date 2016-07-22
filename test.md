@@ -32,14 +32,19 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
  - type : booléen
  - valeurs par défaut : `true` (fonction KIF-SP activée)
- - action : Activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai).
- 
+ - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
 
-- `net.fenyo.franceconnect.config.oidc.debug`
+- `net.fenyo.franceconnect.config.oidc.clientid`
 
- - true:
- - false:
+ - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+ - valeurs par défaut : aucune
+ - usage : client id du fournisseur de services, attribué par FranceConnect. Cet identifiant est public.
 
+- `net.fenyo.franceconnect.config.oidc.clientsecret`
+
+ - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+ - valeurs par défaut : aucune
+ - usage : secret id du fournisseur de services, attribué par FranceConnect. Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
 
 ----------
 
