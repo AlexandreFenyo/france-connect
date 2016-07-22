@@ -123,7 +123,7 @@
   </bean>
 
   <!-- URI vers lesquelles l'utilisateur est redirigé en cas d'erreur d'authentification -->
-  <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+  <bean id="authenticationFailureHandler" class="net.fenyo.franceconnect.AuthenticationFailureHandler">
     <property name="defaultFailureUrl" value="${net.fenyo.franceconnect.config.oidc.authenticationerroruri}" />
 	<property name="exceptionMappings">
 	  <props>

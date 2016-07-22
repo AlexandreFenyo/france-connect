@@ -68,6 +68,8 @@ public class WebController {
 	// accès à la page d'accueil du service : pas d'authentification requise
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView home() {
+		Tools.log("accès à /", logger);
+
 		// si le mode debug n'est pas positionné, seul l'IdP est activé
 		if (oidcAttributes.isDebug() == false) {
 			final ModelAndView mav = new ModelAndView("authenticationError");
@@ -84,6 +86,8 @@ public class WebController {
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@PreAuthorize("isFullyAuthenticated()")
 	public ModelAndView user(final Principal p) {
+		Tools.log("accès à /user", logger);
+
 		// si le mode debug n'est pas positionné, seul l'IdP est activé
 		if (oidcAttributes.isDebug() == false) {
 			final ModelAndView mav = new ModelAndView("authenticationError");
@@ -93,8 +97,6 @@ public class WebController {
 
 		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
-
-		logger.info("access to /user: [" + (oidcauth != null ? oidcauth.getIdToken().getParsedString() : "") + " / " + (oidcauth != null ? oidcauth.getUserInfo().getSource() : ""));
 
 		// exemples d'accès en Java aux informations d'authentification :
 		//   oidcauth.getIdToken().getJWTClaimsSet().getIssuer()
@@ -121,9 +123,12 @@ public class WebController {
 	public RedirectView idp(final HttpServletRequest request) {
 		final RedirectView redirectView = new RedirectView();
 
+		Tools.log("accès à /idp", logger);
+
 		String ciphertext_hex = request.getParameter("msg");
+		Tools.log("accès à /idp: requête chiffrée [" + ciphertext_hex + "]", logger);
 		if (ciphertext_hex == null) {
-			logger.warn("no msg parameter");
+			Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
 			redirectView.setUrl("/authenticationError");
 		    return redirectView;
 		}
@@ -144,11 +149,12 @@ public class WebController {
 			int length2 = aes.doFinal(outBuf, length1);
 			final String plaintext = new String(outBuf, 0, length1 + length2, Charset.forName("UTF-8"));
 			URL url = new URL(plaintext);
+			Tools.log("accès à /idp: requête déchiffrée [" + url + "]", logger);
 
 			// on récupère les paramètres nonce et state de l'URL de callback
 			// s'ils sont présents plusieurs fois, on ne récupère que leurs premières instances respectives
 			if (url.getQuery() == null) {
-				logger.warn("no query");
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}
@@ -165,12 +171,12 @@ public class WebController {
 			// nonce : anti-rejeu
 			// state : protection contre le saut de session
 			if (nonce == null) {
-				logger.warn("no nonce");
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}
 			if (state == null) {
-				logger.warn("no state");
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}
@@ -200,10 +206,11 @@ public class WebController {
 				return_url = plaintext + "&info=" + info_ciphertext_hex;
 
 			// on redirige l'utilisateur
+			Tools.log("accès à /idp: redirection [" + return_url + "]", logger);
 			redirectView.setUrl(return_url);
 			return redirectView;
 		} catch (final Exception ex) {
-			logger.warn(ex.getMessage());
+			Tools.log("accès à /idp: exception [" + ex.getStackTrace() + "]", logger);
 			redirectView.setUrl("/authenticationError");
 		    return redirectView;
 		}

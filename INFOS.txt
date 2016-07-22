@@ -189,4 +189,3 @@ il ne faut pas que l'URL de callback puisse être forgée ou modifiée par un utili
 il faut rajouter deux param : nonce et state
 state à l'intérieur du jeton JSON d'info doivent être comparés à ceux qu'ils a créés
 
-TDL : logger (notamment les exceptions trappées) et commenter. les logs avec les IPs.
