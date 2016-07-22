@@ -25,27 +25,44 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
-> **Ce fichier de configuration contient des secrets, il faut donc configurer les permissions d'accès à ce fichier ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.**
+> **Ce fichier de configuration contient des secrets, il faut donc configurer ses permissions d'accès ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.**
 
 ### Paramètres de configuration
 
 - `net.fenyo.franceconnect.config.oidc.debug`
 
  - type : booléen
- - valeurs par défaut : `true` (fonction KIF-SP activée)
+ - valeur par défaut : `true` (fonction KIF-SP activée)
  - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
 
 - `net.fenyo.franceconnect.config.oidc.clientid`
 
  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeurs par défaut : aucune
+ - valeur par défaut : aucune
  - usage : client id du fournisseur de services, attribué par FranceConnect. Cet identifiant est public.
 
 - `net.fenyo.franceconnect.config.oidc.clientsecret`
 
  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeurs par défaut : aucune
+ - valeur par défaut : aucune
  - usage : secret id du fournisseur de services, attribué par FranceConnect. Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
+
+- `net.fenyo.franceconnect.config.oidc.sessiontimeout`
+
+ - type : nombre (minutes)
+ - valeur par défaut : 240 minutes (4 heures)
+ - usage : sans activite pendant ce delai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.
+  Exemple de séquence de reconnexion transparente :
+      1. `sessiontimeout` vaut 10 minutes
+      2. l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
+      3. à partir de t0 + 5 min, l'utilisateur devient inactif
+      4. sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
+      5. à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
+      6. la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
+      7. la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas fait une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
+      8. le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
+
+
 
 ----------
 
