@@ -39,13 +39,13 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
  - valeur par défaut : aucune
- - usage : client id du fournisseur de services, attribué par FranceConnect. Cet identifiant est public.
+ - usage : client id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Cet identifiant est public.
 
 - `net.fenyo.franceconnect.config.oidc.clientsecret`
 
  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
  - valeur par défaut : aucune
- - usage : secret id du fournisseur de services, attribué par FranceConnect. Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
+ - usage : secret id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
 
 - `net.fenyo.franceconnect.config.oidc.sessiontimeout`
 
@@ -67,16 +67,6 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - type : chaîne de caractères
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
-
-
-
-
-iss pas bon :
-````
-INFO : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]
-````
-
-
 
 
 
@@ -112,6 +102,9 @@ fonctionnement interne
 
 
 
+````
+INFO : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]
+````
 
 
 
