@@ -55,7 +55,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
      Exemple de séquence de reconnexion transparente :
      
-      1. `sessiontimeout` vaut 10 minutes
+    1. `sessiontimeout` vaut 10 minutes
       2. l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
       3. à partir de t0 + 5 min, l'utilisateur devient inactif
       4. sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
