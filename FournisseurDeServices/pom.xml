@@ -159,7 +159,7 @@ sélectionner le serveur, et aller dans l'onglet modules pour vérifier qu'il y 
                       cette bibliothèque est donc inutile dans le cadre des cinématiques France Connect.
                       Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a)
                       pouvant conduire à un timeout au chargement de l'application sous jetty.
-                      On évite donc l'importation de cette bibliothèque.
+                      On évite donc l'importation de cette bibliothèque (plus loin dans ce fichier, on importe une version plus récente de Bouncy Castle, mais pas pour MITREid Connect).
                       Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette bibliothèque.
                  -->
                  <exclusion>
@@ -170,6 +170,25 @@ sélectionner le serveur, et aller dans l'onglet modules pour vérifier qu'il y 
 			</exclusions>
 		</dependency>
 
+		<!--
+		    On importe une version récente de bouncy castle n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation
+			par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring).
+			Cet IdP n'est pas utile pour mettre en oeuvre la cinématique France Connect. Cette dépendance peut être supprimée à condition de supprimer aussi le code de l'IdP.
+			On utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits et on souhaite utiliser une clé de 256 bits.
+        -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>1.46</version>
+		</dependency>
+
+		<!-- Utilisé par l'implémentation d'un IdP dans ce package --> 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+  
 		<!-- Spring -->
 
         <dependency>

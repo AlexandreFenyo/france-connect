@@ -5,6 +5,8 @@ public class OidcAttributes {
 	private String afterlogouturi;
 	private String fcbuttonuri;
 	private Integer sessionTimeout;
+	private String idpKey;
+	private String idpIv;
 	
 	public String getStartlogouturi() {
 		return startlogouturi;
@@ -36,5 +38,21 @@ public class OidcAttributes {
 
 	public void setSessionTimeout(final Integer sessionTimeout) {
 		this.sessionTimeout = sessionTimeout;
+	}
+
+	public String getIdpKey() {
+		return idpKey;
+	}
+
+	public void setIdpKey(final String idpKey) {
+		this.idpKey = idpKey;
+	}
+
+	public String getIdpIv() {
+		return idpIv;
+	}
+
+	public void setIdpIv(final String idpIv) {
+		this.idpIv = idpIv;
 	}
 }

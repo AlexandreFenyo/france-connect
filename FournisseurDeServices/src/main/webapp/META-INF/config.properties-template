@@ -1,6 +1,10 @@
+
+#################################################################################
+# Parametres de la fonction fournisseur de service
+
 net.fenyo.franceconnect.config.oidc.debug=true
 
-# paramètres d'authentification pour les échanges entre ce fournisseur de services et France Connect
+# parametres d'authentification pour les echanges entre ce fournisseur de services et France Connect
 net.fenyo.franceconnect.config.oidc.clientid=
 net.fenyo.franceconnect.config.oidc.clientsecret=
 
@@ -44,3 +48,13 @@ net.fenyo.franceconnect.config.oidc.startlogouturi=j_spring_security_logout
 
 # URI du code JavaScript du bouton France Connect
 net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
+
+#################################################################################
+# Parametres exclusivement utilises pour la fonction IdP
+
+# On utilise un chiffrement symetrique de type AES-256-CBC avec padding PKCS#7
+
+# Cle AES 256 bits en hexadecimal (generation via openssl : "openssl rand -hex 32")
+net.fenyo.franceconnect.config.idp.key=
+# Vecteur d'initialisation 64 bits en hexadecimal (generation via openssl : "openssl rand -hex 16")
+net.fenyo.franceconnect.config.idp.iv=
