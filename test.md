@@ -25,11 +25,11 @@ Il y a des listes :
 
 Mais on peut aussi numéroter :
 
-- ceci est le niveau 2
+1. ceci est le niveau 2
   1. :arrows_counterclockwise: et ceci le niveau 2
   2. :arrows_counterclockwise:
-:arrows_counterclockwise:
 
+http://www.webpagefx.com/tools/emoji-cheat-sheet/
 
 
 ----------
