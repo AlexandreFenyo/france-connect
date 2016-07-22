@@ -21,7 +21,8 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 La configuration consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF`à partir du template `config.properties-template` déjà présent dans ce même répertoire.
 
-> :warning: Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé depuis le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
+> :warning:
+> Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé depuis le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
 
 
 
