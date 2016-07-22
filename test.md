@@ -66,8 +66,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
 - type : chaîne de caractères
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le token id reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces :  
-   `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match`
+ - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le token id reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match`.
 
 
 
