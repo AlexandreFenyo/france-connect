@@ -28,6 +28,7 @@ Mais on peut aussi numéroter :
 1. ceci est le niveau 2
   1. :arrows_counterclockwise: et ceci le niveau 2
   2. :arrows_counterclockwise:
+  - et sous liste
 
 :arrows_counterclockwise: intéressant
 
