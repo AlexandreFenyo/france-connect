@@ -1,4 +1,8 @@
 
+----------
+
+https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+https://help.github.com/articles/basic-writing-and-formatting-syntax/
 # The largest heading
 ## The second largest heading
 ### troisième
@@ -33,6 +37,11 @@ Mais on peut aussi numéroter :
 :arrows_counterclockwise: intéressant
 
 http://www.webpagefx.com/tools/emoji-cheat-sheet/
+
+on peut faire des lignes qui se suivent.
+Par exemple comme ceci.
+
+
 
 
 ----------
