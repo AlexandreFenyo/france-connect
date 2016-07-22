@@ -17,6 +17,33 @@ KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services F
 
 L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provider*) et l'implémentation de la fonction relai est dénommée **KIF-IdP** (*Identity Provider*).
 
+à rédiger :
+KIF :
+composition du package
+licence
+
+KIF-SP :
+description fonctionnelle : les pages, les protections
+protéger une page
+configuration
+lancement
+migration en production
+traces
+performances
+déconnexion
+
+KIT-IdP :
+configuration
+lancement
+tâches de migration en production
+
+
+## Configuration
+
+
+
+
+
 
 
 ----------
