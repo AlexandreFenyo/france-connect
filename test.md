@@ -68,7 +68,17 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
 
+- `net.fenyo.franceconnect.config.oidc.authorizationendpointuri`
 
+ - type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : authorization endpoint de FranceConnect, qui réalise l'authentification de l'utilisateur en le renvoyant vers un fournisseur d'identité FranceConnect et qui fournit en retour un authorization code au fournisseur de services.
+
+- `net.fenyo.franceconnect.config.oidc.tokenendpointuri`
+
+ - type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si la signature est invalide ou si d'autres éléments de sécurité qui y sont contenus sont incorrects, l'authentification est rejetée et un message d'erreur de ce type est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause du rejet.
 
 
 ----------
