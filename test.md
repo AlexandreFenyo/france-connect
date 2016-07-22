@@ -1,6 +1,8 @@
 
 ----------
 
+aller directement à un lien : [stack edit](#welcome-to-stackedit)
+
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 https://help.github.com/articles/basic-writing-and-formatting-syntax/
 # The largest heading
