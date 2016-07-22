@@ -1,13 +1,23 @@
 package net.fenyo.franceconnect;
 
+// Bean de stockage des paramètres de configuration
 public class OidcAttributes {
+	private Boolean debug;
 	private String startlogouturi;
 	private String afterlogouturi;
 	private String fcbuttonuri;
 	private Integer sessionTimeout;
 	private String idpKey;
 	private String idpIv;
-	
+
+	public Boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(final Boolean debug) {
+		this.debug = debug;
+	}
+
 	public String getStartlogouturi() {
 		return startlogouturi;
 	}

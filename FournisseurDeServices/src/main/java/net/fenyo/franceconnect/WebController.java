@@ -33,9 +33,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.common.escape.ArrayBasedUnicodeEscaper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.springframework.security.core.*;
 import org.springframework.security.core.context.*;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -62,18 +65,36 @@ public class WebController {
 	@Autowired
     private OidcAttributes oidcAttributes;
 	
+	// accès à la page d'accueil du service : pas d'authentification requise
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView home() {
+		// si le mode debug n'est pas positionné, seul l'IdP est activé
+		if (oidcAttributes.isDebug() == false) {
+			final ModelAndView mav = new ModelAndView("authenticationError");
+			mav.addObject("oidcAttributes", oidcAttributes);
+			return mav;
+		}
+
 		final ModelAndView mav = new ModelAndView("home");
 		mav.addObject("oidcAttributes", oidcAttributes);
 		return mav;
 	}
 
+	// accès à la page de fourniture du service : nécessite une authentification valide
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	@PreAuthorize("isFullyAuthenticated()")
 	public ModelAndView user(final Principal p) {
-    	final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		// si le mode debug n'est pas positionné, seul l'IdP est activé
+		if (oidcAttributes.isDebug() == false) {
+			final ModelAndView mav = new ModelAndView("authenticationError");
+			mav.addObject("oidcAttributes", oidcAttributes);
+			return mav;
+		}
+
+		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
+
+		logger.info("access to /user: [" + (oidcauth != null ? oidcauth.getIdToken().getParsedString() : "") + " / " + (oidcauth != null ? oidcauth.getUserInfo().getSource() : ""));
 
 		// exemples d'accès en Java aux informations d'authentification :
 		//   oidcauth.getIdToken().getJWTClaimsSet().getIssuer()
@@ -86,6 +107,7 @@ public class WebController {
 		return mav;
 	}
 
+	// ne pas montrer les causes d'erreurs aux utilisateurs
 	@RequestMapping(value = "/authenticationError", method = RequestMethod.GET)
 	public ModelAndView authenticationError() {
 		final ModelAndView mav = new ModelAndView("authenticationError");
@@ -93,6 +115,7 @@ public class WebController {
 		return mav;
 	}
 
+	// implémentation d'un IdP
 	@RequestMapping(value = "/idp", method = RequestMethod.GET)
 	@PreAuthorize("isFullyAuthenticated()")
 	public RedirectView idp(final HttpServletRequest request) {
@@ -120,11 +143,45 @@ public class WebController {
 			int length1 = aes.processBytes(ciphertext, 0, ciphertext.length, outBuf, 0);
 			int length2 = aes.doFinal(outBuf, length1);
 			final String plaintext = new String(outBuf, 0, length1 + length2, Charset.forName("UTF-8"));
+			URL url = new URL(plaintext);
+
+			// on récupère les paramètres nonce et state de l'URL de callback
+			// s'ils sont présents plusieurs fois, on ne récupère que leurs premières instances respectives
+			if (url.getQuery() == null) {
+				logger.warn("no query");
+				redirectView.setUrl("/authenticationError");
+			    return redirectView;
+			}
+			String nonce = null;
+			String state = null;
+			final List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
+			for (final NameValuePair param : params) {
+				if (nonce == null && param.getName().equals("nonce")) nonce = param.getValue();
+				if (state == null && param.getName().equals("state")) state = param.getValue();
+				if (nonce != null && state != null) break;
+			}
+
+			// nonce et state sont des paramètres obligatoires
+			// nonce : anti-rejeu
+			// state : protection contre le saut de session
+			if (nonce == null) {
+				logger.warn("no nonce");
+				redirectView.setUrl("/authenticationError");
+			    return redirectView;
+			}
+			if (state == null) {
+				logger.warn("no state");
+				redirectView.setUrl("/authenticationError");
+			    return redirectView;
+			}
+			
+			// on récupère l'identité de l'utilisateur et on y rajoute les paramètres nonce et state
 			final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
-
-			// on récupère l'identité de l'utilisateur
-			final String info = oidcauth.getUserInfo().toJson().toString();
+			final JsonObject gson = oidcauth.getUserInfo().toJson();
+			gson.addProperty("nonce", nonce);
+			gson.addProperty("state", nonce);
+			final String info = gson.toString();
 			final byte [] info_plaintext = info.getBytes();
 
 			// on encrypte l'identité de l'utilisateur
@@ -137,7 +194,6 @@ public class WebController {
 
 			// on construit l'URL vers laquelle on redirige le navigateur en ajoutant l'identité chiffrée à l'URL de callback indiquée dans la requête
 			final String return_url;
-			URL url = new URL(plaintext);
 			if (url.getQuery() == null || url.getQuery().isEmpty())
 				return_url = plaintext + "?info=" + info_ciphertext_hex;
 			else

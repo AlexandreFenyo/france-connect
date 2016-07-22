@@ -12,8 +12,9 @@
     <!-- importer les valeurs des paramètres de configuration de l'accès à France Connect -->
     <context:property-placeholder location="META-INF/config.properties" />
 	
-    <!-- fourniture de paramètres aux vues Spring MVC et autres composants -->
+    <!-- fourniture de paramètres au contrôleur et aux vues Spring MVC -->
     <bean id="oidcAttributes" class="net.fenyo.franceconnect.OidcAttributes">
+        <property name="debug" value="${net.fenyo.franceconnect.config.oidc.debug}" />
     	<property name="startlogouturi" value="${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
 	    <property name="afterlogouturi" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
 	    <property name="fcbuttonuri" value="${net.fenyo.franceconnect.config.oidc.fcbuttonuri}" />

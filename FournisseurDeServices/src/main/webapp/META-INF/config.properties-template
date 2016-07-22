@@ -2,6 +2,7 @@
 #################################################################################
 # Parametres de la fonction fournisseur de service
 
+# activer la fonction fournisseur de service en positionnant debug a true
 net.fenyo.franceconnect.config.oidc.debug=true
 
 # parametres d'authentification pour les echanges entre ce fournisseur de services et France Connect

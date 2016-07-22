@@ -2,24 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-<!-- context root : hp% git diff FournisseurDeServices/.settings/org.eclipse.wst.common.component
-- a/FournisseurDeServices/.settings/org.eclipse.wst.common.component
-+ b/FournisseurDeServices/.settings/org.eclipse.wst.common.component
-@@ -5,6 +5,6 @@
-         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-         <property name="java-output-path" value="/franceconnect/target/classes"/>
--        <property name="context-root" value=""/>
-+        <property name="context-root" value="franceconnect-demo"/>^M
-     </wb-module>
- </project-modules>
-
-et fin de ce fichier : 	<name>franceconnect-demo</name>
-
-sélectionner le serveur, et aller dans l'onglet modules pour vérifier qu'il y a pas de chemin intermédiaire
-
- -->
-
 <!--
       Démarrage sous Eclipse avec un serveur Tomcat embarqué :
       - A chaque modification de ce fichier pom, sélectionner l'élément racine du projet dans l'explorateur de projet,
@@ -67,6 +49,8 @@ sélectionner le serveur, et aller dans l'onglet modules pour vérifier qu'il y 
           mvn clean package
           (le fichier war créé se nomme franceconnect-demo-1.0.0-BUILD.war et se trouve dans le sous-répertoire target)
 -->
+
+	<name>franceconnect-demo</name>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.fenyo</groupId>
@@ -452,5 +436,4 @@ sélectionner le serveur, et aller dans l'onglet modules pour vérifier qu'il y 
         </pluginManagement>
     </build>
 
-	<name>franceconnect-demo</name>
 </project>

@@ -164,12 +164,13 @@ le param url est l'url de retour
 KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 IV=87b7225d16ea2ae1f41d0b13fdce9bba
 
+STATE=23482302934
 openssl rand -hex 16 | head -c 32 | read NONCE
-echo "http://fenyo.net/fc/identite.cgi?nonce=$NONCE" | read PLAINTEXT
+echo "http://fenyo.net/fc/identite.cgi?nonce=$NONCE&state=$STATE" | read PLAINTEXT
 echo -n "$PLAINTEXT" | openssl aes-256-cbc -K $KEY -iv $IV | hexdump -v -e '1/1 "%02x"' | read HEX
 echo "http://127.0.0.1/idp?msg=$HEX"
 
-http://127.0.0.1/idp?msg=dfa6a9446475984c6b89542fcdb4298e28713eb42875ef29c125bc9ae1b354f9f677032d019d534a0be3e0c916e0677a3bf5480d0732a87d531bbca96a9e7d6695215c7a169b421835a3fb60606ed8e5
+http://127.0.0.1/idp?msg=dfa6a9446475984c6b89542fcdb4298e28713eb42875ef29c125bc9ae1b354f9031d9b2d1d5594bb8f6402e3adef2efecd578a9f8fd0719acd174b9a49bc2405b2eb914a43bb02107a31e077b4128e580be33f1c7f15b127a63e0c7a46402f42
 
 encodage de la chaîne de paramètres en UTF-8, puis chiffrement, puis transfo en hexa puis passage par méthode GET en paramètre msg
 le param url est l'url de retour
@@ -181,3 +182,11 @@ décoder :
 cat res | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' > res.bin
 openssl aes-256-cbc -d -K $KEY -iv $IV < res.bin
 
+nonce et state forcement dans l'URL de callback car rien ne doit être chiffré à partir de quelque chose qu'un utilisateur pourrait choisir, sinon il peut trouver les clés
+
+obligations du fournisseur :
+il ne faut pas que l'URL de callback puisse être forgée ou modifiée par un utilisateur : donc pas de param dépendant d'une entrée de l'utilisateur
+il faut rajouter deux param : nonce et state
+state à l'intérieur du jeton JSON d'info doivent être comparés à ceux qu'ils a créés
+
+TDL : logger (notamment les exceptions trappées) et commenter. les logs avec les IPs.

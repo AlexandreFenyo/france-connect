@@ -41,6 +41,8 @@ public class LogoutHandler implements LogoutSuccessHandler {
 			throws IOException, ServletException {
 		final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
 
+		logger.info("logout success: [" + (oidcauth != null ? oidcauth.getIdToken().getParsedString() : "") + " / " + (oidcauth != null ? oidcauth.getUserInfo().getSource() : ""));
+
 		// Traitement du cas où on se déconnecte via le bouton France Connect alors qu'on n'est pas ou plus authentifié.
 		// Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session,
 		// et que l'un des onglets a réalisé une déconnexion via le bouton France Connect.
