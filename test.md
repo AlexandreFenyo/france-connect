@@ -59,9 +59,15 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
     - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
     - la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
-    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas fait une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
+    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
     - le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
 
+- `net.fenyo.franceconnect.config.oidc.issuer`
+
+- type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr
+ - usage : identifiant de l'émetteur des token id JWT, présent dans le claim *iss* de ces jetons.
+````INFO : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]````
 
 
 ----------
@@ -70,6 +76,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 KIF :
 composition du package
 licence
+glossaire
 
 KIF-SP :
 description fonctionnelle : les pages, les protections
