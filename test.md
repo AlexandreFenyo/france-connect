@@ -24,10 +24,18 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé depuis le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
 
+- variable : `net.fenyo.franceconnect.config.oidc.debug`
+
+ - true:
+ - false:
+
+- variable : `net.fenyo.franceconnect.config.oidc.debug`
+
+ - true:
+ - false:
 
 
 ----------
-
 
 à rédiger :
 KIF :
