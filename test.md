@@ -25,7 +25,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.
-> Ce fichier de configuration contient des secrets, il faut donc configurer le système de fichiers sur lequel il est stocké de manière à ce qu'il ne soit accessible que par le serveur d'application.
+> Ce fichier de configuration contient des secrets, il faut donc configurer les permissions d'accès à ce fichier ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.
 
 ### Paramètres de configuration
 
