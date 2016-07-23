@@ -94,20 +94,23 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
 
 Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
-La cinematique d'authentification est la suivante :
-
-- Lorsque le filtre Spring MitreID Connect detecte l'acces a une ressource protegee et qu'il n'y a pas eu de precedente authentification pour la session courante,
-- MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
-- Ce endpoint constate qu'aucun id token n'est associe a cette session et qu'aucun parametre contenant un code d'autorisation n'est fourni dans la requete qu'il recoit.
-- Il entame donc la cinematique OpenID Connect pour demander un code d'autorisation et ce code est renvoye par FranceConnect sur ce endpoint.
-- A la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour recuperer un id token et un access token.
-- Un nouveau web service REST presentant l'access token est invoque sur le userinfo endpoint de FranceConnect pour recuperer le userinfo qui represente l'identite de l'utilisateurs au format JSON.
-- L'utilisateur est enfin renvoye vers la ressource protegee.
 
 
-![alt text](docs/authentification1.png "Logo Title Text 1")
+## Cinématique d'authentification
 
-![alt text](docs/authentification2.png "Logo Title Text 1")
+La cinématique d'authentification est la suivante :
+
+1. Lorsque le filtre Spring MitreID Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
+2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
+3. Il entame donc la cinématique OpenID Connect pour demander un code d'autorisation à l'authorization endpoint et ce code est renvoyé par FranceConnect sur ce endpoint.
+4. À la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
+5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
+6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
+
+Le diagramme de séquence UML suivant présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
+
+![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
+
 
 ----------
 
