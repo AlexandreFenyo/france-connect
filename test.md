@@ -86,6 +86,14 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
+- `net.fenyo.franceconnect.config.oidc.logouturi`
+
+ - type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services.
+
+
+
 
 ----------
 
