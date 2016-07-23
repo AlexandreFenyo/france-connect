@@ -21,7 +21,7 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 ### Fichiers de configuration
 
-La configuration consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF`à partir du template `config.properties-template` déjà présent dans ce même répertoire.
+La configuration consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
 
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
@@ -78,7 +78,13 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si la signature est invalide ou si d'autres éléments de sécurité qui y sont contenus sont incorrects, l'authentification est rejetée et un message d'erreur de ce type est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause du rejet.
+ - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
+
+- `net.fenyo.franceconnect.config.oidc.userinfouri`
+
+ - type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
 
 ----------
