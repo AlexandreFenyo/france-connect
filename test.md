@@ -6,7 +6,7 @@
  Ce produit a deux objectifs :
 
 1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/) :**
-  - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html)
+  - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html), à l'aide du framework [Spring Security](http://projects.spring.io/spring-security/)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
   - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
 
