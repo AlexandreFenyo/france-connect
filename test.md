@@ -21,13 +21,37 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 ### Fichiers de configuration
 
-La configuration consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
+Deux fichiers de configuration sont utilisés :
+
+- le fichier de configuration des paramètres
+- le fichier de configuration des traces
+
+La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
 
 > :warning: *attention*  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
 > **Ce fichier de configuration contient des secrets, il faut donc configurer ses permissions d'accès ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.**
 
+La configuration des traces consiste à adapter le fichier `log4j.xml` (format standard [Log4j 1.2.x](http://logging.apache.org/log4j/1.2/)) présent dans le répertoire `FournisseurDeServices/src/main/resources` aux besoins de traces. Dans ce même répertoire, deux exemples sont fournis :
+
+- log4j-devel.xml avec un niveau de traces élevé, notamment sur les composants concernés par l'authentification
+
+- log4j-prod.xml avec un niveau de trace minimal, intégrant néanmoins toutes les traces nécessaires pour un système en production :
+  - conservation des traces de niveau `warn` pour tous les composants
+  - conservation des traces de niveau `info` pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
+    - l'identifiant de session (valeur du cookie JSESSIONID)
+    - la référence à l'objet Java représentant la requête, pour croiser les traces correspondant à une même requête si besoin
+    - l'adresse IP du navigateur client
+    - le port TCP côté client, pour différencier différents navigateurs présentant une adresse IP commune (cas où l'utilisateur emprunte un proxy ou un réseau NATé, par exemple)
+    - la cause d'erreur le cas échéant (jeton invalide, tentative de rejeu, etc.)
+    - le nom de la session créée ou détruite le cas échéant
+    - le nombre de sessions actives à des fins de *capacity planning* : la mémoire utilisée est une fonction affine du nombre de sessions
+
 ### Paramètres de configuration
+
+#### Paramètres pour la fonction KIF-SP (POC de fournisseur de services)
+
+##### Activation de la fonction
 
 - `net.fenyo.franceconnect.config.oidc.debug`
 
@@ -35,38 +59,9 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : `true` (fonction KIF-SP activée)
  - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
 
-- `net.fenyo.franceconnect.config.oidc.clientid`
+##### Configuration des endpoints
 
- - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeur par défaut : aucune
- - usage : client id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Cet identifiant est public.
-
-- `net.fenyo.franceconnect.config.oidc.clientsecret`
-
- - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeur par défaut : aucune
- - usage : secret id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
-
-- `net.fenyo.franceconnect.config.oidc.sessiontimeout`
-
- - type : nombre (minutes)
- - valeur par défaut : 240 minutes (4 heures)
- - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
-   Exemple de séquence de reconnexion transparente :
-    - `sessiontimeout` vaut 10 minutes
-    - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
-    - à partir de t0 + 5 min, l'utilisateur devient inactif
-    - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
-    - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
-    - la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
-    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
-    - le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
-
-- `net.fenyo.franceconnect.config.oidc.issuer`
-
- - type : chaîne de caractères
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
 
 - `net.fenyo.franceconnect.config.oidc.authorizationendpointuri`
 
@@ -86,19 +81,93 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
+- `net.fenyo.franceconnect.config.oidc.redirecturi`
+
+ - type : URL
+ - valeur par défaut : http://127.0.0.1/openid_connect_login
+ - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MitreID Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MitreID Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
+
+##### Configuration de la relation de confiance mutuelle avec FranceConnect
+
+- `net.fenyo.franceconnect.config.oidc.clientid`
+
+ - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+ - valeur par défaut : aucune
+ - usage : client id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Cet identifiant est public.
+
+- `net.fenyo.franceconnect.config.oidc.clientsecret`
+
+ - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+ - valeur par défaut : aucune
+ - usage : secret id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
+
+- `net.fenyo.franceconnect.config.oidc.issuer`
+
+ - type : chaîne de caractères
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+ - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+
+- `net.fenyo.franceconnect.config.oidc.fcbuttonuri`
+
+ - type : URL
+ - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
+ - usage :  URL du code JavaScript du bouton FranceConnect.
+
+##### Configuration du mécanisme de déconnexion
+
 - `net.fenyo.franceconnect.config.oidc.logouturi`
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services.
 
+- `net.fenyo.franceconnect.config.oidc.afterlogouturi`
 
-Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
+ - type : URL
+ - valeur par défaut : http://127.0.0.1/
+ - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
+
+- `net.fenyo.franceconnect.config.oidc.startlogouturi`
+
+ - type : URL
+ - valeur par défaut : j_spring_security_logout
+ - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout.
+
+##### Configuration du comportement du fournisseur de services
+
+- `net.fenyo.franceconnect.config.oidc.sessiontimeout`
+
+ - type : nombre (minutes)
+ - valeur par défaut : 240 minutes (4 heures)
+ - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
+   Exemple de séquence de reconnexion transparente :
+    - `sessiontimeout` vaut 10 minutes
+    - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
+    - à partir de t0 + 5 min, l'utilisateur devient inactif
+    - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
+    - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
+    - la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
+    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
+    - le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
+
+- `net.fenyo.franceconnect.config.oidc.authenticationerroruri`
+
+ - type : URL
+ - valeur par défaut : http://127.0.0.1/authenticationError
+ - usage :  URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+
+
+
+
+
+
+
+
 
 
 ## Cinématique d'authentification
 
-La cinématique d'authentification est la suivante :
+La cinématique d'authentification est constitué des étapes suivantes :
 
 1. Lorsque le filtre Spring MitreID Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
 2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
@@ -107,7 +176,7 @@ La cinématique d'authentification est la suivante :
 5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
 6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
 
-Le diagramme de séquence UML suivant présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
 
 ![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
 
