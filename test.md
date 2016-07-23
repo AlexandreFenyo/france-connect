@@ -35,9 +35,9 @@ La configuration des paramètres consiste à créer le fichier de paramétrage `
 
 La configuration des traces consiste à adapter le fichier `log4j.xml` (format standard [Log4j 1.2.x](http://logging.apache.org/log4j/1.2/)) présent dans le répertoire `FournisseurDeServices/src/main/resources` aux besoins de traces. Dans ce même répertoire, deux exemples sont fournis :
 
-- log4j-devel.xml avec un niveau de traces élevé, notamment sur les composants concernés par l'authentification
+- `log4j-devel.xml` avec un niveau de traces élevé, notamment sur les composants concernés par l'authentification
 
-- log4j-prod.xml avec un niveau de trace minimal, intégrant néanmoins toutes les traces nécessaires pour un système en production :
+- `log4j-prod.xml` avec un niveau de trace peu verbeux, intégrant néanmoins toutes les traces nécessaires pour un système en production :
   - conservation des traces de niveau `warn` pour tous les composants
   - conservation des traces de niveau `info` pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
     - l'identifiant de session (valeur du cookie JSESSIONID)
@@ -157,14 +157,21 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - valeur par défaut : http://127.0.0.1/authenticationError
  - usage :  URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
+#### Paramètres pour la fonction KIF-IdP (Identity Provider)
 
+- `net.fenyo.franceconnect.config.idp.key`
 
+ - type : Cle AES 256 bits en hexadecimal (generation via openssl : `openssl rand -hex 32`)
+ - valeur par défaut : `a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224`
+ - usage :  secret partagé permettant le chiffrement entre l'application à intégrer et KIF-IdP.
 
+- `net.fenyo.franceconnect.config.idp.iv`
 
+ - type : Vecteur d'initialisation 64 bits en hexadecimal (generation via openssl : `openssl rand -hex 16`)
+ - valeur par défaut : `87b7225d16ea2ae1f41d0b13fdce9bba`
+ - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
 
-
-
-
+Les valeurs par défaut permettent de communiquer avec l'application exemple disponible sur https://fenyo.net/fc/index.cgi
 
 ## Cinématique d'authentification
 
