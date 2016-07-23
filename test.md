@@ -11,7 +11,7 @@
   - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
-  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, etc.)
+  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
 KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services FranceConnect en environnement JEE et un IdP relai entre une application existante (*legacy application*) et l'IdP FranceConnect.
@@ -578,7 +578,7 @@ cond(no)->op
 
 [![](https://cdn.monetizejs.com/resources/button-32.png)](https://monetizejs.com/authorize?client_id=ESTHdCYOi18iLhhO&summary=true)
 
-  [^stackedit]: [StackEdit](https://stackedit.io/) is a full-featured, open-source Markdown editor based on PageDown, the Markdown library used by Stack Overflow and the other Stack Exchange sites.
+[StackEdit](https://stackedit.io/) is a full-featured, open-source Markdown editor based on PageDown, the Markdown library used by Stack Overflow and the other Stack Exchange sites.
 
 
   [1]: http://math.stackexchange.com/
