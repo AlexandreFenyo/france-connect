@@ -8,6 +8,7 @@
 1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/) :**
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
+  - en intégrant le mécanisme de déconnexion, la gestion des erreurs et des niveaux de traces requis
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, etc.)
