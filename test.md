@@ -80,7 +80,7 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
 
-- `net.fenyo.franceconnect.config.oidc.userinfouri`
+- `net.fenyo.franceconnect.config.oidc.userinfoendpointuri`
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
@@ -93,7 +93,21 @@ La configuration consiste à créer le fichier de paramétrage `config.propertie
  - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services.
 
 
+Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
+La cinematique d'authentification est la suivante :
 
+- Lorsque le filtre Spring MitreID Connect detecte l'acces a une ressource protegee et qu'il n'y a pas eu de precedente authentification pour la session courante,
+- MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
+- Ce endpoint constate qu'aucun id token n'est associe a cette session et qu'aucun parametre contenant un code d'autorisation n'est fourni dans la requete qu'il recoit.
+- Il entame donc la cinematique OpenID Connect pour demander un code d'autorisation et ce code est renvoye par FranceConnect sur ce endpoint.
+- A la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour recuperer un id token et un access token.
+- Un nouveau web service REST presentant l'access token est invoque sur le userinfo endpoint de FranceConnect pour recuperer le userinfo qui represente l'identite de l'utilisateurs au format JSON.
+- L'utilisateur est enfin renvoye vers la ressource protegee.
+
+
+![alt text](docs/authentification1.png "Logo Title Text 1")
+
+![alt text](docs/authentification2.png "Logo Title Text 1")
 
 ----------
 
@@ -405,6 +419,61 @@ $$
 
 
 ### UML diagrams
+
+```sequence
+navigateur->fournisseur de services: GET sur ressource protégée par Spring Security\nhttp://127.0.0.1/user
+fournisseur de services-->navigateur: redirection vers callback endpoint fournisseur
+
+navigateur->fournisseur de services: GET sur callback endpoint fournisseur\nhttp://127.0.0.1/openid_connect_login?...
+fournisseur de services-->navigateur: redirection vers authorization endpoint FranceConnect
+
+navigateur->FranceConnect: GET sur authorization endpoint FranceConnect\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/authorize?response_type=code&client_id=...
+FranceConnect-->navigateur: redirection vers page de sélection d'un fournisseur d'identité
+
+navigateur->FranceConnect: GET de la page permettant de choisir un fournisseur d'identité
+FranceConnect-->navigateur: page contenant la liste des fournisseurs d'identité et une URL d'accès pour chacun d'eux
+
+navigateur->FranceConnect: GET sur URL d'accès au fournisseur d'identité choisi par l'utilisateur\nhttps://fcp.integ01.dev-franceconnect.fr/call?provider=dgfip
+FranceConnect-->navigateur: redirection vers authorization endpoint du fournisseur d'identité
+
+navigateur->fournisseur d'identité: GET sur authorization endpoint du fournisseur d'identité\nhttps://fip1.integ01.dev-franceconnect.fr/user/authorize?state=...
+fournisseur d'identité-->navigateur: redirection vers formulaire d'authentification
+
+navigateur->fournisseur d'identité: GET sur formulaire d'authentification pour connaître son contenu et l'afficher à l'utilisateur\nhttps://fip1.integ01.dev-franceconnect.fr/my/login?...
+fournisseur d'identité-->navigateur: fourniture de la page HTML du formulaire
+
+navigateur->fournisseur d'identité: POST sur formulaire d'authentification avec l'identifiant et le mot de passe utilisateur\nhttps://fip1.integ01.dev-franceconnect.fr/my/login?...
+fournisseur d'identité-->navigateur: redirection vers authorization endpoint du fournisseur d'identité pour obtenir un code d'autorisation
+
+navigateur->fournisseur d'identité: GET sur authorization endpoint du fournisseur d'identité pour obtenir un code d'autorisation\nhttps://fip1.integ01.dev-franceconnect.fr/user/authorize?response_type=code&client_id=...
+fournisseur d'identité-->navigateur: redirection vers callback endpoint FranceConnect pour lui fournir le code d'autorisation
+
+navigateur->FranceConnect: GET sur callback endpoint avec le code d'autorisation\nhttps://fcp.integ01.dev-franceconnect.fr/oidc_callback?code=...
+
+FranceConnect->fournisseur d'identité: web service REST : fourniture du code d'autorisation\n(URL du token endpoint)
+fournisseur d'identité-->FranceConnect: renvoi d'un token id JWT et d'un token access
+FranceConnect->fournisseur d'identité: web service REST : fourniture du token access\n(URL du userinfo endpoint)
+fournisseur d'identité-->FranceConnect: renvoi de l'identité utilisateur (format JSON)
+FranceConnect-->navigateur: redirection vers authorization endpoint
+
+navigateur->FranceConnect: GET sur authorization endpoint FranceConnect\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/authorize?...
+FranceConnect-->navigateur: fourniture de la page HTML présentant l'identité utilisateur et la demande\nd'autorisation de renvoi de ces informations au fournisseur de service
+
+navigateur->FranceConnect: POST pour accepter de fournir l'identité au fournisseur de services\nhttps://fcp.integ01.dev-franceconnect.fr/confirm-redirect-client
+FranceConnect-->navigateur: redirection vers callback endpoint du fournisseur de services\npour lui fournir le code d'autorisation
+
+navigateur->fournisseur de services: GET sur callback endpoint pour lui fournir le code d'autorisation\nhttp://127.0.0.1/openid_connect_login?code=...
+
+fournisseur de services->FranceConnect: web service REST : fourniture du code d'autorisation\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/token
+FranceConnect-->fournisseur de services: renvoi d'un token id JWT et d'un token access
+fournisseur de services->FranceConnect: web service REST : fourniture du token access\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo
+FranceConnect-->fournisseur de services: renvoi de l'identité utilisateur (format JSON)
+fournisseur de services-->navigateur: redirection vers ressource protégée
+
+navigateur->fournisseur de services: GET sur ressource protégée par Spring Security\nhttp://127.0.0.1/user
+fournisseur de services-->navigateur: contenu de la ressource protégée
+```
+
 
 You can also render sequence diagrams like this:
 
