@@ -1,5 +1,4 @@
-# france-connect
-Développements concernant France Connect
 
 
 
+> Written with [StackEdit](https://stackedit.io/).
