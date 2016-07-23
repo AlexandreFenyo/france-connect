@@ -3,7 +3,7 @@
 
 ## Introduction
 
- Ce produit atteint deux objectifs :
+ Ce produit a deux objectifs :
 
 1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/) :**
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html)
