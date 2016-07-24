@@ -190,6 +190,8 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Cinématique de déconnexion
 
+**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
+
 La cinématique de déconnexion est constituée des étapes suivantes :
 
 1. Lorsque l'utilisateur clique sur le lien de déconnexion dans le bouton FranceConnect ou via un lien d'une page du fournisseur de services, son navigateur effectue une requête GET sur l'URL de logout du fournisseur de services.
