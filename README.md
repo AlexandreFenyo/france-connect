@@ -764,6 +764,16 @@ Voici une liste des opérations Maven standard :
 > 
 > En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
 
+## Intégration rapide d'une application existante avec KIF-IdP
+
+### Introduction
+
+KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (IdP) permettant une intégration simple d'une application existante :
+
+  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
+
+  - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
+
 
 
 ----------
