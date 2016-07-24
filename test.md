@@ -30,7 +30,7 @@ Deux fichiers de configuration sont utilisés :
 La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
 
 > :warning: *attention*  
-> Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
+> Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration des paramètres car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
 > **Ce fichier de configuration contient des secrets, il faut donc configurer ses permissions d'accès ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.**
 
 La configuration des traces consiste à adapter le fichier `log4j.xml` (format standard [Log4j 1.2.x](http://logging.apache.org/log4j/1.2/)) présent dans le répertoire `FournisseurDeServices/src/main/resources` aux besoins de traces. Dans ce même répertoire, deux exemples sont fournis :
@@ -38,8 +38,8 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 - `log4j-devel.xml` avec un niveau de traces élevé, notamment sur les composants concernés par l'authentification
 
 - `log4j-prod.xml` avec un niveau de trace peu verbeux, intégrant néanmoins toutes les traces nécessaires pour un système en production :
-  - conservation des traces de niveau `warn` pour tous les composants
-  - conservation des traces de niveau `info` pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
+  - conservation des traces de niveau `warn` et supérieurs pour tous les composants
+  - conservation des traces de niveau `info` et supérieurs pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
     - l'identifiant de session (valeur du cookie JSESSIONID)
     - la référence à l'objet Java représentant la requête, pour croiser les traces correspondant à une même requête si besoin
     - l'adresse IP du navigateur client
@@ -187,6 +187,9 @@ La cinématique d'authentification est constitué des étapes suivantes :
 Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
 
 ![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
+
+
+![déconnexion - diagramme de séquence UML](docs/deconnexion1.png "déconnexion - diagramme de séquence UML")
 
 
 ----------
@@ -497,6 +500,21 @@ $$
 
 > **Note:** You can find more information about **LaTeX** mathematical expressions [here][4].
 
+```sequence
+navigateur->fournisseur de services: GET sur URL de logout\nhttp://127.0.0.1/j_spring_security_logout
+Note right of fournisseur de services: le fournisseur invalide la session
+fournisseur de services-->navigateur: redirection vers URL de déconnexion de FranceConnect
+
+navigateur->FranceConnect: GET sur URL de déconnexion de FranceConnect\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=...
+FranceConnect-->navigateur: fourniture de la page HTML proposant la déconnexion de FranceConnect
+
+navigateur->FranceConnect: POST sur URL de déconnexion de FranceConnect avec le choix utilisateur\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=...
+Note right of FranceConnect: invalidation de la session FranceConnect\nsi l'utilisateur a fait ce choix
+FranceConnect-->navigateur: redirection vers URL post-logout du fournisseur de services
+
+navigateur->fournisseur de services: GET sur URL de post-logout\nhttp://127.0.0.1/
+fournisseur de services-->navigateur: fourniture de la page HTML post-logout
+```
 
 ### UML diagrams
 
