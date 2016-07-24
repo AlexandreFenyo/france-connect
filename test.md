@@ -653,8 +653,6 @@ valeur JSON complète : ${ userInfo.source }
 Une méthode spécifique peut ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée. Pour cela, il faut utiliser la bibliothèse que tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
 
 Voici un exemple de méthode spécifique correspondant à ce scénario :
-
-:
 ````java
 	@RequestMapping(value = "/user", method = RequestMethod.GET)
 	public ModelAndView user(final Principal p) {
@@ -665,8 +663,6 @@ Voici un exemple de méthode spécifique correspondant à ce scénario :
 ````
 
 Voici la vue associée :
-
-Voici un exemple de vue affichant les informations d'identité de l'utilisateur :
 ````html
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
