@@ -288,7 +288,7 @@ Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond p
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
 - le fournisseur de service émet la requête suivante au token endpoint de France Connect :
-````
+````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
 Content-Type: application/x-www-form-urlencoded
