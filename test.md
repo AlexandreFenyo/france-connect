@@ -555,15 +555,37 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 </beans>
 ````
 
-## Création de ressources sécurisées
+## Création de nouvelles ressources
 
-Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](Intégration-de-MitreID-Connect-dans-Spring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où positionner :
+### Répertoires
+
+Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](#intégration-de-mitreid-connect-dans-spring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où rajouter :
 
 - des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible sans nécessiter une authentification au préalable
 
 - des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible nécessitant une authentification au préalable
 
 En cas d'accès à une ressource protégée mais sans authentification préalable de l'utilisateur, la cinématique d'authentification est automatiquement lancée puis le navigateur est redigiré à nouveau vers la ressource à laquelle il peut enfin accéder.
+
+### Ressources statiques
+
+Les accès aux ressources statiques (pages html, code JavaScript, pages de styles CSS et images) nécessitant une authentification ne sont **pas** tracés. Ces ressources n'ont pas accès à l'identité de l'utilisateur.
+
+### Pages jsp
+
+Pour tracer l'accès direct à une page jsp, c'est-à-dire sans passer par le contrôleur Spring MVC, celle-ci doit inclure `<% net.fenyo.franceconnect.Tools.log(request.getRequestURI()); %>`.
+
+Les pages jsp à accès direct sans passer par un contrôleur n'ont pas accès à l'identité de l'utilisateur (néanmoins, cet accès est possible en écrivant du code Java spécifique dans ces pages).
+
+### Contrôleur et vues
+
+Le contrôleur a accès à l'identité de l'utilisateur. Les vues, c'est-à-dire les pages jsp accessible après passage par le contrôleur, ont aussi accès au données d'identité de l'utilisateur. 
+
+Pour créer un mapping de requête au sein du contrôleur, il faut modifier la classe net.fenyo.franceconnect.WebController en y ajoutant une méthode spécifique. Le mapping est configuré par une annotation `@RequestMapping`, par exemple : `@RequestMapping(value = "/user", method = RequestMethod.GET)`. Si la requête nécessite une authentification, il faut le signaler par l'annotation suivante : `@PreAuthorize("isFullyAuthenticated()")`. Pour tracer cette requête, la méthode spécifique doit débuter par une invocation à la méthode statique `log` de la classe `Tools`, par exemple : `Tools.log("accès à /user", logger);`.
+
+Pour tracer l'accès à une vue, c'est-à-dire sans passer par le contrôleur Spring MVC, celle-ci doit inclure `<% net.fenyo.franceconnect.Tools.log(request.getRequestURI()); %>`.
+
+Les pages jsp à accès direct sans passer par un contrôleur n'ont pas accès à l'identité de l'utilisateur (néanmoins, cet accès est possible en écrivant du code Java spécifique dans ces pages).
 
 
 
