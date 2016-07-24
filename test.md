@@ -243,6 +243,8 @@ Fournir les traces sur la sortie standard du serveur d'application n'est pas tou
 
 ### Format des traces
 
+#### Traces d'informations
+
 À chaque création de session, une trace correspondante est générée, incluant la valeur du nouvel identifiant de session stocké dans le cookie JSESSIONID et une mise à jour du nombre de sessions en mémoire :
 ````
 INFO : 2016-07-24 03:25:16,203 net.fenyo.franceconnect.SessionListener - log fc: msg [création de session 2236652D2F06E535395CDA6CA557B9BF (21 sessions)]; auth: oidc authentication token is null; req: request attributes are null
@@ -266,7 +268,9 @@ INFO : 2016-07-24 03:36:56,095 net.fenyo.franceconnect.LogoutHandler - log fc: m
 INFO : 2016-07-24 03:25:33,139 net.fenyo.franceconnect.WebController - log fc: msg [accès à /user]; auth: id token [eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2ZjcC5pbnRlZzAxLmRldi1mcmFuY2Vjb25uZWN0LmZyIiwic3ViIjoiNTRmNzBhNTU3ZDgzOGJjZDI2YWJkMjIwMzgxMjY4MTkyOTllZjIwNDhjMDFlYWI5N2E3YTEwNTQ1OTc2ZWY5OHYxIiwiYXVkIjoiOWViZjFhZDkwODQyMDdjNWU0OTM5YmNjNmM3NThjODBmMjYwZWU3MDE3N2E0MjRlOTQ3NTRiZWNlZmNiNDU3ZSIsImV4cCI6MTQ2OTMyNDczMiwiaWF0IjoxNDY5MzIzNTMyLCJub25jZSI6IjEwMjY0YTBmODAyYmQiLCJpZHAiOiJGQyIsImFjciI6ImVpZGFzMiIsImFtciI6W119.RfOvGXAfDm4UvH1XGIVeVe-_0JDZVuLdzTAyGi8n5io]; auth: user info [{"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"}}]; req: session id [2236652D2F06E535395CDA6CA557B9BF]; req: remote addr [127.0.0.1]; req: remote port [62375]; req: request [SecurityContextHolderAwareRequestWrapper[ org.springframework.security.web.savedrequest.SavedRequestAwareWrapper@44f3efb7]]
 ````
 
-Lorsqu'une erreur d'authentification se produit, une trace correspondante est générée :
+#### Traces d'erreurs
+
+Lorsqu'une erreur liée à l'authentification se produit, une trace correspondante est générée :
 ````
 INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: State parameter mismatch on return. Expected null got 205775549532c]]; auth: oidc authentication token is null; req: session id [null]; req: remote addr [127.0.0.1]; req: remote port [62535]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@4216b2a1]
 ````
@@ -278,6 +282,8 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 ##### Session expirée
 
 Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect.
+
+voir fin de la section [format des traces](#traces-d'erreurs)
 
 ##### &Eacute;tat invalide
 
