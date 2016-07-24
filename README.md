@@ -22,7 +22,7 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 ### Fichiers de configuration
 
->:information_source:
+>:information_source:  
 > Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet d'adresser le fournisseur de service avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, il cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut substituer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
 
 Deux fichiers de configuration sont utilisés :
