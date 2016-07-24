@@ -299,18 +299,20 @@ Accept-Encoding: gzip,deflate
 grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
 ````
 
-       - France Connect signale que le code est invalide :
-         HTTP/1.1 400 Bad Request
-         Server: nginx
-         Date: Wed, 20 Jul 2016 17:09:24 GMT
-         Content-Type: application/json; charset=utf-8
-         Content-Length: 27
-         Connection: keep-alive
-         ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
-         Vary: Accept-Encoding
+- FranceConnect signale que le code est invalide :
+````http
+France Connect signale que le code est invalide :
+HTTP/1.1 400 Bad Request
+Server: nginx
+Date: Wed, 20 Jul 2016 17:09:24 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 27
+Connection: keep-alive
+ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
+Vary: Accept-Encoding
+````
 
-       - le fournisseur de service répond donc au navigateur par une erreur 401 avec le message d'erreur suivant :
-         "Authentication Failed: Unable to obtain Access Token: 400 Bad Request"
+- le fournisseur de service répond donc au navigateur par une erreur 401 avec le message d'erreur suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`.
 
 
 #### Phase de logout
