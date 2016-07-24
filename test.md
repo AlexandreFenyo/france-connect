@@ -321,18 +321,17 @@ Vary: Accept-Encoding
 
 - Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
-####    Nonce invalide
+##### Nonce invalide
 
 Si le nonce reçu n'est pas celui attendu, une Une trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par *replay*. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
-#### Autres cas d'erreur d'authentification
+##### Autres cas d'erreur d'authentification
 
 De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des token id JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Phase de logout
 
 Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
-
 
 ## Cinématique d'authentification
 
