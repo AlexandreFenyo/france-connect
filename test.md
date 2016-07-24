@@ -581,12 +581,65 @@ Les pages jsp à accès direct sans passer par un contrôleur n'ont pas accès �
 
 Le contrôleur a accès à l'identité de l'utilisateur. Les vues, c'est-à-dire les pages jsp accessible après passage par le contrôleur, ont aussi accès au données d'identité de l'utilisateur. 
 
-Pour créer un mapping de requête au sein du contrôleur, il faut modifier la classe net.fenyo.franceconnect.WebController en y ajoutant une méthode spécifique. Le mapping est configuré par une annotation `@RequestMapping`, par exemple : `@RequestMapping(value = "/user", method = RequestMethod.GET)`. Si la requête nécessite une authentification, il faut le signaler par l'annotation suivante : `@PreAuthorize("isFullyAuthenticated()")`. Pour tracer cette requête, la méthode spécifique doit débuter par une invocation à la méthode statique `log` de la classe `Tools`, par exemple : `Tools.log("accès à /user", logger);`.
+Pour créer un mapping de requête au sein du contrôleur, il faut modifier la classe net.fenyo.franceconnect.WebController en y ajoutant une méthode spécifique. Le mapping est configuré par une annotation `@RequestMapping`, par exemple : `@RequestMapping(value = "/user", method = RequestMethod.GET)`. Si la requête nécessite une authentification, il faut le signaler par l'annotation suivante : `@PreAuthorize("isFullyAuthenticated()")`. Pour tracer cette requête, la méthode spécifique doit débuter par une invocation de la méthode statique `log` de la classe `Tools`, par exemple : `Tools.log("accès à /user", logger);`. La variable ` logger` est une variable d'instance du contrôleur.
 
-Pour tracer l'accès à une vue, c'est-à-dire sans passer par le contrôleur Spring MVC, celle-ci doit inclure `<% net.fenyo.franceconnect.Tools.log(request.getRequestURI()); %>`.
+Voici un exemple de méthode spécifique qui mappe l'accès à /user et invoque la vue user :
+````java
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@PreAuthorize("isFullyAuthenticated()")
+	public ModelAndView user(final Principal p) {
+		Tools.log("accès à /user", logger);
+		final ModelAndView mav = new ModelAndView("user");
+		return mav;
+	}
+````
 
-Les pages jsp à accès direct sans passer par un contrôleur n'ont pas accès à l'identité de l'utilisateur (néanmoins, cet accès est possible en écrivant du code Java spécifique dans ces pages).
+La vue a accès à l'identité de l'utilisateur via la variable `userInfo` automatiquement injectée dans le modèle. Elle doit inclure le bouton FranceConnect, notamment pour permettre la déconnexion de l'utilisateur.
 
+Voici un exemple de vue affichant les informations d'identité de l'utilisateur :
+````html
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
+<html lang="fr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Fournisseur de services France Connect</title>
+  </head>
+
+  <body>
+    <!-- inclusion du code JavaScript de FranceConnect.
+         Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
+         Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
+    <script src="${ oidcAttributes.fcbuttonuri }"></script>
+    <!-- inclusion du bouton France Connect -->
+    <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
+    <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
+
+    Cette page de fourniture du service n'est accessible qu'aux utilisateurs authentifiés.
+    Vous êtes <b>correctement authentifié</b> via France Connect.<br/>
+<pre>
+Utilisateur (user info) :
+  - sujet (utilisateur)  : ${ userInfo.sub } 
+  - genre                : ${ userInfo.gender } 
+  - date de naissance    : ${ userInfo.birthdate }
+  - prénom               : ${ userInfo.givenName } 
+  - nom                  : ${ userInfo.familyName } 
+  - courriel             : ${ userInfo.email }
+  - addresse postale :
+    - rue               : ${ userInfo.address.streetAddress } 
+    - commune           : ${ userInfo.address.locality }
+    - région            : ${ userInfo.address.region }
+    - code postal       : ${ userInfo.address.postalCode }
+    - pays              : ${ userInfo.address.country }
+    - lieu de naissance : ${ oidcBirthplace }
+    - pays de naissance : ${ oidcBirthcountry }
+valeur JSON complète : ${ userInfo.source }
+    </pre>
+  </body>
+</html>
+````
 
 
 ----------
