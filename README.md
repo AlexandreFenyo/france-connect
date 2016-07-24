@@ -709,11 +709,42 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 ### Fichier pom pour Maven
 
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un autre composant partagé. Dans un tel cas, il est préférable d'imposer le choix de la version partagée retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cet optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
+
+| composant    | version |
+| ------------- |---------:|
+| spring framework | 4.2.5 |
+| spring security | 4.0.4 |
+| mitre id connect | 1.2.6 |
+| slf4j | 1.7.21 |
+| servlet-api | 2.5 |
+| jsp-api | 2.1 |
+| jstl | 1.2 |
+| junit | 4.12 |
+| slf4j | 1.7.21 |
+
+Les conflits rencontrés concernaient notamment :
+
+- MITREiD Connect 1.2.x induit des dépendances vers la version 3 du framework Spring et certaines de ses dépendances transitives, alors que l'on utilise ici la dernière version 4, plus évoluée. On s'est donc affranchi de ces dépendances directes et transitives, pour profiter pleinement de Spring framework 4. Cela concerne précisément les artefacts Maven suivants : org.springframework/spring-core, org.springframework/spring-webmvc, org.springframework.security/spring-security-core, org.springframework.security/spring-security-config,  org.springframework.security.oauth/spring-security-oauth2, org.apache.httpcomponents/httpclient, org.slf4j/slf4j-api, org.slf4j/jcl-over-slf4j, com.fasterxml.jackson.core/jackson-annotations.
+
+- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
+
+- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques France Connect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
+
+- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
+
+Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traitement :
+- il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCE CONNECT - ERREUR DE CONFIGURATION
+
+AVANT DE COMMENCER A UTILISER CE PACKAGE,
+VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-template
+DANS src/main/webapp/META-INF/config.properties
+ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CONNECT.
+````
+- il vérifie explicitement la présence du fichier de configuration config.properties
+
 
 ### Démarrage dans un serveur Tomcat embarqué
 
