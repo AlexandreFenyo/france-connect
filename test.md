@@ -175,7 +175,7 @@ Les valeurs par défaut permettent de communiquer avec l'application exemple dis
 
 ## Cinématique d'authentification
 
-La cinématique d'authentification est constitué des étapes suivantes :
+La cinématique d'authentification est constituée des étapes suivantes :
 
 1. Lorsque le filtre Spring MitreID Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
 2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
@@ -188,6 +188,17 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
 
+## Cinématique de déconnexion
+
+La cinématique de déconnexion est constituée des étapes suivantes :
+
+1. Lorsque l'utilisateur clique sur le lien de déconnexion dans le bouton FranceConnect ou via un lien d'une page du fournisseur de services, son navigateur effectue une requête GET sur l'URL de logout du fournisseur de services.
+2. Le contrôleur Spring MVC invalide alors la session et redirige le navigateur vers l'URL de logout de FranceConnect.
+3. FranceConnect propose à l'utilisateur de se déconnecter de FranceConnect, ou de rester connecté.
+4. Selon le choix de l'utilisateur, FranceConnect invalide éventuellement la session utilisateur et, dans tous les cas, redirige son navigateur vers l'URL post-logout du fournisseur de services.
+5. Le fournisseur de services fournit la page HTML correspondant à son URL post-logout.
+
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase de déconnexion où interviennent le navigateur, le fournisseur de services et FranceConnect (le fournisseur d'identité n'est pas concerné) :
 
 ![déconnexion - diagramme de séquence UML](docs/deconnexion1.png "déconnexion - diagramme de séquence UML")
 
