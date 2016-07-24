@@ -202,7 +202,9 @@ net.fenyo.franceconnect.config.idp.iv=87b7225d16ea2ae1f41d0b13fdce9bba
 
 ### Traces
 
-Voici un exemple complet de fichier de configuration des traces :
+#### Choisir où déposer les traces
+
+Voici un exemple complet de fichier de configuration des traces `log4j.xml` pour un serveur en production, les traces étant fournies dans la sortie standard du serveur d'application :
 
 ````xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -231,6 +233,27 @@ Voici un exemple complet de fichier de configuration des traces :
 </log4j:configuration>
 ````
 
+Fournir les traces sur la sortie standard du serveur d'application n'est pas toujours le moyen le plus adapté pour les conserver. C'est un moyen idéal dans le cadre d'un serveur d'application hébergé dans un micro-conteneur [Docker](www.docker.com), mais dans le cas contraire, on peut remplacer l'appender de type `ConsoleAppender` pour les stocker plutôt :
+
+- dans un fichier, que l'on fait tourner régulièrement : avec un appender de type [`DailyRollingFileAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/DailyRollingFileAppender.html)
+
+- sur un serveur SYSLOG centralisé, avec un appender de type [`SyslogAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SyslogAppender.html)
+
+- dans un fichier d'événements Windows potentiellement rerouté vers un [SIEM](https://fr.wikipedia.org/wiki/Security_information_management_system) comme [LogRhythm](https://logrhythm.com/fr/), avec un appender de type [`NTEventLogAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/nt/NTEventLogAppender.html)
+
+#### Exploiter les traces
+
+À chaque création de session, une trace correspondante est générée, incluant la valeur du nouvel identifiant de session stocké dans le cookie JSESSIONID et une mise à jour du nombre de sessions en mémoire :
+
+````
+INFO : 2016-07-24 03:25:16,203 net.fenyo.franceconnect.SessionListener - log fc: msg [création de session 2236652D2F06E535395CDA6CA557B9BF (21 sessions)]; auth: oidc authentication token is null; req: request attributes are null
+````
+
+À chaque accès à une ressource protégée au travers du contrôleur Spring, une trace correspondante est générée, incluant 
+
+````
+INFO : 2016-07-24 03:25:33,139 net.fenyo.franceconnect.WebController - log fc: msg [accès à /user]; auth: id token [eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2ZjcC5pbnRlZzAxLmRldi1mcmFuY2Vjb25uZWN0LmZyIiwic3ViIjoiNTRmNzBhNTU3ZDgzOGJjZDI2YWJkMjIwMzgxMjY4MTkyOTllZjIwNDhjMDFlYWI5N2E3YTEwNTQ1OTc2ZWY5OHYxIiwiYXVkIjoiOWViZjFhZDkwODQyMDdjNWU0OTM5YmNjNmM3NThjODBmMjYwZWU3MDE3N2E0MjRlOTQ3NTRiZWNlZmNiNDU3ZSIsImV4cCI6MTQ2OTMyNDczMiwiaWF0IjoxNDY5MzIzNTMyLCJub25jZSI6IjEwMjY0YTBmODAyYmQiLCJpZHAiOiJGQyIsImFjciI6ImVpZGFzMiIsImFtciI6W119.RfOvGXAfDm4UvH1XGIVeVe-_0JDZVuLdzTAyGi8n5io]; auth: user info [{"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"}}]; req: session id [2236652D2F06E535395CDA6CA557B9BF]; req: remote addr [127.0.0.1]; req: remote port [62375]; req: request [SecurityContextHolderAwareRequestWrapper[ org.springframework.security.web.savedrequest.SavedRequestAwareWrapper@44f3efb7]]
+````
 
 ## Cinématique d'authentification
 
