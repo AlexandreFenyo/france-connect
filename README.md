@@ -639,17 +639,6 @@ valeur JSON complète : ${ userInfo.source }
 </html>
 ````
 
-
-
-
-
-
-
-
-
-
-
-
 Une méthode spécifique peut ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée. Pour cela, il faut utiliser la bibliothèse que tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
 
 Voici un exemple de méthode spécifique correspondant à ce scénario :
@@ -736,12 +725,16 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 ### Démarrage dans Eclipse
 
-- installer [Eclipse](https://www.eclipse.org/downloads/)  Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
-
+- installer [Eclipse](https://www.eclipse.org/downloads/) Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
+- importer le projet dans [Eclipse](https://www.eclipse.org/downloads/)
 - &Agrave; chaque modification du fichier `pom`, sélectionner l'élément racine du projet dans l'explorateur de projet, faire "bouton droite" sur cet élément, choisir *Maven* dans le menu déroulant puis *Update Project...*.
 - Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
-- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat, publier l'application dans le serveur et démarrer le serveur.
+- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
 
+> :warning:  
+> KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans '[Eclipse](https://www.eclipse.org/downloads/), comme ceci :
+> - soit interrompre Eclipse et modifier le fichier `FournisseurDeServices/.settings/org.eclipse.wst.common.component`pour que la ligne `<property name="context-root" value=""/>` contienne bien un attribut value` vide (c'est cet attribut qui est parfois modifié par Eclipse). Puis redémarrer Eclipse.
+> - soit choisir *Show View* dans le menu déroulant Window puis *Servers*. Dans la vue Servers" qui s'affiche, double-cliquer sur le serveur (ex.: `Tomcat v8.0 Server at localhost [Stopped, Synchronized]`), la configuration du serveur s'affiche alors et l'onglet sélectionné par défaut est nommé Overview, changer pour l'onglet Modules et vérifier que la colonne Path du tableau des Web Modules chargés est vide. Si ce n'est pas le cas, cliquer sur la ligne correspondante et sur le bouton `Edit...` pour effacer le contenu du champ Path. Sauver la nouvelle configuration (entrée *Save* du menu Fichier, ou raccourci clavier `Ctrl-S`) et redémarrer le serveur.
 
 
 ----------
