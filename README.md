@@ -735,6 +735,14 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
 - Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
 
+## Opérations Maven
+
+Voici une liste des opérations Maven standard :
+- faire le ménage (supprimer le répertoire `target`) : `mvn clean`
+- compiler : `mvn clean compile`
+- créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
+
+
 ## Points d'attention
 
 > :warning:  
@@ -746,7 +754,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 &nbsp;
 
 > :warning:  
-> Le fichier de configuration config.properties contient deux URLs déclarées chez FranceConnect :
+> Le fichier de configuration `config.properties` contient deux URLs déclarées chez FranceConnect :
 > - l'URL de callback (paramètre `net.fenyo.franceconnect.config.oidc.redirecturi` de `config.properties`)
 > - l'URL de redirection de déconnexion (paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi` de `config.properties`)
 > 
