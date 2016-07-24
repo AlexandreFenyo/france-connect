@@ -29,7 +29,7 @@ Deux fichiers de configuration sont utilisés :
 
 La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
 
-> :warning: *attention*  
+> :warning:  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration des paramètres car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
 > **Ce fichier de configuration contient des secrets, il faut donc configurer ses permissions d'accès ainsi que les permissions globales d'accès au système de fichiers sur lequel il est stocké de manière à ce qu'aucune personne non habilitée puisse y accéder.**
 
