@@ -713,8 +713,8 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 
 | composant    | version |
 | ------------- |---------:|
-| spring framework | 4.2.5 |
-| spring security | 4.0.4 |
+| spring-framework | 4.2.5 |
+| spring-security | 4.0.4 |
 | spring-security-config | 4.0.4 |
 | spring-security-oauth2 | 2.0.9 |
 | mitre id connect | 1.2.6 |
@@ -757,7 +757,22 @@ Les conflits rencontrés concernaient les problématiques suivantes :
 - On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
 
 Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traitement :
+
 - il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCE CONNECT - ERREUR DE CONFIGURATION
+
+CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
+````
+
+- il vérifie explicitement qu'il est interprété dans un environnement Java 1.7 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCE CONNECT - ERREUR DE VERSION MAVEN
+
+CE PACKAGE NECESSITE L'UTILISATION D'UN JDK JAVA VERSION 1.7 AU MINIMUM.
+````
+
+- il vérifie explicitement que le fichier de paramétrage a été créé et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
 FRANCE CONNECT - ERREUR DE CONFIGURATION
 
@@ -766,7 +781,6 @@ VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-templa
 DANS src/main/webapp/META-INF/config.properties
 ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CONNECT.
 ````
-- il vérifie explicitement la présence du fichier de configuration config.properties
 
 
 ### Démarrage dans un serveur Tomcat embarqué
