@@ -279,13 +279,17 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 
 #### Phase d'authentification
 
+##### Comportement attendu
+
+Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique configurable par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
+
 ##### Session expirée
 
-Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### &Eacute;tat invalide
 
-Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c.
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Code d'autorisation invalide
 
@@ -315,11 +319,19 @@ ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
 Vary: Accept-Encoding
 ````
 
-- le fournisseur de service répond donc au navigateur par une erreur 401 avec le message d'erreur suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`.
+- Une trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
+####    Nonce invalide
+
+Si le nonce reçu n'est pas celui attendu, une Une trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par *replay*. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+
+#### Autres cas d'erreur d'authentification
+
+De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des token id JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Phase de logout
 
+Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
 
 
 ## Cinématique d'authentification
