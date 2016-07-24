@@ -752,7 +752,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 > 
 > Si ces URL utilisent l'adresse IP 127.0.0.1, le navigateur doit être lancé sur http://127.0.0.1/
 > 
-> Si ces URL utilisent le nom localhost, le navigateur doit être lancé sur [http://localhost/]
+> Si ces URL utilisent le nom localhost, le navigateur doit être lancé sur [http://localhost/](http://localhost/)
 > 
 > En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
 
