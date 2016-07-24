@@ -371,17 +371,13 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 KIF :
 composition du package
 licence
-glossaire
 
 KIF-SP :
 description fonctionnelle : les pages, les protections
 protéger une page
-configuration
 lancement
-migration en production
-traces
+migration en production equilibreur de charge affinite de session
 performances
-déconnexion
 fonctionnement interne
 
 KIT-IdP :
@@ -393,65 +389,18 @@ fonctionnement interne
 
 
 
-
-
-
-````
-INFO : 2016-07-23 01:13:40,172 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match, expected https://fcp.integ01.dev-franceconnect.com got https://fcp.integ01.dev-franceconnect.fr]]; auth: oidc authentication token is null; req: session id [E5C557D3C52E05C8967960454D75DB51]; req: remote addr [127.0.0.1]; req: remote port [51619]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@48697e93]
-````
-
-
-
 ----------
 
-aller directement à un lien : [stack edit](#welcome-to-stackedit)
-
-<font color="red">ou directment du html</h1>
-
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-https://help.github.com/articles/basic-writing-and-formatting-syntax/
-# The largest heading
-## The second largest heading
-### troisième
-#### 4ième
-###### The smallest heading
 
-**bold and *italic* and bold**
+https://help.github.com/articles/basic-writing-and-formatting-syntax/
 
 > ceci est retrait
-
-Le code comme `telnet`peut être quoté en ligne ou en bloc :
-```java
-public String GetComment(final String str) {
-}
-```
-
-Un lien vers la page de l'[auteur](http://fenyo.net)
-Ou directement : http://fenyo.net
-
-Il y a des listes :
-
-- de choses
-- et d'autres
-
-Mais on peut aussi numéroter :
-
-1. ceci est le niveau 2
-  1. :arrows_counterclockwise: et ceci le niveau 2
-  2. :arrows_counterclockwise:
-  - et sous liste
 
 :arrows_counterclockwise: intéressant
 
 http://www.webpagefx.com/tools/emoji-cheat-sheet/
 
-on peut faire des lignes qui se suivent.
-Par exemple comme ceci.
-
-
-
-
-----------
 
 
 Welcome to StackEdit!
