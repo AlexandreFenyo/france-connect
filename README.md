@@ -686,7 +686,6 @@ Voici la vue associée :
 
     <security:authorize access="isFullyAuthenticated()">
       Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
-
     </security:authorize>
 
     <security:authorize access="!isFullyAuthenticated()">
@@ -843,7 +842,7 @@ Voici une liste des opérations Maven standard :
 - compiler : `mvn clean compile`
 - créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
 
-### Migration en production
+### Passage en production
 
 #### Chiffrement des flux
 
