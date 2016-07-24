@@ -735,6 +735,8 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
 - Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
 
+&nbsp;
+
 > :warning:  
 > KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans '[Eclipse](https://www.eclipse.org/downloads/), comme ceci :
 > - soit interrompre Eclipse et modifier le fichier `FournisseurDeServices/.settings/org.eclipse.wst.common.component`pour que la ligne `<property name="context-root" value=""/>` contienne bien un attribut `value` vide (c'est cet attribut qui est parfois modifié par Eclipse). Puis redémarrer Eclipse.
@@ -745,12 +747,14 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 > :warning:  
 > Le fichier de configuration config.properties contient deux URLs déclarées chez FranceConnect :
-> - l'URL de callback (paramètres net.fenyo.franceconnect.config.oidc.redirecturi de config.properties)
-> - l'URL de redirection de déconnexion (paramètre net.fenyo.franceconnect.config.oidc.afterlogouturi de config.properties)
+> - l'URL de callback (paramètre `net.fenyo.franceconnect.config.oidc.redirecturi` de `config.properties`)
+> - l'URL de redirection de déconnexion (paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi` de `config.properties`)
+> 
 > Si ces URL utilisent l'adresse IP 127.0.0.1, le navigateur doit être lancé sur http://127.0.0.1/
+> 
 > Si ces URL utilisent le nom localhost, le navigateur doit être lancé sur http://localhost/
-> En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement.
-> Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion.
+> 
+> En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
 
 
 
