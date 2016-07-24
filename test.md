@@ -281,7 +281,7 @@ Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le co
 
 ##### &Eacute;tat invalide
 
-Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c". La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c.
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c.
 
 ##### Code d'autorisation invalide
 
@@ -301,7 +301,6 @@ grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d4
 
 - FranceConnect signale que le code est invalide :
 ````http
-France Connect signale que le code est invalide :
 HTTP/1.1 400 Bad Request
 Server: nginx
 Date: Wed, 20 Jul 2016 17:09:24 GMT
