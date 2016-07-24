@@ -122,7 +122,7 @@ public class WebController {
 	@PreAuthorize("isFullyAuthenticated()")
 	public RedirectView idp(final HttpServletRequest request) {
 		final RedirectView redirectView = new RedirectView();
-
+		
 		Tools.log("accès à /idp", logger);
 
 		String ciphertext_hex = request.getParameter("msg");

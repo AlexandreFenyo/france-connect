@@ -73,7 +73,7 @@
               <property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
               <property name="authorizationEndpointUri" value="${net.fenyo.franceconnect.config.oidc.authorizationendpointuri}" />
               <property name="tokenEndpointUri" value="${net.fenyo.franceconnect.config.oidc.tokenendpointuri}" />
-              <property name="userInfoUri" value="${net.fenyo.franceconnect.config.oidc.userinfouri}" />
+              <property name="userInfoUri" value="${net.fenyo.franceconnect.config.oidc.userinfoendpointuri}" />
             </bean>
           </entry>
         </map>
@@ -112,7 +112,7 @@
             <!-- cette configuration ne sert qu'aux validations de sécurité -->
             <property name="redirectUris">
               <set>
-                <value>${net.fenyo.franceconnect.config.oidc.redirecturi.base}${net.fenyo.franceconnect.config.oidc.redirecturi.resource}</value>
+                <value>${net.fenyo.franceconnect.config.oidc.redirecturi}</value>
               </set>
             </property>
 
@@ -144,9 +144,10 @@
     <property name="authenticationFailureHandler" ref="authenticationFailureHandler" />
   </bean>
 
-  <!-- création d'un bean servant à stocker l'URI correspondant au point d'entrée d'authentification via Spring Security (ce n'est pas un endpoint au sens OpenID Connect) -->
+  <!-- création d'un bean servant à stocker l'URI correspondant au point d'entrée d'authentification via Spring Security
+       il s'agit du callback endpoint du fournisseur de services, qui reçoit le code d'autorisation -->
   <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
-    <constructor-arg value="/${net.fenyo.franceconnect.config.oidc.redirecturi.resource}" />
+    <constructor-arg value="${net.fenyo.franceconnect.config.oidc.redirecturi}" />
   </bean>
 
   <!-- implémentation de la séquence de déconnexion France Connect -->

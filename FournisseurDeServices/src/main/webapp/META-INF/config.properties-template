@@ -9,33 +9,50 @@ net.fenyo.franceconnect.config.oidc.debug=true
 net.fenyo.franceconnect.config.oidc.clientid=
 net.fenyo.franceconnect.config.oidc.clientsecret=
 
-# sans activite pendant ce delai (en minutes), la session expire donc l'acces a une page protegee necessite une nouvelle authentification via France Connect.
-# Si cette valeur est inferieure a la duree de session de France Connect (30 minutes), la reconnexion pourra dans certains cas etre transparente.
+# timeout de session
+# Sans activite pendant ce delai (en minutes), la session expire donc l'acces a une page protegee necessite une nouvelle authentification via FranceConnect.
+# Si cette valeur est inferieure a la duree de session de FranceConnect (30 minutes), la reconnexion pourra dans certains cas etre transparente.
 # Ex. :
 # - sessiontimeout vaut 10 minutes
-# - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect a t0
+# - l'utilisateur se connecte au fournisseur de service et s'authentifie via FranceConnect a t0
 # - a partir de t0 + 5 min, l'utilisateur devient inactif
 # - sa session chez le fournisseur de service est donc invalide a partir de t0 + 5 min + sessiontimeout, c'est a dire t0 + 15 min
 # - a t0 + 20 min, l'utilisateur reprend son activite en accedant a une page protegee
-# - la session ayant expire, le fournisseur de service renvoie l'utilisateur s'authentifier chez France Connect
-# - la session France Connect n'ayant pas expire (si l'utilisateur n'a pas fait une deconnexion via le bouton France Connect entre-temps, depuis ce fournisseur de service ou un autre), France Connect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
+# - la session ayant expire, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
+# - la session FranceConnect n'ayant pas expire (si l'utilisateur n'a pas fait une deconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
 # - le fournisseur de service utilise ce jeton d'autorisation pour recuperer le token id et l'identite de l'utilisateur
 net.fenyo.franceconnect.config.oidc.sessiontimeout=240
 
+# emetteur des id token JWT
+# la reception d'un id token JWT en provenance d'un autre emetteur entraine le rejet de l'authentification
 net.fenyo.franceconnect.config.oidc.issuer=https://fcp.integ01.dev-franceconnect.fr
+
+# Quatre endpoints sont declares pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
+# La cinematique d'authentification est la suivante :
+# - Lorsque le filtre Spring MitreID Connect detecte l'acces a une ressource protegee et qu'il n'y a pas eu de precedente authentification pour la session courante,
+#   MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
+# - Ce endpoint constate qu'aucun id token n'est associe a cette session et qu'aucun parametre contenant un code d'autorisation n'est fourni dans la requete qu'il recoit.
+# - Il entame donc la cinematique OpenID Connect pour demander un code d'autorisation a l'authorization endpoint et ce code est renvoye par FranceConnect sur ce endpoint.
+# - A la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour recuperer un id token et un access token.
+# - Un nouveau web service REST presentant l'access token est invoque sur le userinfo endpoint de FranceConnect pour recuperer le userinfo qui represente l'identite de l'utilisateurs au format JSON.
+# - L'utilisateur est enfin renvoye vers la ressource protegee, a laquelle il a desormais acces.
+
+# URI des endpoints OpenID Connect de FranceConnect
 net.fenyo.franceconnect.config.oidc.authorizationendpointuri=https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize
 net.fenyo.franceconnect.config.oidc.tokenendpointuri=https://fcp.integ01.dev-franceconnect.fr/api/v1/token
-net.fenyo.franceconnect.config.oidc.userinfouri=https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo
+net.fenyo.franceconnect.config.oidc.userinfoendpointuri=https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo
+
+# URI du endpoint de callback du fournisseur de services
+# URI declaree par le fournisseur de services chez FranceConnect dans la section "Urls de callback".
+# Le choix de la chaine openid_connect_login est impose par l'implementation MitreID Connect, elle ne doit donc pas etre substituee par une autre chaine.
+# Cette URI est le point d'entree de MitreID Connect lui permettant de recevoir le code d'autorisation et d'enchainer alors la cinematique de recuperation des tokens.
+net.fenyo.franceconnect.config.oidc.redirecturi=http://127.0.0.1/openid_connect_login
+
+# URI de deconnexion globale de FranceConnect
 net.fenyo.franceconnect.config.oidc.logouturi=https://fcp.integ01.dev-franceconnect.fr/api/v1/logout
 
-# URI declaree par le fournisseur de services chez France Connect dans la section "Urls de callback" (concatenation de base et resource)
-# la chaine openid_connect_login est imposee par l'implementation MitreID Connect
-# cette URI est le point d'entree de MitreID Connect lui permettant de recevoir le code d'autorisation et d'enchainer alors la cinematique de recuperation des tokens
-net.fenyo.franceconnect.config.oidc.redirecturi.base=http://127.0.0.1/
-net.fenyo.franceconnect.config.oidc.redirecturi.resource=openid_connect_login
-
-# URI declaree par le fournisseur de services chez France Connect dans la section "Urls de redirection de deconnexion"
-# URI ou l'utilisateur est renvoye apres deconnexion du service, qu'il ait accepte ou pas la deconnexion de France Connect. Pas forcement sur le fournisseur de services, potentiellement sur le site institutionnel associe.
+# URI declaree par le fournisseur de services chez FranceConnect dans la section "Urls de redirection de deconnexion"
+# URI ou l'utilisateur est renvoye apres deconnexion du service, qu'il ait accepte ou pas la deconnexion de FranceConnect. Pas forcement sur le fournisseur de services, potentiellement sur le site institutionnel associe.
 # Cette URI est aussi utilisee en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel.
 net.fenyo.franceconnect.config.oidc.afterlogouturi=http://127.0.0.1/
 
@@ -44,10 +61,10 @@ net.fenyo.franceconnect.config.oidc.afterlogouturi=http://127.0.0.1/
 # l'utilisateur se verra alors propose de continuer sa navigation sur l'URL definie par net.fenyo.franceconnect.config.oidc.afterlogouturi.
 net.fenyo.franceconnect.config.oidc.authenticationerroruri=http://127.0.0.1/authenticationError
 
-# URI de logout utilisee par le bouton France Connect ou le fournisseur de service pour initier la sequence de logout
+# URI de logout utilisee par le bouton FranceConnect ou le fournisseur de service pour initier la sequence de logout
 net.fenyo.franceconnect.config.oidc.startlogouturi=j_spring_security_logout
 
-# URI du code JavaScript du bouton France Connect
+# URI du code JavaScript du bouton FranceConnect
 net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
 
 #################################################################################
@@ -56,6 +73,6 @@ net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceco
 # On utilise un chiffrement symetrique de type AES-256-CBC avec padding PKCS#7
 
 # Cle AES 256 bits en hexadecimal (generation via openssl : "openssl rand -hex 32")
-net.fenyo.franceconnect.config.idp.key=
-# Vecteur d'initialisation 64 bits en hexadecimal (generation via openssl : "openssl rand -hex 16")
-net.fenyo.franceconnect.config.idp.iv=
+net.fenyo.franceconnect.config.idp.key=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+# Vecteur d'initialisation 128 bits en hexadecimal (generation via openssl : "openssl rand -hex 16")
+net.fenyo.franceconnect.config.idp.iv=87b7225d16ea2ae1f41d0b13fdce9bba

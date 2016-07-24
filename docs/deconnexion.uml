@@ -1,0 +1,15 @@
+```sequence
+navigateur->fournisseur de services: GET sur URL de logout\nhttp://127.0.0.1/j_spring_security_logout
+Note right of fournisseur de services: le fournisseur invalide la session
+fournisseur de services-->navigateur: redirection vers URL de déconnexion de FranceConnect
+
+navigateur->FranceConnect: GET sur URL de déconnexion de FranceConnect\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=...
+FranceConnect-->navigateur: fourniture de la page HTML proposant la déconnexion de FranceConnect
+
+navigateur->FranceConnect: POST sur URL de déconnexion de FranceConnect avec le choix utilisateur\nhttps://fcp.integ01.dev-franceconnect.fr/api/v1/logout?id_token_hint=...
+Note right of FranceConnect: invalidation de la session FranceConnect\nsi l'utilisateur a fait ce choix
+FranceConnect-->navigateur: redirection vers URL post-logout du fournisseur de services
+
+navigateur->fournisseur de services: GET sur URL de post-logout\nhttp://127.0.0.1/
+fournisseur de services-->navigateur: fourniture de la page HTML post-logout
+```
