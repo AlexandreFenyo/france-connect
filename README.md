@@ -744,13 +744,13 @@ Les conflits rencontrés concernaient les problématiques suivantes :
 - MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
 
 - Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
-  - spring-core
-  - spring-webmvc
-  - spring-context
-  - spring-beans
-  - spring-security-core
-  - spring-security-config
-  - spring-security-web
+  - org.springframework/spring-core
+  - org.springframework/spring-webmvc
+  - org.springframework/spring-context
+  - org.springframework/spring-beans
+  - org.springframework.security/spring-security-core
+  - org.springframework.security/spring-security-config
+  - org.springframework.security/spring-security-web
 
 - Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques France Connect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
 
