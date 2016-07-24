@@ -704,7 +704,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - disposer d'une connexion Internet (accès direct ou proxy)
 - disposer d'un navigateur Internet
 
-### Démarrage dans un tomcat embarqué
+### Démarrage dans un serveur Tomcat embarqué
 
 - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
   `mvn clean tomcat7:run`
@@ -716,7 +716,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 - Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
-### Démarrage dans un jetty embarqué
+### Démarrage dans un serveur Jetty embarqué
 
 - Démarrage avec Jetty sur un serveur avec accès direct à Internet : `mvn clean jetty:run`
 
@@ -740,6 +740,18 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 > - soit interrompre Eclipse et modifier le fichier `FournisseurDeServices/.settings/org.eclipse.wst.common.component`pour que la ligne `<property name="context-root" value=""/>` contienne bien un attribut `value` vide (c'est cet attribut qui est parfois modifié par Eclipse). Puis redémarrer Eclipse.
 > 
 > - soit sélectionner *Show View* dans le menu déroulant Window puis *Servers*. Dans la vue Servers" qui s'affiche, double-cliquer sur le serveur (ex.: `Tomcat v8.0 Server at localhost [Stopped, Synchronized]`), la configuration du serveur s'affiche alors et l'onglet sélectionné par défaut est nommé Overview, changer pour l'onglet Modules et vérifier que la colonne Path du tableau des Web Modules chargés est vide. Si ce n'est pas le cas, cliquer sur la ligne correspondante et sur le bouton `Edit...` pour effacer le contenu du champ Path. Sauver la nouvelle configuration (entrée *Save* du menu Fichier, ou raccourci clavier `Ctrl-S`) et redémarrer le serveur.
+
+&nbsp;
+
+> :warning:  
+> Le fichier de configuration config.properties contient deux URLs déclarées chez FranceConnect :
+> - l'URL de callback (paramètres net.fenyo.franceconnect.config.oidc.redirecturi de config.properties)
+> - l'URL de redirection de déconnexion (paramètre net.fenyo.franceconnect.config.oidc.afterlogouturi de config.properties)
+> Si ces URL utilisent l'adresse IP 127.0.0.1, le navigateur doit être lancé sur http://127.0.0.1/
+> Si ces URL utilisent le nom localhost, le navigateur doit être lancé sur http://localhost/
+> En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement.
+> Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion.
+
 
 
 ----------
