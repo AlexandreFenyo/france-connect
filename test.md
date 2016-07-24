@@ -200,9 +200,7 @@ net.fenyo.franceconnect.config.idp.key=a6a7ee7abe681c9c4cede8e3366a9ded96b92668e
 net.fenyo.franceconnect.config.idp.iv=87b7225d16ea2ae1f41d0b13fdce9bba
 ````
 
-### Traces
-
-#### Choisir où déposer les traces
+### Configuration des traces
 
 Voici un exemple complet de fichier de configuration des traces `log4j.xml` pour un serveur en production, les traces étant fournies dans la sortie standard du serveur d'application :
 
@@ -241,7 +239,9 @@ Fournir les traces sur la sortie standard du serveur d'application n'est pas tou
 
 - dans un fichier d'événements Windows potentiellement rerouté vers un [SIEM](https://fr.wikipedia.org/wiki/Security_information_management_system) comme [LogRhythm](https://logrhythm.com/fr/), avec un appender de type [`NTEventLogAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/nt/NTEventLogAppender.html)
 
-#### Exploiter les traces
+## Exploitation des traces
+
+### Format des traces
 
 À chaque création de session, une trace correspondante est générée, incluant la valeur du nouvel identifiant de session stocké dans le cookie JSESSIONID et une mise à jour du nombre de sessions en mémoire :
 ````
@@ -266,11 +266,53 @@ INFO : 2016-07-24 03:36:56,095 net.fenyo.franceconnect.LogoutHandler - log fc: m
 INFO : 2016-07-24 03:25:33,139 net.fenyo.franceconnect.WebController - log fc: msg [accès à /user]; auth: id token [eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2ZjcC5pbnRlZzAxLmRldi1mcmFuY2Vjb25uZWN0LmZyIiwic3ViIjoiNTRmNzBhNTU3ZDgzOGJjZDI2YWJkMjIwMzgxMjY4MTkyOTllZjIwNDhjMDFlYWI5N2E3YTEwNTQ1OTc2ZWY5OHYxIiwiYXVkIjoiOWViZjFhZDkwODQyMDdjNWU0OTM5YmNjNmM3NThjODBmMjYwZWU3MDE3N2E0MjRlOTQ3NTRiZWNlZmNiNDU3ZSIsImV4cCI6MTQ2OTMyNDczMiwiaWF0IjoxNDY5MzIzNTMyLCJub25jZSI6IjEwMjY0YTBmODAyYmQiLCJpZHAiOiJGQyIsImFjciI6ImVpZGFzMiIsImFtciI6W119.RfOvGXAfDm4UvH1XGIVeVe-_0JDZVuLdzTAyGi8n5io]; auth: user info [{"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"}}]; req: session id [2236652D2F06E535395CDA6CA557B9BF]; req: remote addr [127.0.0.1]; req: remote port [62375]; req: request [SecurityContextHolderAwareRequestWrapper[ org.springframework.security.web.savedrequest.SavedRequestAwareWrapper@44f3efb7]]
 ````
 
-Lors qu'une erreur d'authentification se produit, une trace correspondante est générée :
+Lorsqu'une erreur d'authentification se produit, une trace correspondante est générée :
 ````
 INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHandler - log fc: msg [authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: State parameter mismatch on return. Expected null got 205775549532c]]; auth: oidc authentication token is null; req: session id [null]; req: remote addr [127.0.0.1]; req: remote port [62535]; req: request [org.springframework.security.web.context.HttpSessionSecurityContextRepository$Servlet3SaveToSessionRequestWrapper@4216b2a1]
 ````
 
+### Gestion des erreurs
+
+#### Phase d'authentification
+
+##### Session expirée
+
+Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect.
+
+##### &Eacute;tat invalide
+
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors MITREid Connect renvoie une page d'erreur 401 avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c". La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c.
+
+##### Code d'autorisation invalide
+
+Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
+
+- le fournisseur de service émet la requête suivante au token endpoint de France Connect :
+````
+          POST /api/v1/token HTTP/1.1
+          Accept: text/plain, application/json, application/*+json, */*
+          Content-Type: application/x-www-form-urlencoded
+          Content-Length: 312
+          Host: fcp.integ01.dev-franceconnect.fr
+          Accept-Encoding: gzip,deflate
+         grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
+````
+
+       - France Connect signale que le code est invalide :
+         HTTP/1.1 400 Bad Request
+         Server: nginx
+         Date: Wed, 20 Jul 2016 17:09:24 GMT
+         Content-Type: application/json; charset=utf-8
+         Content-Length: 27
+         Connection: keep-alive
+         ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
+         Vary: Accept-Encoding
+
+       - le fournisseur de service répond donc au navigateur par une erreur 401 avec le message d'erreur suivant :
+         "Authentication Failed: Unable to obtain Access Token: 400 Bad Request"
+
+
+#### Phase de logout
 
 
 
