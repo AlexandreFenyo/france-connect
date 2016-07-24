@@ -874,7 +874,7 @@ L'application existante est le fournisseur de services, mais au lieu de s'appuye
 
 La relation de confiance entre l'application existante et KIF-IdP est réalisée à l'aide d'un mécanisme de chiffrement AES-256-CBC, ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
-Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP
+Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP.
 
 La cinématique :
 
