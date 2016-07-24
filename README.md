@@ -714,7 +714,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
   - Attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
   - Lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajouter l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans un jetty embarqué
 
@@ -725,7 +725,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
   - Attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante.
 - Lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajouter l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans Eclipse
 
