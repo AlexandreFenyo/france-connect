@@ -814,15 +814,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CO
 - Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
 - Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
 
-### Opérations Maven
-
-Voici une liste des opérations Maven standard :
-- faire le ménage (supprimer le répertoire `target`) : `mvn clean`
-- compiler : `mvn clean compile`
-- créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
-
-
-### Points d'attention
+### Points d'attention avec Eclipse
 
 > :warning:  
 > KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans '[Eclipse](https://www.eclipse.org/downloads/), comme ceci :
@@ -842,6 +834,14 @@ Voici une liste des opérations Maven standard :
 > Si ces URL utilisent le nom localhost, le navigateur doit être lancé sur [http://localhost/](http://localhost/)
 > 
 > En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
+
+
+### Opérations Maven
+
+Voici une liste des opérations Maven standard :
+- faire le ménage (supprimer le répertoire `target`) : `mvn clean`
+- compiler : `mvn clean compile`
+- créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
 
 ### Migration en production
 
