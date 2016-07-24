@@ -366,9 +366,9 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Intégration de MitreID Connect dans Spring
 
-MitreID Connect est un filtre de sécurité Spring Security. L'intégration de l'authentification OpenID Connect dans KIF-SP a donc consisté à configurer Spring MVC pour s'appuyer sur Spring Security afin de protéger les ressources et à configurer un filtre Spring Security à l'aide de MitreID Connect.
+MitreID Connect est un filtre de sécurité [Spring Security](http://projects.spring.io/spring-security/). L'intégration de l'authentification OpenID Connect dans KIF-SP a donc consisté à configurer [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) pour s'appuyer sur [Spring Security](http://projects.spring.io/spring-security/) afin de protéger les ressources et à configurer un filtre [Spring Security](http://projects.spring.io/spring-security/) à l'aide de MitreID Connect.
 
-Cette configuration a été mise en place dans le fichier décrivant la servlet Spring MVC, `franceconnect-servlet.xml` :
+Cette configuration a été mise en place dans le fichier décrivant la servlet [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html), `franceconnect-servlet.xml` :
 
 ````xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -554,6 +554,9 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
   </security:http>
 </beans>
 ````
+
+## Création de ressources sécurisées
+
 
 
 
