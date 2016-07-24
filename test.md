@@ -5,7 +5,7 @@
 
  Ce produit a deux objectifs :
 
-1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade*, largement documenté
+1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade*, largement documenté :
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html), à l'aide du framework [Spring Security](http://projects.spring.io/spring-security/)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
   - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
@@ -172,6 +172,14 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
 
 Les valeurs par défaut permettent de communiquer avec l'application exemple disponible sur https://fenyo.net/fc/index.cgi
+
+#### Paramètres pour la fonction KIF-SP (POC de fournisseur de services)
+
+
+````properties
+a.b.c=b
+````
+
 
 ## Cinématique d'authentification
 
