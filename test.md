@@ -557,7 +557,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
 ## Création de ressources sécurisées
 
-Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](IntégrationdeMitreIDConnectdansSpring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où positionner :
+Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](Intégration-de-MitreID-Connect-dans-Spring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où positionner :
 
 - des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible sans nécessiter une authentification au préalable
 
