@@ -167,7 +167,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 - `net.fenyo.franceconnect.config.idp.iv`
 
- - type : Vecteur d'initialisation 64 bits en hexadecimal (generation via openssl : `openssl rand -hex 16`)
+ - type : Vecteur d'initialisation 128 bits en hexadecimal (generation via openssl : `openssl rand -hex 16`)
  - valeur par défaut : `87b7225d16ea2ae1f41d0b13fdce9bba`
  - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
 
@@ -704,6 +704,26 @@ Voici la vue associée :
 </html>
 ````
 
+## Déploiement
+
+### Prérequis
+
+Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de ce produit :
+- disposer d'un environnement Unix, Linux ou Windows
+- installer un environnement JDK 7 ou version supérieure
+- installer Maven 3.0.4 ou version supérieure
+- disposer d'une connexion Internet (accès direct ou proxy)
+- disposer d'un navigateur Internet
+
+### Démarrage dans un tomcat embarqué
+
+- Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
+  `mvn clean tomcat7:run`
+  
+- Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
+  - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run`
+  - Attendre le message 'INFOS: Starting ProtocolHandler ["http-bio-80"]', signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante.
+  - Lancer alors un navigateur sur http://127.0.0.1/
 
 
 ----------
