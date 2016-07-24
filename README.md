@@ -22,6 +22,9 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 ### Fichiers de configuration
 
+>:information_source:
+> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet d'adresser le fournisseur de service avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, il cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut substituer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
+
 Deux fichiers de configuration sont utilisés :
 
 - le fichier de configuration des paramètres
@@ -772,9 +775,21 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
 
+  - sans impacter le mode d'authentification existant, afin que le fournisseur de services puisse continuer à authentifier lui-même les utilisateurs qui ne souhaitent pas s'authentifier via FranceConnect,
+
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
+L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relai les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
+La relation de confiance entre l'application existante et KIF-IdP est réalisée à l'aide d'un mécanisme de chiffrement AES-256-CBC, ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
+
+Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP
+
+La cinématique :
+
+- Lorsque l'application existante souhaite effectuer une authentification via FranceConnect :
+  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utisateur vers l'application existante après une authentification réussie,
+    - un paramètre 
 
 ----------
 
