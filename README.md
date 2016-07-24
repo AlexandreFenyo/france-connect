@@ -707,6 +707,14 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - disposer d'une connexion Internet (accès direct ou proxy)
 - disposer d'un navigateur Internet
 
+### Fichier pom pour Maven
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+
 ### Démarrage dans un serveur Tomcat embarqué
 
 - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
@@ -781,7 +789,7 @@ Plusieurs instances de KIF peuvent être déployées simultanément pour la mont
 
 ##### Mono-centre de production
 
-Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité sans nécessiter la mise en place d'un mécanisme de mise en cluster par réplication des données de session. Les données d'une session étant alors présentes dans une seule instance de KIF, un équilibreur (ou plutôt une paire en fonctionnement actif/passif) en coupure des flux, doit implémenter une affinité de session basée uniquement sur le cookie de session JSESSIONID.
+Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité sans nécessiter la mise en place d'un mécanisme de mise en cluster par réplication des données de session. Les données d'une session étant alors présentes dans une seule instance de KIF, un équilibreur (ou plutôt une paire en fonctionnement actif/passif) disposé en coupure des flux doit implémenter le mécanisme d'affinité de session, cette affinité étant basée uniquement sur la valeur du cookie de session JSESSIONID.
 
 ## Intégration rapide d'une application existante avec KIF-IdP
 
