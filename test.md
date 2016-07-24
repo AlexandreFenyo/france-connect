@@ -691,6 +691,7 @@ Voici la vue associée :
     <H1>Page d'accueil du service</H1>
     Cette page d'accueil du service est accessible à tous les internautes, authentifiés ou non.
     <HR/>
+
     <security:authorize access="isFullyAuthenticated()">
       Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
 
@@ -699,7 +700,6 @@ Voici la vue associée :
     <security:authorize access="!isFullyAuthenticated()">
       Vous n'êtes <b>pas</b> authentifié à ce fournisseur de services.<br/>
     </security:authorize>
-
   </body>
 </html>
 ````
