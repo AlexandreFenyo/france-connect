@@ -599,8 +599,6 @@ La vue a accès à l'identité de l'utilisateur via la variable `userInfo` autom
 Voici un exemple de vue affichant les informations d'identité de l'utilisateur :
 ````html
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <html lang="fr">
   <head>
@@ -637,6 +635,75 @@ Utilisateur (user info) :
     - pays de naissance : ${ oidcBirthcountry }
 valeur JSON complète : ${ userInfo.source }
     </pre>
+  </body>
+</html>
+````
+
+
+
+
+
+
+
+
+
+
+
+
+Une méthode spécifique peut ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée. Pour cela, il faut utiliser la bibliothèse que tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
+
+Voici un exemple de méthode spécifique correspondant à ce scénario :
+
+:
+````java
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	public ModelAndView user(final Principal p) {
+		Tools.log("accès à /user", logger);
+		final ModelAndView mav = new ModelAndView("user");
+		return mav;
+	}
+````
+
+Voici la vue associée :
+
+Voici un exemple de vue affichant les informations d'identité de l'utilisateur :
+````html
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ page session="false" %>
+
+<html lang="fr">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Fournisseur de services France Connect</title>
+  </head>
+
+  <body>
+    <security:authorize access="isFullyAuthenticated()">
+
+      <!-- inclusion du code JavaScript de France Connect.
+           Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
+           Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
+      <script src="${ oidcAttributes.fcbuttonuri }"></script>
+      <!-- inclusion du bouton France Connect -->
+      <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
+      <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
+
+    </security:authorize>
+
+    <H1>Page d'accueil du service</H1>
+    Cette page d'accueil du service est accessible à tous les internautes, authentifiés ou non.
+    <HR/>
+    <security:authorize access="isFullyAuthenticated()">
+      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
+
+    </security:authorize>
+
+    <security:authorize access="!isFullyAuthenticated()">
+      Vous n'êtes <b>pas</b> authentifié à ce fournisseur de services.<br/>
+    </security:authorize>
+
   </body>
 </html>
 ````
