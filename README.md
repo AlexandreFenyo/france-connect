@@ -1059,9 +1059,9 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 - cette représentation binaire est transformée en chaîne de caractères à l'aide du charset US-ASCII, ce qui produit le message en clair,
 
   Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
-````
+  ````
 https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
-````
+  ````
 
 - le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` ,
 
