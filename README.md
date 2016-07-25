@@ -1012,7 +1012,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
   Voici un exemple de message chiffré de cette manière :
  ````shell
 % openssl aes-256-cbc -K $KEY -iv $IV < url.bin > contenu-chiffre.bin
-% od -x  contenu-chiffre.bin
+% od -x contenu-chiffre.bin
 0000000      6116    030e    c4c5    a506    be9c    fab6    3c49    8d76
 0000020      5f0a    b99d    c41b    3c6d    664f    0700    6b81    612f
 0000040      ea15    6e2c    249e    ff33    924e    3629    4178    be6d
@@ -1023,8 +1023,11 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 %
   ````
 
-
 - La représentation textuelle du message chiffré est alors produite, par le mécanisme indiqué précédemment.
+
+  Voici un exemple de cette représentation textuelle :
+  ````shell
+  ````
 
 - L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
 
