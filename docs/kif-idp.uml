@@ -1,0 +1,19 @@
+```sequence
+navigateur->application: GET sur URL protégée\nhttps://fenyo.net/fc/index.cgi
+application-->navigateur: redirection vers endpoint KIF-IdP
+navigateur->KIF IdP: GET sur endpoint KIF-IdP\nhttp://127.0.0.1/idp/msg=...
+KIF IdP-->navigateur: redirection vers FranceConnect
+navigateur->FranceConnect: cinématique d'authentification (non détaillée)
+FranceConnect-->navigateur:
+navigateur->fournisseur d'identité:
+fournisseur d'identité-->navigateur: 
+navigateur->FranceConnect:
+FranceConnect->fournisseur d'identité: web services (non détaillés)
+fournisseur d'identité-->FranceConnect:
+FranceConnect-->navigateur:
+navigateur->KIF IdP:
+KIF IdP->FranceConnect: web services (non détaillés)
+FranceConnect-->KIF IdP:
+KIF IdP-->navigateur:
+navigateur->application: GET sur URL de callback\nhttps://fenyo.net/fc/identite.cgi?...
+```

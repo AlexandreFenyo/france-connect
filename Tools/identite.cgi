@@ -12,6 +12,7 @@ echo
 echo
 echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Demo France Connect</title></head><body>"
 echo "$QUERY_STRING" | sed 's/.*info=\([a-z0-9]*\).*/\1/' | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' | openssl aes-256-cbc -d -K $KEY -iv $IV | read IDENT
+if echo $IDENT | grep -v state > /dev/null ; then echo "Erreur d'authentification" ; exit 1 ; fi
 echo "$IDENT" | jq '.given_name, .family_name' | xargs echo | read NAME
 echo '<script src="https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js"></script>'
 echo '<div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="logout.cgi"><br/>'
@@ -30,6 +31,7 @@ echo
 echo
 echo "&lt;html>&lt;head>&lt;meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>&lt;title>Demo France Connect&lt;/title>&lt;/head>&lt;body>"
 echo "\$QUERY_STRING" | sed 's/.*info=\([a-z0-9]*\).*/\1/' | perl -pe 's/([0-9a-f]{2})/chr hex \$1/gie' | openssl aes-256-cbc -d -K \$KEY -iv \$IV | read IDENT
+if echo \$IDENT | grep -v state > /dev/null ; then echo "Erreur d'authentification" ; exit 1 ; fi
 echo "\$IDENT" | jq '.given_name, .family_name' | xargs echo | read NAME
 echo '&lt;script src="https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js">&lt;/script>'
 echo '&lt;div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="logout.cgi">&lt;br/>'
