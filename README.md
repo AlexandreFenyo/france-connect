@@ -889,6 +889,12 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
 
+### Endpoints
+
+Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de recevoir les requêtes d'authentification en provenance de l'application. Les réponses à ces requêtes ne sont pas envoyées vers un endpoint de l'application mais vers une URL de redirection incluse dans la requête de l'application.
+
+Ce protocole est donc particulièrement léger à implémenter puisque l'application n'a aucun endpoint à gérer.
+
 ### Fonction de cryptographie
 
 La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
@@ -916,20 +922,25 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
-### Chiffrement d'une requête
+### Requête d'authentification
 
-- Lorsque l'application existante souhaite effectuer une authentification via FranceConnect :
-  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie,
-    - cette URL de callback peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
-      - `state` : un paramètre opaque représentant de manière unique la session utilisateur
-      - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
-    - la chaîne de caractères représentant l'URL de callback est alors chiffrée comme ceci :
-	    - la chaîne est transformée en message binaire via le mécanisme de représentation binaire d'un message en clair décrit précédemment
-	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC
-		 - la chaîne d'octets résultante est transformée en une chaîne de caractères constituée d'une représentation hexadécimale de chaque octet dans le *charset* US-ASCII, les lettres de l'alphabet étant choisies en minuscules
-		 - cette chaîne de caractères résultante est dénommée 'message chiffré de l'application vers KIF-IdP
+Lorsque l'application existante souhaite effectuer une authentification via FranceConnect, elle procède aux étapes suivantes :
 
-On peut noter que les message chiffré est une représentation hexadécimale d'une chaîne d'octets, elle peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière.
+- Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie.
+  Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
+
+- La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, comme indiquée précédemment.
+
+- La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
+
+- La représentation textuelle du message chiffré est alors produite, comme indiqué précédemment.
+
+- L'application construit enfin une URL de requête, constituée de l'URL du endpoint de KIF-IdP dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
+
+- L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
+
+### Réponse à une requête
+
 
 
 
