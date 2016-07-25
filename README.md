@@ -1,21 +1,6 @@
 
 # **KIF** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
 
-## Table des matières
-
-1. [Introduction](#Introduction)
-  1.1 [Fichiers de configuartion](#fichiers-de-configuration)
-2. [Configuration](#Configuration)
-3. [Exploitation des traces](#exploitation-des-traces)
-4. [Cinématique d'authentification](#cinématique-dauthentification)
-5. [Cinématique de déconnexion](#cinématique-de-déconnexion)
-6. [Intégration de MitreID Connect dans Spring](#intégration-de-mitreid-connect-dans-spring)
-7. [Création de nouvelles ressources](#création-de-nouvelles-ressources)
-8. [Déploiement](#deploiement)
-9. [Intégration rapide d'une application existante avec KIF-IdP](#intégration-rapide-dune-application-existante-avec-kif-idp)
-10. [Support](#support)
-
-
 ## Introduction
 
  Ce produit a deux objectifs :
