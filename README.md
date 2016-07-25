@@ -1028,7 +1028,8 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
   Voici un exemple de cette représentation textuelle :
   ````shell
 % hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
-% echo $HEXA 16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+% echo $HEXA
+16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
   ````
 
 - L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
