@@ -1009,8 +1009,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
 
-Voici un exemple de message chiffré de cette manière :
-  Voici un exemple d'URL de callback de ce type :  
+  Voici un exemple de message chiffré de cette manière :
  ````shell
 % openssl aes-256-cbc -K $KEY -iv $IV < url.bin > contenu-chiffre.bin
 % od -x  contenu-chiffre.bin
