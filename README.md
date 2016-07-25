@@ -988,6 +988,25 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, par le mécanisme indiqué précédemment.
 
+  voici un exemple d'une telle représentation binaire :
+ ````url
+ % echo "https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2" > url.bin
+ % od -xa url.bin
+0000000      7468    7074    3a73    2f2f    6566    796e    2e6f    656e
+           h   t   t   p   s   :   /   /   f   e   n   y   o   .   n   e
+0000020      2f74    6366    692f    6564    746e    7469    2e65    6763
+           t   /   f   c   /   i   d   e   n   t   i   t   e   .   c   g
+0000040      3f69    6f6e    636e    3d65    6632    3266    6332    3962
+           i   ?   n   o   n   c   e   =   2   f   f   2   2   c   b   9
+0000060      3636    3933    3039    3064    3930    6466    6430    6566
+           6   6   3   9   9   0   d   0   0   9   f   d   0   d   f   e
+0000100      3738    3964    3739    3663    7326    6174    6574    663d
+           8   7   d   9   9   7   c   6   &   s   t   a   t   e   =   f
+0000120      3938    6234    3762    3630    6131    6337    6132    0032
+           8   9   4   b   b   7   0   6   1   a   7   c   2   a   2
+%
+  ````
+
 - La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
 
 - La représentation textuelle du message chiffré est alors produite, par le mécanisme indiqué précédemment.
