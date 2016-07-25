@@ -905,7 +905,7 @@ Elle est développée en langage shell, déployée via l'interface CGI sur un se
 - une page d'accueil : https://fenyo.net/fc/index.cgi
 - une page protégée : https://fenyo.net/fc/identite.cgi
 
-**Au total, ces deux scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Elle permet de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+**Au total, ces deux scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
 
 ### Fonction de cryptographie
 
@@ -973,9 +973,19 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 - Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
+On peut, par exemple, utiliser hexdump pour convertir un message chiffré dans sa représentation textuelle :
+
+  ````shell
+% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
+% echo $HEXA
+6b3c4e81185da4711da128e83594d19a
+%
+````
 
 
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
+
+
 
 ### Création d'une requête d'authentification
 
