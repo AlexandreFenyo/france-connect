@@ -893,7 +893,7 @@ On peut noter, pour valider la cohérence de ce mode d'échange, que les critèr
 
 Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de recevoir les requêtes d'authentification en provenance de l'application. Les réponses à ces requêtes ne sont pas envoyées vers un endpoint de l'application mais vers une URL de redirection incluse dans la requête de l'application.
 
-Ce protocole est donc particulièrement léger à implémenter puisque l'application n'a aucun endpoint à gérer.
+Ce protocole est donc particulièrement léger à implémenter côté application puisque cette dernière n'a aucun endpoint à gérer.
 
 ### Fonction de cryptographie
 
