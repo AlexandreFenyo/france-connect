@@ -1210,8 +1210,26 @@ echo "<a href='http://127.0.0.1/idp?msg=$HEX'>http://127.0.0.1/idp?msg=$HEX</a><
 ````
 
 - script de la page protégée (https://fenyo.net/fc/identite.cgi) :
-````shell
 
+````shell
+#!/bin/zsh
+KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+IV=87b7225d16ea2ae1f41d0b13fdce9bba
+echo Content-type: text/html
+echo Cache-Control: no-store
+echo Pragma: no-cache
+echo
+echo
+echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Demo France Connect</title></head><body>"
+echo "$QUERY_STRING" | sed 's/.*info=\([a-z0-9]*\).*/\1/' | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' | openssl aes-256-cbc -d -K $KEY -iv $IV | read IDENT
+if echo $IDENT | grep -v state > /dev/null ; then echo "Erreur d'authentification" ; exit 1 ; fi
+echo "$IDENT" | jq '.given_name, .family_name' | xargs echo | read NAME
+echo '<script src="https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js"></script>'
+echo '<div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="logout.cgi"><br/>'
+echo "<a href='#'>$NAME</a><br/> </div>"
+echo "Vous êtes authentifié : $IDENT"
+echo "<p/>IMPORTANT : pour assurer la protection anti-rejeu et contre le saut de session, le programmeur doit vérifier que nonce et state correspondent bien à ceux de la requête avant d'exploiter les informations d'identification de l'utilisateur."
+echo "</body></html>"
 ````
 
 
