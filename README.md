@@ -1141,15 +1141,40 @@ Lorsque l'application reçoit une réponse à une requête d'authentification, c
 
 L'application traite alors cette réponse comme suit :
 
-- le paramètre `info` est extrait de la réponse et constitue la représentation textuelle du message de réponse chiffré,
+- Le paramètre `info` est extrait de la réponse et constitue la représentation textuelle du message de réponse chiffré.
 
-- cette représentation textuelle d'un message chiffré est convertie en chaîne d'octets,
+Dans notre exemple, l'application récupère la chaîne suivante, produite par KIF-IdP :
+````
+b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+````
 
-- la chaîne d'octets est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair,
+- Cette représentation textuelle d'un message chiffré est convertie en chaîne d'octets.
 
-- cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair,
+Voici un exemple de conversion avec Perl5 :
+````
+% HEXA=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+% echo -n $HEXA | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' > contenu-chiffre.bin
+%
+````
 
- - le message en clair est au format JSON, incluant l'identité de l'utilisateur et le contenu des paramètres `state` et `nonce` fournis dans la requête initiale.
+- La chaîne d'octets est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair.
+
+Pour déchiffrer cette chaîne, on peut utiliser openssl :
+````
+% openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin > reponse.bin
+%
+````
+
+- Cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair.
+
+Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale est correctement positionnée :
+````
+% LANG=fr_FR.UTF-8
+% cat reponse.bin ; echo
+{"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"},"nonce":"4b23ee941a0106b1e288a6c1f36abde2","state":"4b23ee941a0106b1e288a6c1f36abde2"}
+````
+
+ - Le message en clair est au format JSON, incluant l'identité de l'utilisateur et le contenu des paramètres `state` et `nonce` fournis dans la requête initiale.
 
 ### Vérifications de sécurité
 
