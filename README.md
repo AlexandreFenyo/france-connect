@@ -981,16 +981,16 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie. Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
 
-  voici un exemple d'URL de callback de ce type :  
+  Voici un exemple d'URL de callback de ce type :  
  ````url
  https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
   ````
 
 - La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, par le mécanisme indiqué précédemment.
 
-  voici un exemple d'une telle représentation binaire :
- ````url
- % echo "https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2" > url.bin
+  Voici un exemple d'une telle représentation binaire :
+ ````shell
+ % echo -n "https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2" > url.bin
  % od -xa url.bin
 0000000      7468    7074    3a73    2f2f    6566    796e    2e6f    656e
            h   t   t   p   s   :   /   /   f   e   n   y   o   .   n   e
@@ -1008,6 +1008,22 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
   ````
 
 - La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
+
+Voici un exemple de message chiffré de cette manière :
+  Voici un exemple d'URL de callback de ce type :  
+ ````shell
+% openssl aes-256-cbc -K $KEY -iv $IV < url.bin > contenu-chiffre.bin
+% od -x  contenu-chiffre.bin
+0000000      6116    030e    c4c5    a506    be9c    fab6    3c49    8d76
+0000020      5f0a    b99d    c41b    3c6d    664f    0700    6b81    612f
+0000040      ea15    6e2c    249e    ff33    924e    3629    4178    be6d
+0000060      8246    e66e    ffc4    da23    f1a0    4e8c    1d11    f7d4
+0000100      920f    d7ac    3ebe    0767    03fd    8b21    4bea    32ce
+0000120      d1ab    45ba    afad    9dc0    3040    8ab2    74e6    2824
+0000140
+%
+  ````
+
 
 - La représentation textuelle du message chiffré est alors produite, par le mécanisme indiqué précédemment.
 
