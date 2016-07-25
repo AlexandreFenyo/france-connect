@@ -146,7 +146,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
-    - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
+    - l'utilisateur se connecte au fournisseur de service et s'authentifie via FranceConnect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
     - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
@@ -292,13 +292,13 @@ Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le co
 
 ##### &Eacute;tat invalide
 
-Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à FranceConnect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Code d'autorisation invalide
 
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
-- le fournisseur de service émet la requête suivante au token endpoint de France Connect :
+- le fournisseur de service émet la requête suivante au token endpoint de FranceConnect :
   ````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
@@ -395,7 +395,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <mvc:annotation-driven />
     <context:component-scan base-package="net.fenyo.franceconnect" />
 
-    <!-- importer les valeurs des paramètres de configuration de l'accès à France Connect -->
+    <!-- importer les valeurs des paramètres de configuration de l'accès à FranceConnect -->
     <context:property-placeholder location="META-INF/config.properties" />
 
     <!-- mappings d'URI directs, sans nécessiter de passer par un contrôleur -->
@@ -435,12 +435,12 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <!-- création du authRequestUrlBuilder, utilisé par le filtre de pré-authentification MitreID Connect fourni à Spring Security -->
     <bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
 
-    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
       <property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
     </bean>	
 
-    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
       <property name="servers">
         <map>
@@ -526,7 +526,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <constructor-arg value="${net.fenyo.franceconnect.config.oidc.redirecturi}" />
   </bean>
 
-  <!-- implémentation de la séquence de déconnexion France Connect -->
+  <!-- implémentation de la séquence de déconnexion FranceConnect -->
   <bean id="logoutHandler" class="net.fenyo.franceconnect.LogoutHandler">
     <property name="logoutUri" value="${net.fenyo.franceconnect.config.oidc.logouturi}" />
     <property name="afterLogoutUri" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
@@ -541,13 +541,13 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
     <!--
      configuration de Spring Security avec :
-     - l'URI de logout utilisée par le bouton France Connect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
-     - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de France Connect :
-       - redirection de l'utilisateur chez France Connect, qui lui propose aussi de se déloguer de France Connect,
+     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
+     - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de FranceConnect :
+       - redirection de l'utilisateur chez FranceConnect, qui lui propose aussi de se déloguer de FranceConnect,
        - retour vers le fournisseur de service
     -->
     <security:logout success-handler-ref="logoutHandler" logout-url="/${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
-    <!-- France Connect réalise le logout via GET et non POST ; pour que Spring Security le supporte, il faut désactiver le filtre anti-csrf. Il n'y a néanmoins pas de vulnérabilité csrf permettant de déloguer l'utilisateur à son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa déconnexion, donc France Connect présente une mire de demande de déconnexion. -->
+    <!-- FranceConnect réalise le logout via GET et non POST ; pour que Spring Security le supporte, il faut désactiver le filtre anti-csrf. Il n'y a néanmoins pas de vulnérabilité csrf permettant de déloguer l'utilisateur à son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa déconnexion, donc FranceConnect présente une mire de demande de déconnexion. -->
     <security:csrf disabled="true" />
 
     <!-- déclaration des URI nécessitant une authentification valide -->
@@ -606,7 +606,7 @@ Voici un exemple de vue affichant les informations d'identité de l'utilisateur 
 <html lang="fr">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Fournisseur de services France Connect</title>
+    <title>Fournisseur de services FranceConnect</title>
   </head>
 
   <body>
@@ -614,12 +614,12 @@ Voici un exemple de vue affichant les informations d'identité de l'utilisateur 
          Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
          Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
     <script src="${ oidcAttributes.fcbuttonuri }"></script>
-    <!-- inclusion du bouton France Connect -->
+    <!-- inclusion du bouton FranceConnect -->
     <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
     <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
 
     Cette page de fourniture du service n'est accessible qu'aux utilisateurs authentifiés.
-    Vous êtes <b>correctement authentifié</b> via France Connect.<br/>
+    Vous êtes <b>correctement authentifié</b> via FranceConnect.<br/>
 <pre>
 Utilisateur (user info) :
   - sujet (utilisateur)  : ${ userInfo.sub } 
@@ -664,17 +664,17 @@ Voici la vue associée :
 <html lang="fr">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Fournisseur de services France Connect</title>
+    <title>Fournisseur de services FranceConnect</title>
   </head>
 
   <body>
     <security:authorize access="isFullyAuthenticated()">
 
-      <!-- inclusion du code JavaScript de France Connect.
+      <!-- inclusion du code JavaScript de FranceConnect.
            Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
            Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
       <script src="${ oidcAttributes.fcbuttonuri }"></script>
-      <!-- inclusion du bouton France Connect -->
+      <!-- inclusion du bouton FranceConnect -->
       <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
       <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
 
@@ -685,7 +685,7 @@ Voici la vue associée :
     <HR/>
 
     <security:authorize access="isFullyAuthenticated()">
-      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
+      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via FranceConnect.<br/>
     </security:authorize>
 
     <security:authorize access="!isFullyAuthenticated()">
@@ -750,7 +750,7 @@ Les conflits rencontrés concernaient les problématiques suivantes :
   - org.springframework.security/spring-security-config
   - org.springframework.security/spring-security-web
 
-- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques France Connect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
+- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
 
 - On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
 
@@ -758,26 +758,26 @@ Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traite
 
 - il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCE CONNECT - ERREUR DE CONFIGURATION
+FRANCECONNECT - ERREUR DE CONFIGURATION
 
 CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
 ````
 
 - il vérifie explicitement qu'il est interprété dans un environnement Java 1.7 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCE CONNECT - ERREUR DE VERSION MAVEN
+FRANCECONNECT - ERREUR DE VERSION MAVEN
 
 CE PACKAGE NECESSITE L'UTILISATION D'UN JDK JAVA VERSION 1.7 AU MINIMUM.
 ````
 
 - il vérifie explicitement que le fichier de paramétrage a été créé et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCE CONNECT - ERREUR DE CONFIGURATION
+FRANCECONNECT - ERREUR DE CONFIGURATION
 
 AVANT DE COMMENCER A UTILISER CE PACKAGE,
 VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-template
 DANS src/main/webapp/META-INF/config.properties
-ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CONNECT.
+ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
 ````
 
 
@@ -880,7 +880,7 @@ Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigate
 Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP, par l'intermédiaire du navigateur, en exploitant le mécanisme de redirection :
 
 - de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback, qui peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
-      - `state` : un paramètre opaque représentant de manière unique la session utilisateur
+      - `state` : un paramètre opaque représentant de manière unique la session utilisateur (il peut s'agir par exemple de la valeur du cookie de session, si les sessions sont associées à un tel élément dans le cadre de la technologie utilisée pour le développement de l'application, de la valeur d'une donnée associée uniquement à la session sans être transportée dans un cookie, ou encore du résultat de l'application d'une fonction de hash d'une de ces valeurs, comme SHA-256)
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
 
   Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux critères normatifs lui permettant d'être transportée dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
@@ -964,6 +964,32 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 - l'URL de callback vers l'application est enrichie d'un paramètre `info` contenant la représentation textuelle du message chiffré,
 
 - KIF-IdP redirige alors le navigateur de l'utilisateur vers cette URL de callback.
+
+### Traitement d'une réponse
+
+Lorsque l'application reçoit une réponse à une requête d'authentification, cette réponse est invoquée sur l'URL de callback initialement fournie dans la requête.
+
+L'application traite alors cette réponse comme suit :
+
+- le paramètre `info` est extrait de la réponse et constitue la représentation textuelle du message de réponse chiffré,
+
+- cette représentation textuelle d'un message chiffré est convertie en chaîne d'octets,
+
+- la chaîne d'octets est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair,
+
+- cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair,
+
+ - le message en clair est au format JSON, incluant l'identité de l'utilisateur et le contenu des paramètres `state` et `nonce` fournis dans la requête initiale.
+
+### Vérifications de sécurité
+
+Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser un ensemble de vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
+
+- l'application vérifie que le paramètre `state` contenu dans le message JSON correspond bien à la session utilisateur en cours, afin d'éviter les attaques par saut de session,
+
+- l'application vérifie que le paramètre `nonce` contenu dans le message JSON correspond bien à celui fourni dans la requête d'authentification initiale, afin d'éviter les attaques par rejeu.
+
+Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.
 
 
 
