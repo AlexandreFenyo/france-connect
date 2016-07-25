@@ -1328,7 +1328,7 @@ En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au m�
 
 KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même manière que celui décrit dans [la section correspondante de KIF-SP](#déploiement).
 
-### Support
+## Support
 
 Un support en mode *best-effort* est fourni en contactant l'adresse suivante :
 
