@@ -883,7 +883,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
       - `state` : un paramètre opaque représentant de manière unique la session utilisateur
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
 
-  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux critères normatifs lui permettant d'être transporté dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux critères normatifs lui permettant d'être transportée dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
 
 - de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
 
