@@ -979,8 +979,12 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 Lorsque l'application existante souhaite effectuer une authentification via FranceConnect, elle procède aux étapes suivantes :
 
-- Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie.
-  Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
+- Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie. Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
+
+  voici un exemple d'URL de callback de ce type :  
+ ````url
+ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
+  ````
 
 - La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, par le mécanisme indiqué précédemment.
 
