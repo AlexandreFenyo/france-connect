@@ -65,7 +65,7 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 
 ##### Configuration des endpoints
 
-Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
+Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : trois endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
 
 - `net.fenyo.franceconnect.config.oidc.authorizationendpointuri`
 
@@ -864,7 +864,7 @@ Plusieurs instances de KIF peuvent être déployées simultanément pour la mont
 
 KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (IdP) permettant une intégration simple d'une application existante :
 
-  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
+  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.),
 
   - sans impacter le mode d'authentification existant, afin que le fournisseur de services puisse continuer à authentifier lui-même les utilisateurs qui ne souhaitent pas s'authentifier via FranceConnect,
 
@@ -893,7 +893,7 @@ La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP po
 Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondance US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
-> La représentation textuelle d'un message chiffré est peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondance (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondance (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
 > 
 > On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quel bibliothèque informatique capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
 
@@ -903,7 +903,7 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 - Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit donc une représentation binaire constituée d'une chaîne d'octets réalisée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
-- Une réponse est un message JSON avec encodage UTF-8. On choisit donc une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est supérieure ou égal au nombre de caractères constituant la réponse en clair.
+- Une réponse est un message JSON avec encodage UTF-8. On choisit donc une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
 ### Chiffrement d'une requête
 
