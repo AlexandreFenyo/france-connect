@@ -311,7 +311,7 @@ grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d4
   ````
 
 - FranceConnect signale que le code est invalide :
-````http
+  ````http
 HTTP/1.1 400 Bad Request
 Server: nginx
 Date: Wed, 20 Jul 2016 17:09:24 GMT
@@ -320,7 +320,7 @@ Content-Length: 27
 Connection: keep-alive
 ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
 Vary: Accept-Encoding
-````
+  ````
 
 - Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
