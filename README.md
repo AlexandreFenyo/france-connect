@@ -1068,7 +1068,7 @@ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f
 - KIF-IdP enrichit l'identité au format JSON, récupérée par KIF-SP, les paramètres `state` et `nonce`, ce qui constitue le message en clair qui doit être adressé au serveur d'application,
 
   Dans notre exemple, KIF-IdP a reçu de FranceConnect le message JSON suivant, sous forme compacte :
-````json
+  ````json
 {
   "sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1",
   "gender":"male","birthdate":"1981-06-23",
@@ -1085,6 +1085,30 @@ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f
     "postal_code":"75015",
     "country":"France"
   }
+}
+````
+
+  KIF-IdP enrichit donc ce message JSON comme ceci :
+    Dans notre exemple, KIF-IdP a reçu de FranceConnect le message JSON suivant, sous forme compacte :
+  ````json
+{
+  "sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1",
+  "gender":"male","birthdate":"1981-06-23",
+  "birthcountry":"99100",
+  "birthplace":"91272",
+  "given_name":"Eric",
+  "family_name":"Mercier",
+  "email":"eric.mercier@france.fr",
+  "address": {
+    "formatted":"26 rue Desaix, 75015 Paris",
+    "street_address":"26 rue Desaix",
+    "locality":"Paris",
+    "region":"Ile-de-France",
+    "postal_code":"75015",
+    "country":"France"
+  },
+  "nonce":"2ff22cb9663990d009fd0dfe87d997c6",
+  "state":"f894bb7061a7c2a2"
 }
 ````
 
