@@ -912,7 +912,7 @@ Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa re
 
 La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
 
-- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement constituée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
+- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
