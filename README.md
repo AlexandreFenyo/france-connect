@@ -5,7 +5,7 @@
 
  Ce produit a deux objectifs :
 
-1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade*, largement documenté :
+1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade* et correctement documenté :
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html), à l'aide du framework [Spring Security](http://projects.spring.io/spring-security/)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
   - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
@@ -21,6 +21,9 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 ## Configuration
 
 ### Fichiers de configuration
+
+>:information_source:  
+> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet d'adresser le fournisseur de service avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut substituer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
 
 Deux fichiers de configuration sont utilisés :
 
@@ -62,7 +65,7 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 
 ##### Configuration des endpoints
 
-Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : 3 endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
+Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : trois endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
 
 - `net.fenyo.franceconnect.config.oidc.authorizationendpointuri`
 
@@ -143,7 +146,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
-    - l'utilisateur se connecte au fournisseur de service et s'authentifie via France Connect à t0
+    - l'utilisateur se connecte au fournisseur de service et s'authentifie via FranceConnect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
     - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
@@ -289,14 +292,14 @@ Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le co
 
 ##### &Eacute;tat invalide
 
-Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à France Connect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à FranceConnect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Code d'autorisation invalide
 
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
-- le fournisseur de service émet la requête suivante au token endpoint de France Connect :
-````http
+- le fournisseur de service émet la requête suivante au token endpoint de FranceConnect :
+  ````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
 Content-Type: application/x-www-form-urlencoded
@@ -305,10 +308,10 @@ Host: fcp.integ01.dev-franceconnect.fr
 Accept-Encoding: gzip,deflate
 
 grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
-````
+  ````
 
 - FranceConnect signale que le code est invalide :
-````http
+  ````http
 HTTP/1.1 400 Bad Request
 Server: nginx
 Date: Wed, 20 Jul 2016 17:09:24 GMT
@@ -317,7 +320,7 @@ Content-Length: 27
 Connection: keep-alive
 ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
 Vary: Accept-Encoding
-````
+  ````
 
 - Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
@@ -344,7 +347,7 @@ La cinématique d'authentification est constituée des étapes suivantes :
 5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
 6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
 
-Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité). Les informations d'état civil de l'utilisateur, renvoyées par le fournisseur d'identité, sont redressées par FranceConnect pour constituer une identité dite pivot, à l'aide d'un rapprochement avec le contenu du Répertoire national d’identification des personnes physiques ([RNIPP](https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0)). L'identité fournie par le fournisseur d'identité n'est donc pas forcément celle relayée au fournisseur de services par FranceConnect : **le fournisseur de services reçoit systématiquement un extrait de l'état civil provenant du RNIPP**.
 
 ![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
 
@@ -392,7 +395,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <mvc:annotation-driven />
     <context:component-scan base-package="net.fenyo.franceconnect" />
 
-    <!-- importer les valeurs des paramètres de configuration de l'accès à France Connect -->
+    <!-- importer les valeurs des paramètres de configuration de l'accès à FranceConnect -->
     <context:property-placeholder location="META-INF/config.properties" />
 
     <!-- mappings d'URI directs, sans nécessiter de passer par un contrôleur -->
@@ -432,12 +435,12 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <!-- création du authRequestUrlBuilder, utilisé par le filtre de pré-authentification MitreID Connect fourni à Spring Security -->
     <bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
 
-    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
       <property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
     </bean>	
 
-    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité France Connect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
       <property name="servers">
         <map>
@@ -523,7 +526,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     <constructor-arg value="${net.fenyo.franceconnect.config.oidc.redirecturi}" />
   </bean>
 
-  <!-- implémentation de la séquence de déconnexion France Connect -->
+  <!-- implémentation de la séquence de déconnexion FranceConnect -->
   <bean id="logoutHandler" class="net.fenyo.franceconnect.LogoutHandler">
     <property name="logoutUri" value="${net.fenyo.franceconnect.config.oidc.logouturi}" />
     <property name="afterLogoutUri" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
@@ -538,13 +541,13 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
     <!--
      configuration de Spring Security avec :
-     - l'URI de logout utilisée par le bouton France Connect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
-     - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de France Connect :
-       - redirection de l'utilisateur chez France Connect, qui lui propose aussi de se déloguer de France Connect,
+     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
+     - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de FranceConnect :
+       - redirection de l'utilisateur chez FranceConnect, qui lui propose aussi de se déloguer de FranceConnect,
        - retour vers le fournisseur de service
     -->
     <security:logout success-handler-ref="logoutHandler" logout-url="/${net.fenyo.franceconnect.config.oidc.startlogouturi}" />
-    <!-- France Connect réalise le logout via GET et non POST ; pour que Spring Security le supporte, il faut désactiver le filtre anti-csrf. Il n'y a néanmoins pas de vulnérabilité csrf permettant de déloguer l'utilisateur à son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa déconnexion, donc France Connect présente une mire de demande de déconnexion. -->
+    <!-- FranceConnect réalise le logout via GET et non POST ; pour que Spring Security le supporte, il faut désactiver le filtre anti-csrf. Il n'y a néanmoins pas de vulnérabilité csrf permettant de déloguer l'utilisateur à son insu car la norme OpenID Connect impose une validation par l'utilisateur de sa déconnexion, donc FranceConnect présente une mire de demande de déconnexion. -->
     <security:csrf disabled="true" />
 
     <!-- déclaration des URI nécessitant une authentification valide -->
@@ -603,7 +606,7 @@ Voici un exemple de vue affichant les informations d'identité de l'utilisateur 
 <html lang="fr">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Fournisseur de services France Connect</title>
+    <title>Fournisseur de services FranceConnect</title>
   </head>
 
   <body>
@@ -611,12 +614,12 @@ Voici un exemple de vue affichant les informations d'identité de l'utilisateur 
          Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
          Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
     <script src="${ oidcAttributes.fcbuttonuri }"></script>
-    <!-- inclusion du bouton France Connect -->
+    <!-- inclusion du bouton FranceConnect -->
     <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
     <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
 
     Cette page de fourniture du service n'est accessible qu'aux utilisateurs authentifiés.
-    Vous êtes <b>correctement authentifié</b> via France Connect.<br/>
+    Vous êtes <b>correctement authentifié</b> via FranceConnect.<br/>
 <pre>
 Utilisateur (user info) :
   - sujet (utilisateur)  : ${ userInfo.sub } 
@@ -661,17 +664,17 @@ Voici la vue associée :
 <html lang="fr">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Fournisseur de services France Connect</title>
+    <title>Fournisseur de services FranceConnect</title>
   </head>
 
   <body>
     <security:authorize access="isFullyAuthenticated()">
 
-      <!-- inclusion du code JavaScript de France Connect.
+      <!-- inclusion du code JavaScript de FranceConnect.
            Ce code force le navigateur à récupérer la CSS suivante : https://fcp.integ01.dev-franceconnect.fr/stylesheets/franceconnect.css
            Cette CSS définit le attributs de style pour l'élément d'id fconnect-profile -->
       <script src="${ oidcAttributes.fcbuttonuri }"></script>
-      <!-- inclusion du bouton France Connect -->
+      <!-- inclusion du bouton FranceConnect -->
       <div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="${ oidcAttributes.startlogouturi }"><br/>
       <a href="#">${ userInfo.givenName } ${ userInfo.familyName }&nbsp;<i class="material-icons tiny">keyboard_arrow_down</i></a><br/>&nbsp;</div>
 
@@ -682,8 +685,7 @@ Voici la vue associée :
     <HR/>
 
     <security:authorize access="isFullyAuthenticated()">
-      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via France Connect.<br/>
-
+      Vous vous êtes précédemment <b>correctement authentifié</b> auprès du fournisseur de services via FranceConnect.<br/>
     </security:authorize>
 
     <security:authorize access="!isFullyAuthenticated()">
@@ -701,8 +703,83 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - disposer d'un environnement Unix, Linux ou Windows
 - installer un environnement JDK 7 ou version supérieure
 - installer Maven 3.0.4 ou version supérieure
-- disposer d'une connexion Internet (accès direct ou proxy)
+- disposer d'une connexion Internet (accès direct ou par proxy)
 - disposer d'un navigateur Internet
+
+### Fichier pom pour Maven
+
+Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un autre composant partagé. Dans un tel cas, il est préférable d'imposer le choix de la version partagée retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cet optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
+
+| groupe | artefact   | version |
+| :------------- | :------------- |---------:|
+| org.springframework | spring-core | 4.2.5 |
+| org.springframework.security | spring-security-config | 4.0.4 |
+| org.springframework.security.oauth | spring-security-oauth2 | 2.0.9 |
+| org.mitre | openid-connect-client | 1.2.6 |
+| org.slf4j | slf4j-api | 1.7.21 |
+| javax.servlet | servlet-api | 2.5 |
+| javax.servlet.jsp | jsp-api | 2.1 |
+| javax.servlet | jstl | 1.2 |
+| junit | junit | 4.12 |
+| org.slf4j | slf4j-api | 1.7.21 |
+| org.slf4j | jcl-over-slf4j | 1.7.21 |
+| com.fasterxml.jackson.core | jackson-annotations | 2.3.4 |
+| org.apache.commons | commons-lang3 | 3.4 |
+| org.apache.httpcomponents | httpclient | 4.5.2 |
+
+Les conflits rencontrés concernaient les problématiques suivantes :
+
+- MITREiD Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives provenant de Spring. Or on utilise ici la dernière version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on exclue donc du traitement des dépendances par Maven  :
+  - org.springframework/spring-core
+  - org.springframework/spring-webmvc
+  - org.springframework.security/spring-security-core
+  - org.springframework.security/spring-security-config
+  - org.springframework.security.oauth/spring-security-oauth2
+  - org.apache.httpcomponents/httpclient, org.slf4j/slf4j-api
+  - org.slf4j/jcl-over-slf4j
+  - com.fasterxml.jackson.core/jackson-annotations
+
+- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
+
+- Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
+  - org.springframework/spring-core
+  - org.springframework/spring-webmvc
+  - org.springframework/spring-context
+  - org.springframework/spring-beans
+  - org.springframework.security/spring-security-core
+  - org.springframework.security/spring-security-config
+  - org.springframework.security/spring-security-web
+
+- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
+
+- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
+
+Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traitement :
+
+- il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCECONNECT - ERREUR DE CONFIGURATION
+
+CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
+````
+
+- il vérifie explicitement qu'il est interprété dans un environnement Java 1.7 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCECONNECT - ERREUR DE VERSION MAVEN
+
+CE PACKAGE NECESSITE L'UTILISATION D'UN JDK JAVA VERSION 1.7 AU MINIMUM.
+````
+
+- il vérifie explicitement que le fichier de paramétrage a été créé et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
+  ````
+FRANCECONNECT - ERREUR DE CONFIGURATION
+
+AVANT DE COMMENCER A UTILISER CE PACKAGE,
+VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-template
+DANS src/main/webapp/META-INF/config.properties
+ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
+````
+
 
 ### Démarrage dans un serveur Tomcat embarqué
 
@@ -735,15 +812,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
 - Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
 
-## Opérations Maven
-
-Voici une liste des opérations Maven standard :
-- faire le ménage (supprimer le répertoire `target`) : `mvn clean`
-- compiler : `mvn clean compile`
-- créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
-
-
-## Points d'attention
+### Points d'attention avec Eclipse
 
 > :warning:  
 > KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans '[Eclipse](https://www.eclipse.org/downloads/), comme ceci :
@@ -764,16 +833,416 @@ Voici une liste des opérations Maven standard :
 > 
 > En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
 
+
+### Goals Maven
+
+Voici une liste des goals Maven utilisés régulièrement :
+- faire le ménage (supprimer le répertoire `target`) : `mvn clean`
+- compiler : `mvn clean compile`
+- créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
+
+### Passage en production
+
+#### Chiffrement des flux
+
+En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services dans le fichier de configuration `franceconnect-servlet.xml`. Il faut substituer le protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple. Pour que les flux soient effectivement chiffrés, la pratique habituelle consiste à faire porter l'adresse IP associée au nom public du fournisseur de services par un reverse-proxy de type Apache ou Nginx, ou par un équilibreur de flux, points de terminaison des sessions SSL/TLS. C'est alors le reverse-proxy ou l'équilibreur de charge qui est doté d'un certificat X.509 et de la clé privée associée. Les flux entre le reverse-proxy ou l'équilibreur de charge et le fournisseur de services restent non chiffrés. Les invocations, par le fournisseur de services, de web services REST vers FranceConnect sont chiffrés car les endpoints FranceConnect sont accessibles uniquement via SSL/TLS.
+
+#### &Eacute;quilibrage de charge et haute disponibilité
+
+##### Multi-centres de production
+
+Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité. Si le serveur d'application a été configuré en cluster, afin que les données de sessions des serveurs de servlets soient repliquées entre les différents hôtes hébergeant KIF, le partage de charges multi-centres de production est possible via un simple round-robin DNS (exemple de configuration avec Tomcat 8 : https://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html). Avec une telle architecture, aucun équilibreur de charge n'est requis, sauf si on veut rajouter la fonction failover pour laquelle une paire d'équilibreurs (une paire en fonctionnement actif/passif suffit, pour éviter que l'équilibreur soit un SPOF : *Single Point Of Failure*) de type GSLB (Global Server Load Balancing) est nécessaire, comme par exemple la solution d'[équilibrage F5 BIG-IP munie du module GTM (Global Traffic Management)](https://www.f5.com/pdf/products/big-ip-global-traffic-manager-ds.pdf). Le principe de fonctionnement de ce type d'équilibreur consiste à gérer dynamiquement le contenu d'une zone DNS contenant des enregistrements à durée de vie courte (quelques secondes) pour associer le nom global du service aux adresses IP des instances du cluster de servlets constituant le fournisseur de services. La zone est gérée par plusieurs serveurs faisant autorité (*authoritative DNS servers*) afin que le service DNS ne constitue pas un SPOF (*Single Point Of Failure*).
+
+##### Mono-centre de production
+
+Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité sans nécessiter la mise en place d'un mécanisme de mise en cluster par réplication des données de session. Les données d'une session étant alors présentes dans une seule instance de KIF, un équilibreur (ou plutôt une paire en fonctionnement actif/passif) disposé en coupure des flux doit implémenter le mécanisme d'affinité de session, cette affinité étant basée uniquement sur la valeur du cookie de session JSESSIONID.
+
 ## Intégration rapide d'une application existante avec KIF-IdP
 
 ### Introduction
 
 KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (IdP) permettant une intégration simple d'une application existante :
 
-  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
+  -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.),
+
+  - sans impacter le mode d'authentification existant, afin que le fournisseur de services puisse continuer à authentifier lui-même les utilisateurs qui ne souhaitent pas s'authentifier via FranceConnect,
 
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
+L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
+
+La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
+
+### Messages échangés
+
+Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP, par l'intermédiaire du navigateur, en exploitant le mécanisme de redirection :
+
+- de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback, qui peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
+      - `state` : un paramètre opaque représentant de manière unique la session utilisateur (il peut s'agir par exemple de la valeur du cookie de session, si les sessions sont associées à un tel élément dans le cadre de la technologie utilisée pour le développement de l'application, de la valeur d'une donnée associée uniquement à la session sans être transportée dans un cookie, ou encore du résultat de l'application d'une fonction de hash d'une de ces valeurs, comme SHA-256)
+      - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
+
+  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux exigences normatives lui permettant d'être transportée dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+
+- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
+
+On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
+
+### Endpoints
+
+Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de recevoir les requêtes d'authentification en provenance de l'application. Les réponses à ces requêtes ne sont pas envoyées vers un endpoint de l'application mais vers une URL de redirection incluse dans la requête de l'application.
+
+Ce protocole est donc particulièrement léger à implémenter côté application puisque cette dernière n'a aucun endpoint à gérer.
+
+L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
+
+### Exemple d'application
+
+Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, il pourra donc accéder au endpoint de KIF-IdP avec l'URL suivante : http://127.0.0.1/idp
+
+L'application utilisée avec ces exemples est déployée à l'URL suivante : https://fenyo.net/fc
+
+Elle est développée en langage shell, déployée via l'interface CGI sur un serveur apache et est constituée de trois scripts :
+- une page d'accueil : https://fenyo.net/fc/index.cgi
+- une page protégée : https://fenyo.net/fc/identite.cgi
+- une page de déconnexion : https://fenyo.net/fc/logout.cgi
+
+**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+
+### Fonction de cryptographie
+
+La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
+
+Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
+- l'utilisation d'une clé secrête de 256 bits
+- avec un padding préalable de type CBC
+- en utilisant une taille de bloc de 128 bits (PKCS#7)
+- donc avec un vecteur d'initialisation de 128 bits
+
+On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide de cette fonction cryptographique :
+````shell
+% KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+% IV=87b7225d16ea2ae1f41d0b13fdce9bba
+% echo Texte en clair | openssl aes-256-cbc -K $KEY -iv $IV > contenu-chiffre.bin
+%
+````
+
+On peut constater, en utilisant od, que le message est bien devenu illisible :
+````shell
+ % od -xa contenu-chiffre.bin
+0000000    3c6b    814e    5d18    71a4    a11d    e828    9435    9ad1
+          k   <   N soh can   ]   $   q  gs   !   (   h   5 dc4   Q sub
+0000020
+````
+
+Pour le déchiffrer, on peut aussi utiliser openssl, comme ceci :
+````shell
+% KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+% IV=87b7225d16ea2ae1f41d0b13fdce9bba
+% openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin
+Texte en clair
+%
+````
+
+### Représentation textuelle d'un message chiffré
+
+Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
+
+>:information_source:  
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
+> 
+> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
+
+On peut, par exemple, utiliser hexdump pour convertir un message chiffré vers sa représentation textuelle :
+
+````shell
+% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
+% echo $HEXA
+6b3c4e81185da4711da128e83594d19a
+%
+````
+
+&Agrave; l'inverse, pour convertir le message en hexadecimal vers sa forme binaire, on peut utiliser Perl5 :
+````shell
+% echo -n $HEXA | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' > contenu-chiffre-2.bin
+% diff -s contenu-chiffre.bin contenu-chiffre-2.bin
+Les fichiers contenu-chiffre.bin et contenu-chiffre-2.bin sont identiques
+%
+````
+### Représentation binaire d'un message en clair
+
+La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
+
+- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
+
+- Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
+
+### Création d'une requête d'authentification
+
+Lorsque l'application existante souhaite effectuer une authentification via FranceConnect, elle procède aux étapes suivantes :
+
+- Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie. Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
+
+  Voici un exemple d'URL de callback de ce type :  
+ ````url
+ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
+  ````
+
+- La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, par le mécanisme indiqué précédemment.
+
+  Voici un exemple d'une telle représentation binaire :
+ ````shell
+ % echo -n "https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2" > url.bin
+ % od -xa url.bin
+0000000      7468    7074    3a73    2f2f    6566    796e    2e6f    656e
+           h   t   t   p   s   :   /   /   f   e   n   y   o   .   n   e
+0000020      2f74    6366    692f    6564    746e    7469    2e65    6763
+           t   /   f   c   /   i   d   e   n   t   i   t   e   .   c   g
+0000040      3f69    6f6e    636e    3d65    6632    3266    6332    3962
+           i   ?   n   o   n   c   e   =   2   f   f   2   2   c   b   9
+0000060      3636    3933    3039    3064    3930    6466    6430    6566
+           6   6   3   9   9   0   d   0   0   9   f   d   0   d   f   e
+0000100      3738    3964    3739    3663    7326    6174    6574    663d
+           8   7   d   9   9   7   c   6   &   s   t   a   t   e   =   f
+0000120      3938    6234    3762    3630    6131    6337    6132    0032
+           8   9   4   b   b   7   0   6   1   a   7   c   2   a   2
+%
+  ````
+
+- La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
+
+  Voici un exemple de message chiffré de cette manière :
+ ````shell
+% openssl aes-256-cbc -K $KEY -iv $IV < url.bin > contenu-chiffre.bin
+% od -x contenu-chiffre.bin
+0000000      6116    030e    c4c5    a506    be9c    fab6    3c49    8d76
+0000020      5f0a    b99d    c41b    3c6d    664f    0700    6b81    612f
+0000040      ea15    6e2c    249e    ff33    924e    3629    4178    be6d
+0000060      8246    e66e    ffc4    da23    f1a0    4e8c    1d11    f7d4
+0000100      920f    d7ac    3ebe    0767    03fd    8b21    4bea    32ce
+0000120      d1ab    45ba    afad    9dc0    3040    8ab2    74e6    2824
+0000140
+%
+  ````
+
+- La représentation textuelle du message chiffré est alors produite par le mécanisme indiqué précédemment.
+
+  Voici un exemple de cette représentation textuelle :
+  ````shell
+% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
+% echo $HEXA
+16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+  ````
+
+- L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
+
+  Voici un exemple d'une telle URL :
+  ````url
+  https://fenyo.net/fc/msg=16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+   ````
+ 
+- L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
+
+### Création d'une réponse à une requête
+
+Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MitreID Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
+
+- le paramètre `msg`, représentation textuelle du message chiffré, est extrait de la requête de l'application,
+
+  Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
+  ````
+16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+  ````
+
+- cette chaîne de caractères, qui représente en hexadécimal une chaîne d'octets, est transformée en chaîne d'octets,
+
+- cette chaîne est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit la représentation binaire d'un message en clair,
+
+- cette représentation binaire est transformée en chaîne de caractères à l'aide du charset US-ASCII, ce qui produit le message en clair,
+
+  Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
+  ````
+https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
+  ````
+
+- le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` ,
+
+- KIF-IdP enrichit l'identité au format JSON, récupérée par KIF-SP, les paramètres `state` et `nonce`, ce qui constitue le message en clair qui doit être adressé au serveur d'application,
+
+  Dans notre exemple, KIF-IdP a reçu de FranceConnect le message JSON suivant, sous forme compacte :
+  ````json
+  {
+    "sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1",
+    "gender":"male","birthdate":"1981-06-23",
+    "birthcountry":"99100",
+    "birthplace":"91272",
+    "given_name":"Eric",
+    "family_name":"Mercier",
+    "email":"eric.mercier@france.fr",
+    "address": {
+      "formatted":"26 rue Desaix, 75015 Paris",
+      "street_address":"26 rue Desaix",
+      "locality":"Paris",
+      "region":"Ile-de-France",
+      "postal_code":"75015",
+      "country":"France"
+    }
+  }
+````
+
+  KIF-IdP enrichit donc ce message JSON comme ceci :
+  ````json
+  {
+    "sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1",
+    "gender":"male","birthdate":"1981-06-23",
+    "birthcountry":"99100",
+    "birthplace":"91272",
+    "given_name":"Eric",
+    "family_name":"Mercier",
+    "email":"eric.mercier@france.fr",
+    "address": {
+      "formatted":"26 rue Desaix, 75015 Paris",
+      "street_address":"26 rue Desaix",
+      "locality":"Paris",
+      "region":"Ile-de-France",
+      "postal_code":"75015",
+      "country":"France"
+    },
+    "nonce":"2ff22cb9663990d009fd0dfe87d997c6",
+    "state":"f894bb7061a7c2a2"
+  }
+````
+
+- le message en clair est transformé dans sa représentation binaire,
+
+- la représentation binaire est chiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit le message chiffré,
+
+- le message chiffré est converti dans sa représentation textuelle,
+
+  Dans notre exemple, cela correspond à la représentation suivante :
+  ````
+b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+  ````
+
+- l'URL de callback vers l'application est enrichie d'un paramètre `info` contenant la représentation textuelle du message chiffré,
+
+  Dans notre exemple, cela correspond à l'URL suivante :
+  ````url
+https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2&info=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+  ````
+
+- KIF-IdP redirige alors le navigateur de l'utilisateur vers cette URL de callback.
+
+  > :warning:  
+  > On peut remarquer que les paramètres `nonce` et `state` sont présents dans l'URL de callback puisqu'ils y étaient déjà présents dans le message chiffré de la requête de l'application. **Néanmoins, l'application doit ignorer ces paramètres présents de manière non chiffrée dans l'URL de callback, et uniquement se baser sur leur valeur dans le contenu JSON chiffré au sein du paramètre info, car rien ne permet de s'assurer que l'URL de callback n'a pas été forgée. C'est pour couvrir ce risque de sécurité en s'assurant que leur valeur provient bien de KIF-IdP que ces paramètres ont été rajoutés par ce dernier dans le message JSON**.
+
+
+### Traitement d'une réponse
+
+Lorsque l'application reçoit une réponse à une requête d'authentification, cette réponse est invoquée sur l'URL de callback initialement fournie dans la requête.
+
+L'application traite alors cette réponse comme suit :
+
+- Le paramètre `info` est extrait de la réponse et constitue la représentation textuelle du message de réponse chiffré.
+
+Dans notre exemple, l'application récupère la chaîne suivante, produite par KIF-IdP :
+````
+b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+````
+
+- Cette représentation textuelle d'un message chiffré est convertie en chaîne d'octets.
+
+Voici un exemple de conversion avec Perl5 :
+````
+% HEXA=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+% echo -n $HEXA | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' > contenu-chiffre.bin
+%
+````
+
+- La chaîne d'octets est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair.
+
+Pour déchiffrer cette chaîne, on peut utiliser openssl :
+````
+% openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin > reponse.bin
+%
+````
+
+- Cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair.
+
+Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale du terminal utilisé est correctement positionnée (UTF-8), afin que les éventuels accents dans l'état civil de l'utilisateur soient correctement affichés. Si on utilise xterm, on peut le lancer avec le paramètre `-en UTF-8` afin qu'il affiche correctement les caractères UTF-8. Dans un shell sous xterm lancé de cette manière, on se contente d'invoquer /bin/cat comme ceci :
+````
+% cat reponse.bin ; echo
+{"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"},"nonce":"4b23ee941a0106b1e288a6c1f36abde2","state":"4b23ee941a0106b1e288a6c1f36abde2"}
+%
+````
+
+ - Le message en clair est au format JSON, incluant l'identité de l'utilisateur et le contenu des paramètres `state` et `nonce` fournis dans la requête initiale.
+
+### Vérifications de sécurité
+
+Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
+
+- l'application vérifie que le paramètre `state` contenu dans le message JSON correspond bien à la session utilisateur en cours, afin d'éviter les attaques par saut de session,
+
+- l'application vérifie que le paramètre `nonce` contenu dans le message JSON correspond bien à celui fourni dans la requête d'authentification initiale, afin d'éviter les attaques par rejeu.
+
+**Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
+
+## Exemple d'application
+
+L'application de démonstration est constituée de trois scripts, dont voici les contenus :
+
+- script de la page d'accueil (https://fenyo.net/fc/index.cgi) :
+
+````shell
+#!/bin/zsh
+KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+IV=87b7225d16ea2ae1f41d0b13fdce9bba
+echo Content-type: text/html
+echo Cache-Control: no-store
+echo Pragma: no-cache
+echo
+echo
+echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Demo France Connect</title></head><body>"
+openssl rand -hex 16 | head -c 16 | read STATE
+openssl rand -hex 16 | head -c 32 | read NONCE
+echo -n "https://fenyo.net/fc/identite.cgi?nonce=$NONCE&state=$STATE" | openssl aes-256-cbc -K $KEY -iv $IV | hexdump -v -e '1/1 "%02x"' | read HEX
+echo "cliquez sur ce lien pour vous authentifier puis revenir à ce service :<br/>"
+echo "<a href='http://127.0.0.1/idp?msg=$HEX'>http://127.0.0.1/idp?msg=$HEX</a></body></html>"
+````
+
+- script de la page protégée (https://fenyo.net/fc/identite.cgi) :
+
+````shell
+#!/bin/zsh
+KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+IV=87b7225d16ea2ae1f41d0b13fdce9bba
+echo Content-type: text/html
+echo Cache-Control: no-store
+echo Pragma: no-cache
+echo
+echo
+echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Demo France Connect</title></head><body>"
+echo "$QUERY_STRING" | sed 's/.*info=\([a-z0-9]*\).*/\1/' | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' | openssl aes-256-cbc -d -K $KEY -iv $IV | read IDENT
+if echo $IDENT | grep -v state > /dev/null ; then echo "Erreur d'authentification" ; exit 1 ; fi
+echo "$IDENT" | jq '.given_name, .family_name' | xargs echo | read NAME
+echo '<script src="https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js"></script>'
+echo '<div style="color: #000000; background-color: #000ccc" id="fconnect-profile" data-fc-logout-url="logout.cgi"><br/>'
+echo "<a href='#'>$NAME</a><br/> </div>"
+echo "Vous êtes authentifié : $IDENT"
+echo "<p/>IMPORTANT : pour assurer la protection anti-rejeu et contre le saut de session, le programmeur doit vérifier que nonce et state correspondent bien à ceux de la requête avant d'exploiter les informations d'identification de l'utilisateur."
+echo "</body></html>"
+````
+
+- script de déconnexion (https://fenyo.net/fc/identite.cgi) :
+
+````shell
+#!/bin/zsh
+echo Content-type: text/html
+echo Location: http://127.0.0.1/j_spring_security_logout
+echo
+echo
+echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
+````
 
 
 ----------
