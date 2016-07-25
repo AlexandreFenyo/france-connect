@@ -1048,9 +1048,9 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 - le paramètre `msg`, représentation textuelle du message chiffré, est extrait de la requête de l'application,
 
   Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
-````
+  ````
 16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
-````
+  ````
 
 - cette chaîne de caractères, qui représente en hexadécimal une chaîne d'octets, est transformée en chaîne d'octets,
 
