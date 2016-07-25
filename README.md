@@ -885,7 +885,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 ### Fonction de cryptographie
 
-La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer leurs messages est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
+La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
 
 Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
 - l'utilisation d'une clé secrête de 256 bits
@@ -898,7 +898,7 @@ Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
 Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
-> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
 > 
 > On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
 
@@ -906,7 +906,7 @@ Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa re
 
 La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
 
-- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit une représentation binaire constituée d'une chaîne d'octets directement constituée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
+- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement constituée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
