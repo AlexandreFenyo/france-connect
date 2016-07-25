@@ -299,7 +299,7 @@ Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond p
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
 - le fournisseur de service émet la requête suivante au token endpoint de France Connect :
-````http
+  ````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
 Content-Type: application/x-www-form-urlencoded
@@ -308,7 +308,7 @@ Host: fcp.integ01.dev-franceconnect.fr
 Accept-Encoding: gzip,deflate
 
 grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
-````
+  ````
 
 - FranceConnect signale que le code est invalide :
 ````http
