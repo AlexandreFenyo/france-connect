@@ -710,23 +710,22 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un autre composant partagé. Dans un tel cas, il est préférable d'imposer le choix de la version partagée retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cet optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
 
-| composant    | version |
-| ------------- |---------:|
-| spring-framework | 4.2.5 |
-| spring-security | 4.0.4 |
-| spring-security-config | 4.0.4 |
-| spring-security-oauth2 | 2.0.9 |
-| mitre id connect | 1.2.6 |
-| slf4j | 1.7.21 |
-| servlet-api | 2.5 |
-| jsp-api | 2.1 |
-| jstl | 1.2 |
-| junit | 4.12 |
-| slf4j | 1.7.21 |
-| jackson-annotations | 2.3.4 |
-| commons-lang3 | 3.4 |
-| jackson-annotations | 2.3.4 |
-| httpclient | 4.5.2 |
+| groupe | artefact   | version |
+| ------------- | ------------- |---------:|
+| org.springframework | spring-core | 4.2.5 |
+| org.springframework.security | spring-security-config | 4.0.4 |
+| org.springframework.security.oauth | spring-security-oauth2 | 2.0.9 |
+| org.mitre | openid-connect-client | 1.2.6 |
+| org.slf4j | slf4j-api | 1.7.21 |
+| javax.servlet | servlet-api | 2.5 |
+| javax.servlet.jsp | jsp-api | 2.1 |
+| javax.servlet | jstl | 1.2 |
+| junit | junit | 4.12 |
+| org.slf4j | slf4j-api | 1.7.21 |
+| org.slf4j | jcl-over-slf4j | 1.7.21 |
+| com.fasterxml.jackson.core | jackson-annotations | 2.3.4 |
+| org.apache.commons | commons-lang3 | 3.4 |
+| org.apache.httpcomponents | httpclient | 4.5.2 |
 
 Les conflits rencontrés concernaient les problématiques suivantes :
 
