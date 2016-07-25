@@ -1184,7 +1184,7 @@ Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-I
 
 - l'application vérifie que le paramètre `nonce` contenu dans le message JSON correspond bien à celui fourni dans la requête d'authentification initiale, afin d'éviter les attaques par rejeu.
 
-Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.
+**Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
 
 ## Exemple d'application
 
