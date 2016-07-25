@@ -834,9 +834,9 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CO
 > En effet, les cookies de session positionnés par un serveur désigné localhost ne sont pas renvoyés à un serveur désigné 127.0.0.1 et réciproquement. **Utiliser dans une même configuration un mélange de localhost et de 127.0.0.1 conduit à des erreurs de connexion**.
 
 
-### Opérations Maven
+### Goals Maven
 
-Voici une liste des opérations Maven standard :
+Voici une liste des goals Maven utilisés en standard :
 - faire le ménage (supprimer le répertoire `target`) : `mvn clean`
 - compiler : `mvn clean compile`
 - créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
