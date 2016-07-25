@@ -878,7 +878,7 @@ Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigate
 
 ### Messages échangés
 
-Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP :
+Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP, par l'intermédiaire du navigateur, en exploitant le mécanisme de redirection :
 
 - de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback
 
