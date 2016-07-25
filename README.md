@@ -901,11 +901,12 @@ Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un
 
 L'application utilisée avec ces exemples est déployée à l'URL suivante : https://fenyo.net/fc
 
-Elle est développée en langage shell, déployée via l'interface CGI sur un serveur apache et est constituée de deux scripts :
+Elle est développée en langage shell, déployée via l'interface CGI sur un serveur apache et est constituée de trois scripts :
 - une page d'accueil : https://fenyo.net/fc/index.cgi
 - une page protégée : https://fenyo.net/fc/identite.cgi
+- une page de déconnexion : https://fenyo.net/fc/logout.cgi
 
-**Au total, ces deux scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
 
 ### Fonction de cryptographie
 
@@ -1188,7 +1189,7 @@ Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-I
 
 ## Exemple d'application
 
-L'application de démonstration est constituée de deux scripts, dont voici les contenus :
+L'application de démonstration est constituée de trois scripts, dont voici les contenus :
 
 - script de la page d'accueil (https://fenyo.net/fc/index.cgi) :
 
@@ -1230,6 +1231,17 @@ echo "<a href='#'>$NAME</a><br/> </div>"
 echo "Vous êtes authentifié : $IDENT"
 echo "<p/>IMPORTANT : pour assurer la protection anti-rejeu et contre le saut de session, le programmeur doit vérifier que nonce et state correspondent bien à ceux de la requête avant d'exploiter les informations d'identification de l'utilisateur."
 echo "</body></html>"
+````
+
+- script de déconnexion (https://fenyo.net/fc/identite.cgi) :
+
+````shell
+#!/bin/zsh
+echo Content-type: text/html
+echo Location: http://127.0.0.1/j_spring_security_logout
+echo
+echo
+echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
 
 
