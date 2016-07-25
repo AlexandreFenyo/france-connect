@@ -1167,11 +1167,11 @@ Pour déchiffrer cette chaîne, on peut utiliser openssl :
 
 - Cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair.
 
-Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale est correctement positionnée :
+Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale du terminal utilisé est correctement positionnée (UTF-8), afin que les éventuels accents dans l'état civil de l'utilisateur soient correctement affichés. Si on utilise xterm, on peut le lancer avec le paramètre `-en UTF-8` afin qu'il affiche correctement les caractères UTF-8. Dans un tel xterm, on se contente d'invoquer /bin/cat comme ceci :
 ````
-% LANG=fr_FR.UTF-8
 % cat reponse.bin ; echo
 {"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"},"nonce":"4b23ee941a0106b1e288a6c1f36abde2","state":"4b23ee941a0106b1e288a6c1f36abde2"}
+%
 ````
 
  - Le message en clair est au format JSON, incluant l'identité de l'utilisateur et le contenu des paramètres `state` et `nonce` fournis dans la requête initiale.
