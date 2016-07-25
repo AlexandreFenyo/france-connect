@@ -1191,6 +1191,7 @@ Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit
 L'application de démonstration est constituée de deux scripts, dont voici les contenus :
 
 - script de la page d'accueil (https://fenyo.net/fc/index.cgi) :
+
 ````shell
 #!/bin/zsh
 KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
