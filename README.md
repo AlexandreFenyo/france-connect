@@ -929,13 +929,13 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 - Elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie.
   Cette URL de callback peut contenir différents paramètres, en incluant, parmi ceux-ci, les paramètres `state` et `nonce`, comme indiqué précédemment.
 
-- La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, comme indiquée précédemment.
+- La chaîne de caractères représentant l'URL est alors transformée en une représentation binaire, par le mécanisme indiqué précédemment.
 
 - La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
 
-- La représentation textuelle du message chiffré est alors produite, comme indiqué précédemment.
+- La représentation textuelle du message chiffré est alors produite, par le mécanisme indiqué précédemment.
 
-- L'application construit enfin une URL de requête, constituée de l'URL du endpoint de KIF-IdP dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
+- L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
 
 - L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
 
