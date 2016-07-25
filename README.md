@@ -895,6 +895,12 @@ Ce protocole est donc particulièrement léger à implémenter côté applicatio
 
 L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
 
+### Cinématique
+
+La cinématique d'authentification, qui est présentée en détails dans la suite de ce document, est résumée dans le diagramme de séquence UML suivant :
+
+![KIF-IdP - diagramme de séquence UML](docs/kif-idp1.png "KIF-IdP - diagramme de séquence UML")
+
 ### Exemple d'application
 
 Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, il pourra donc accéder au endpoint de KIF-IdP avec l'URL suivante : http://127.0.0.1/idp
