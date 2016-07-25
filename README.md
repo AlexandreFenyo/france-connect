@@ -1167,7 +1167,7 @@ Pour déchiffrer cette chaîne, on peut utiliser openssl :
 
 - Cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair.
 
-Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale du terminal utilisé est correctement positionnée (UTF-8), afin que les éventuels accents dans l'état civil de l'utilisateur soient correctement affichés. Si on utilise xterm, on peut le lancer avec le paramètre `-en UTF-8` afin qu'il affiche correctement les caractères UTF-8. Dans un tel xterm, on se contente d'invoquer /bin/cat comme ceci :
+Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat en ayant au préalable vérifié que la locale du terminal utilisé est correctement positionnée (UTF-8), afin que les éventuels accents dans l'état civil de l'utilisateur soient correctement affichés. Si on utilise xterm, on peut le lancer avec le paramètre `-en UTF-8` afin qu'il affiche correctement les caractères UTF-8. Dans un shell sous xterm lancé de cette manière, on se contente d'invoquer /bin/cat comme ceci :
 ````
 % cat reponse.bin ; echo
 {"sub":"54f70a557d838bcd26abd22038126819299ef2048c01eab97a7a10545976ef98v1","gender":"male","birthdate":"1981-06-23","birthcountry":"99100","birthplace":"91272","given_name":"Eric","family_name":"Mercier","email":"eric.mercier@france.fr","address":{"formatted":"26 rue Desaix, 75015 Paris","street_address":"26 rue Desaix","locality":"Paris","region":"Ile-de-France","postal_code":"75015","country":"France"},"nonce":"4b23ee941a0106b1e288a6c1f36abde2","state":"4b23ee941a0106b1e288a6c1f36abde2"}
@@ -1178,7 +1178,7 @@ Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat e
 
 ### Vérifications de sécurité
 
-Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser un ensemble de vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
+Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
 
 - l'application vérifie que le paramètre `state` contenu dans le message JSON correspond bien à la session utilisateur en cours, afin d'éviter les attaques par saut de session,
 
@@ -1186,7 +1186,32 @@ Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-I
 
 Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.
 
+## Exemple d'application
 
+L'application de démonstration est constituée de deux scripts, dont voici les contenus :
+
+- script de la page d'accueil (https://fenyo.net/fc/index.cgi) :
+````shell
+#!/bin/zsh
+KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+IV=87b7225d16ea2ae1f41d0b13fdce9bba
+echo Content-type: text/html
+echo Cache-Control: no-store
+echo Pragma: no-cache
+echo
+echo
+echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><title>Demo France Connect</title></head><body>"
+openssl rand -hex 16 | head -c 16 | read STATE
+openssl rand -hex 16 | head -c 32 | read NONCE
+echo -n "https://fenyo.net/fc/identite.cgi?nonce=$NONCE&state=$STATE" | openssl aes-256-cbc -K $KEY -iv $IV | hexdump -v -e '1/1 "%02x"' | read HEX
+echo "cliquez sur ce lien pour vous authentifier puis revenir à ce service :<br/>"
+echo "<a href='http://127.0.0.1/idp?msg=$HEX'>http://127.0.0.1/idp?msg=$HEX</a></body></html>"
+````
+
+- script de la page protégée (https://fenyo.net/fc/identite.cgi) :
+````shell
+
+````
 
 
 ----------
