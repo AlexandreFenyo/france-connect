@@ -872,7 +872,7 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
 L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relai les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
-La relation de confiance entre l'application existante et KIF-IdP est réalisée à l'aide d'un mécanisme de chiffrement AES-256-CBC, ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
+La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
 Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP.
 
@@ -882,7 +882,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 - de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback
 
-- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot et d'autres informations au format JSON avec encodage UTF-8
+- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot et d'autres informations, au format JSON avec encodage UTF-8
 
 ### Fonction de cryptographie
 
