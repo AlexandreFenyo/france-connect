@@ -895,7 +895,10 @@ Ce protocole est donc particulièrement léger à implémenter côté applicatio
 
 L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
 
+### Exemple d'application
+
 Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, il pourra donc accéder au endpoint de KIF-IdP avec l'URL suivante : http://127.0.0.1/idp
+L'application utilisée avec ces exemples est déployée à l'URL suivante : https://fenyo.net/fc
 
 ### Fonction de cryptographie
 
@@ -957,19 +960,17 @@ On peut, par exemple, utiliser hexdump pour convertir un message chiffré dans s
 Les fichiers contenu-chiffre.bin et contenu-chiffre-2.bin sont identiques
 %
 ````
-
-
-
-
 ### Représentation binaire d'un message en clair
 
 La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
 
 - Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
+
+
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
-#### Requête d'authentification
+### Création d'une requête d'authentification
 
 Lorsque l'application existante souhaite effectuer une authentification via FranceConnect, elle procède aux étapes suivantes :
 
@@ -986,7 +987,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
 
-#### Réponse à une requête
+### Création d'une réponse à une requête
 
 Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MitreID Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
 
