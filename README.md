@@ -836,7 +836,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCE CO
 
 ### Goals Maven
 
-Voici une liste des goals Maven utilisés en standard :
+Voici une liste des goals Maven utilisés régulièrement :
 - faire le ménage (supprimer le répertoire `target`) : `mvn clean`
 - compiler : `mvn clean compile`
 - créer une archive war : `mvn clean package` (le fichier war créé se nomme `franceconnect-demo-1.0.0-BUILD.war` et se trouve dans le sous-répertoire `target`)
@@ -887,32 +887,38 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer leurs messages est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
 
-### Représentation textuelle des messages chiffrés
+Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
+- l'utilisation d'une clé secrête de 256 bits
+- avec un padding préalable de type CBC
+- en utilisant une taille de bloc de 128 bits (PKCS#7)
+- donc avec un vecteur d'initialisation de 128 bits
+
+### Représentation textuelle d'un message chiffré
 
 Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
-> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
 > 
-> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quel bibliothèque informatique capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
+> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
 
 ### Représentation binaire d'un message en clair
 
 La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
 
-- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit donc une représentation binaire constituée d'une chaîne d'octets réalisée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
+- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit une représentation binaire constituée d'une chaîne d'octets directement constituée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
-- Une réponse est un message JSON avec encodage UTF-8. On choisit donc une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
+- Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
 ### Chiffrement d'une requête
 
 - Lorsque l'application existante souhaite effectuer une authentification via FranceConnect :
-  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilsateur vers l'application existante après une authentification réussie,
+  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilisateur vers l'application existante après une authentification réussie,
     - cette URL de callback peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
       - `state` : un paramètre opaque représentant de manière unique la session utilisateur
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
     - la chaîne de caractères représentant l'URL de callback est alors chiffrée comme ceci :
-	    - chaque caractère est transformé en octet à l'aide de la table de correspondances (*charset*) US-ASCII (pour rappel, une URL ne contient que des caractères de cette table : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt))
+	    - la chaîne est transformée en message binaire via le mécanisme de représentation binaire d'un message en clair décrit précédemment
 	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC :
 		    - chiffrement symétrique AES, s'appuyant sur une clé secrête de 256 bits
 		    - avec un padding préalable de type CBC
