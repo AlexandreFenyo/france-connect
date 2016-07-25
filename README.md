@@ -901,6 +901,12 @@ Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un
 
 L'application utilisée avec ces exemples est déployée à l'URL suivante : https://fenyo.net/fc
 
+Elle est développée en langage shell, déployée via l'interface CGI sur un serveur apache et est constituée de deux scripts :
+- une page d'accueil : https://fenyo.net/fc/index.cgi
+- une page protégée : https://fenyo.net/fc/identite.cgi
+
+**Au total, ces deux scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Elle permet de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+
 ### Fonction de cryptographie
 
 La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
