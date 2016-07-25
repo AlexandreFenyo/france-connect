@@ -1274,7 +1274,7 @@ KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même ma
 
 ## Support
 
-![support](#docs/support1.png)
+![support](#docs/support1.png support)
 
 
 ----------
