@@ -951,7 +951,7 @@ Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa re
 > 
 > On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
 
-On peut, par exemple, utiliser hexdump pour convertir un message chiffré dans sa représentation textuelle :
+On peut, par exemple, utiliser hexdump pour convertir un message chiffré vers sa représentation textuelle :
 
 ````shell
 % hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
@@ -960,7 +960,7 @@ On peut, par exemple, utiliser hexdump pour convertir un message chiffré dans s
 %
 ````
 
-&Agrave; l'inverse, pour convertir le message en hexadecimal dans sa forme binaire, on peut utiliser Perl5 :
+&Agrave; l'inverse, pour convertir le message en hexadecimal vers sa forme binaire, on peut utiliser Perl5 :
 ````shell
 % echo -n $HEXA | perl -pe 's/([0-9a-f]{2})/chr hex $1/gie' > contenu-chiffre-2.bin
 % diff -s contenu-chiffre.bin contenu-chiffre-2.bin
@@ -973,19 +973,7 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 - Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
-On peut, par exemple, utiliser hexdump pour convertir un message chiffré dans sa représentation textuelle :
-
-  ````shell
-% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
-% echo $HEXA
-6b3c4e81185da4711da128e83594d19a
-%
-````
-
-
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
-
-
 
 ### Création d'une requête d'authentification
 
