@@ -969,7 +969,7 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
 
 - Une réponse est un message JSON avec encodage UTF-8. On choisit une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est donc supérieur ou égal au nombre de caractères constituant la réponse en clair, et est inférieur ou égal à quatre fois ce nombre de caractères.
 
-### Requête d'authentification
+#### Requête d'authentification
 
 Lorsque l'application existante souhaite effectuer une authentification via FranceConnect, elle procède aux étapes suivantes :
 
@@ -986,7 +986,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
 
-### Réponse à une requête
+#### Réponse à une requête
 
 Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MitreID Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
 
