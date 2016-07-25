@@ -1250,8 +1250,6 @@ echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
 
-![KIF-IdP - diagramme de séquence UML](docs/kif-idp1.png "KIF-IdP - diagramme de séquence UML")
-
 
 ----------
 
