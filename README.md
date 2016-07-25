@@ -887,7 +887,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
 
-### Endpoints
+### Endpoint
 
 Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de recevoir les requêtes d'authentification en provenance de l'application. Les réponses à ces requêtes ne sont pas envoyées vers un endpoint de l'application mais vers une URL de redirection incluse dans la requête de l'application.
 
@@ -1233,7 +1233,7 @@ echo "<p/>IMPORTANT : pour assurer la protection anti-rejeu et contre le saut de
 echo "</body></html>"
 ````
 
-- script de déconnexion (https://fenyo.net/fc/identite.cgi) :
+- script de déconnexion (https://fenyo.net/fc/logout.cgi) :
 
 ````shell
 #!/bin/zsh
@@ -1243,6 +1243,8 @@ echo
 echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
+
+![KIF-IdP - diagramme de séquence UML](docs/kif-idp1.png "KIF-IdP - diagramme de séquence UML")
 
 
 ----------
