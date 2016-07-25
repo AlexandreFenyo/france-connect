@@ -1077,16 +1077,15 @@ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f
   "given_name":"Eric",
   "family_name":"Mercier",
   "email":"eric.mercier@france.fr",
-  "address":
-  {
-  "formatted":"26 rue Desaix, 75015 Paris",
-  "street_address":"26 rue Desaix",
-  "locality":"Paris",
-  "region":"Ile-de-France",
-  "postal_code":"75015",
-  "country":"France"
+  "address": {
+    "formatted":"26 rue Desaix, 75015 Paris",
+    "street_address":"26 rue Desaix",
+    "locality":"Paris",
+    "region":"Ile-de-France",
+    "postal_code":"75015",
+    "country":"France"
   }
-}
+}
 ````
 
 
