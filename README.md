@@ -941,6 +941,30 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 ### Réponse à une requête
 
+Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MitreID Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
+
+- le paramètre `msg`, représentation textuelle du message chiffré, est extrait de la requête de l'application,
+
+- cette chaîne de caractères, qui représente en hexadécimal une chaîne d'octets, est transformée en chaîne d'octets,
+
+- cette chaîne est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit la représentation binaire d'un message en clair,
+
+- cette représentation binaire est transformée en chaîne de caractères à l'aide du charset US-ASCII, ce qui produit le message en clair,
+
+- le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` ,
+
+- KIF-IdP enrichit l'identité au format JSON, récupérée par KIF-SP, les paramètres `state` et `nonce`, ce qui constitue le message en clair qui doit être adressé au serveur d'application,
+
+- le message en clair est transformé dans sa représentation binaire,
+
+- la représentation binaire est chiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit le message chiffré,
+
+- le message chiffré est converti dans sa représentation textuelle,
+
+- l'URL de callback vers l'application est enrichie d'un paramètre `info` contenant la représentation textuelle du message chiffré,
+
+- KIF-IdP redirige alors le navigateur de l'utilisateur vers cette URL de callback.
+
 
 
 
