@@ -898,6 +898,7 @@ L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lan
 ### Exemple d'application
 
 Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, il pourra donc accéder au endpoint de KIF-IdP avec l'URL suivante : http://127.0.0.1/idp
+
 L'application utilisée avec ces exemples est déployée à l'URL suivante : https://fenyo.net/fc
 
 ### Fonction de cryptographie
