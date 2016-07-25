@@ -1191,7 +1191,7 @@ Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-I
 
 **Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
 
-## Sources de l'application exemple
+### Sources de l'application exemple
 
 L'application de démonstration est constituée de trois scripts, dont voici les contenus :
 
@@ -1248,11 +1248,11 @@ echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
 
-## Configuration
+### Configuration
 
 KIF-IdP s'appuie sur KIF-SP pour la relation avec FranceConnect. Sa configuration est présentée dans la [section correspondante de KIF-SP](#fichiers-de-configuration).
 
-## Traces
+### Traces
 
 En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au même format que celles de KIF-IdP :
 
@@ -1268,11 +1268,11 @@ En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au m�
 
 - `accès à /idp: renvoi vers la page d'erreur d'authentification` : cette trace indique que la requête ne contient pas de paramètre `nonce` ou de paramètre `state` (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
 
-## Déploiement
+### Déploiement
 
 KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même manière que celui décrit dans [la section correspondante de KIF-SP](#déploiement).
 
-## Support
+### Support
 
 Un support en mode *best-effort* est fourni en contactant l'adresse suivante : ![support](docs/support1.png support)
 
