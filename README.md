@@ -911,20 +911,26 @@ On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide
 ````shell
 % KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 % IV=87b7225d16ea2ae1f41d0b13fdce9bba
-% echo "Texte en clair" | openssl aes-256-cbc -K $KEY -iv $IV > contenu-chiffre.bin
+% echo Texte en clair | openssl aes-256-cbc -K $KEY -iv $IV > contenu-chiffre.bin
 %
+````
+
+On peut constater, en utilisant od, que le message est bien devenu illisible :
+````shell
+ % od -xa contenu-chiffre.bin
+0000000    3c6b    814e    5d18    71a4    a11d    e828    9435    9ad1
+          k   <   N soh can   ]   $   q  gs   !   (   h   5 dc4   Q sub
+0000020
 ````
 
 Pour le déchiffrer, on peut aussi utiliser openssl, comme ceci :
 ````shell
 % KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 % IV=87b7225d16ea2ae1f41d0b13fdce9bba
-% openssl -d aes-256-cbc -K $KEY -iv $IV < contenu-chiffre.bin
+% openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin
 Texte en clair
 %
 ````
-
-
 
 ### Représentation textuelle d'un message chiffré
 
@@ -934,6 +940,14 @@ Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa re
 > La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
 > 
 > On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
+
+On peut par exemple utiliser hexdump pour convertir un message chiffré dans sa représentation textuelle :
+
+````shell
+% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
+% echo $HEXA
+6b3c4e81185da4711da128e83594d19a
+````
 
 ### Représentation binaire d'un message en clair
 
