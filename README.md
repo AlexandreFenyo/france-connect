@@ -347,7 +347,7 @@ La cinématique d'authentification est constituée des étapes suivantes :
 5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
 6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
 
-Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité) :
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité). Les informations d'état civil de l'utilisateur, renvoyées par le fournisseur d'identité, sont redressées par FranceConnect pour constituer une identité dite pivot, à l'aide d'un rapprochement avec le contenu du Répertoire national d’identification des personnes physiques ([RNIPP](https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0)). L'identité fournie par le fournisseur d'identité n'est donc pas forcément celle relayée au fournisseur de services par FranceConnect : **le fournisseur de services reçoit systématiquement un extrait de l'état civil provenant du RNIPP**.
 
 ![authentification - diagramme de séquence UML](docs/authentification1.png "authentification - diagramme de séquence UML")
 
@@ -852,7 +852,7 @@ En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de ser
 
 ##### Multi-centres de production
 
-Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité. Si le serveur d'application a été configuré en cluster, afin que les données de sessions des serveurs de servlets soient repliquées entre les différents hôtes hébergeant KIF, le partage de charges multi-centres de production est possible via un simple round-robin DNS (exemple de configuration avec Tomcat 8 : https://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html). Avec une telle architecture, aucun équilibreur de charge n'est requis, sauf s'il on veut rajouter la fonction failover pour laquelle une paire d'équilibreurs (une paire en fonctionnement actif/passif suffit, pour éviter que l'équilibreur soit un SPOF : *Single Point Of Failure*) de type GSLB (Global Server Load Balancing) est nécessaire, comme par exemple la solution d'[équilibrage F5 BIG-IP munie du module GTM (Global Traffic Management)](https://www.f5.com/pdf/products/big-ip-global-traffic-manager-ds.pdf). Le principe de fonctionnement de ce type d'équilibreur consiste à gérer dynamiquement le contenu d'une zone DNS contenant des enregistrements à durée de vie courte (quelques secondes) pour associer le nom global du service aux adresses IP des instances du cluster de servlets constituant le fournisseur de services. La zone est gérée par plusieurs serveurs faisant autorité (*authoritative DNS servers*) afin que le service DNS ne constitue pas un SPOF (*Single Point Of Failure*).
+Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité. Si le serveur d'application a été configuré en cluster, afin que les données de sessions des serveurs de servlets soient repliquées entre les différents hôtes hébergeant KIF, le partage de charges multi-centres de production est possible via un simple round-robin DNS (exemple de configuration avec Tomcat 8 : https://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html). Avec une telle architecture, aucun équilibreur de charge n'est requis, sauf si on veut rajouter la fonction failover pour laquelle une paire d'équilibreurs (une paire en fonctionnement actif/passif suffit, pour éviter que l'équilibreur soit un SPOF : *Single Point Of Failure*) de type GSLB (Global Server Load Balancing) est nécessaire, comme par exemple la solution d'[équilibrage F5 BIG-IP munie du module GTM (Global Traffic Management)](https://www.f5.com/pdf/products/big-ip-global-traffic-manager-ds.pdf). Le principe de fonctionnement de ce type d'équilibreur consiste à gérer dynamiquement le contenu d'une zone DNS contenant des enregistrements à durée de vie courte (quelques secondes) pour associer le nom global du service aux adresses IP des instances du cluster de servlets constituant le fournisseur de services. La zone est gérée par plusieurs serveurs faisant autorité (*authoritative DNS servers*) afin que le service DNS ne constitue pas un SPOF (*Single Point Of Failure*).
 
 ##### Mono-centre de production
 
@@ -876,11 +876,54 @@ La relation de confiance entre l'application existante et KIF-IdP est réalisée
 
 Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP.
 
-La cinématique :
+### Messages échangés
+
+Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP :
+
+- de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback
+
+- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot et d'autres informations au format JSON avec encodage UTF-8
+
+### Fonction de cryptographie
+
+La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer leurs messages est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
+
+### Représentation textuelle des messages chiffrés
+
+Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondance US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
+
+>:information_source:  
+> La représentation textuelle d'un message chiffré est peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondance (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+> 
+> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quel bibliothèque informatique capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
+
+### Représentation binaire d'un message en clair
+
+La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
+
+- Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit donc une représentation binaire constituée d'une chaîne d'octets réalisée à partir de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
+
+- Une réponse est un message JSON avec encodage UTF-8. On choisit donc une représentation binaire constituée d'une chaîne d'octets construite à partir de ce charset. Le nombre d'octets de la représentation binaire est supérieure ou égal au nombre de caractères constituant la réponse en clair.
+
+### Chiffrement d'une requête
 
 - Lorsque l'application existante souhaite effectuer une authentification via FranceConnect :
-  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utisateur vers l'application existante après une authentification réussie,
-    - un paramètre 
+  - elle construit une URL de callback permettant à KIF-IdP de renvoyer l'utilsateur vers l'application existante après une authentification réussie,
+    - cette URL de callback peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
+      - `state` : un paramètre opaque représentant de manière unique la session utilisateur
+      - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
+    - la chaîne de caractères représentant l'URL de callback est alors chiffrée comme ceci :
+	    - chaque caractère est transformé en octet à l'aide de la table de correspondance (*charset*) US-ASCII (pour rappel, une URL ne contient que des caractères de cette table : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt))
+	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC :
+		    - chiffrement symétrique AES, s'appuyant sur une clé secrête de 256 bits
+		    - avec un padding préalable de type CBC
+		    - en utilisant une taille de bloc de 128 bits (PKCS#7), donc un vecteur d'initialisation de 128 bits
+		 - la chaîne d'octets résultante est transformée en une chaîne de caractères constituée d'une représentation hexadécimale de chaque octet dans le *charset* US-ASCII, les lettres de l'alphabet étant choisies en minuscules
+		 - cette chaîne de caractères résultante est dénommée 'message chiffré de l'application vers KIF-IdP
+
+On peut noter que les message chiffré est une représentation hexadécimale d'une chaîne d'octets, elle peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière.
+
+
 
 ----------
 
