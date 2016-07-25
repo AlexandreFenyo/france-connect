@@ -1274,7 +1274,9 @@ KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même ma
 
 ### Support
 
-Un support en mode *best-effort* est fourni en contactant l'adresse suivante : ![support](docs/support1.png)
+Un support en mode *best-effort* est fourni en contactant l'adresse suivante :
+
+![support](docs/support1.png)
 
 ----------
 
