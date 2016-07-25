@@ -879,9 +879,15 @@ Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigate
 
 Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP, par l'intermédiaire du navigateur, en exploitant le mécanisme de redirection :
 
-- de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback
+- de l'application vers KIF-IdP : les requêtes d'authentification, qui sont constituées d'une URL de callback, qui peut contenir différents paramètres, et doit contenir, parmi ceux-ci, les deux suivants, présents une seule fois chacun :
+      - `state` : un paramètre opaque représentant de manière unique la session utilisateur
+      - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
 
-- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot et d'autres informations, au format JSON avec encodage UTF-8
+  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux critères normatifs lui permettant d'être transporté dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+
+- de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
+
+On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
 
 ### Fonction de cryptographie
 
@@ -919,10 +925,7 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
     - la chaîne de caractères représentant l'URL de callback est alors chiffrée comme ceci :
 	    - la chaîne est transformée en message binaire via le mécanisme de représentation binaire d'un message en clair décrit précédemment
-	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC :
-		    - chiffrement symétrique AES, s'appuyant sur une clé secrête de 256 bits
-		    - avec un padding préalable de type CBC
-		    - en utilisant une taille de bloc de 128 bits (PKCS#7), donc un vecteur d'initialisation de 128 bits
+	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC
 		 - la chaîne d'octets résultante est transformée en une chaîne de caractères constituée d'une représentation hexadécimale de chaque octet dans le *charset* US-ASCII, les lettres de l'alphabet étant choisies en minuscules
 		 - cette chaîne de caractères résultante est dénommée 'message chiffré de l'application vers KIF-IdP
 
