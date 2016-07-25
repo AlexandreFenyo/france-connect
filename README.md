@@ -873,8 +873,6 @@ L'application existante est le fournisseur de services, mais au lieu de s'appuye
 
 La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
-Dans les exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP.
-
 ### Messages échangés
 
 Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP, par l'intermédiaire du navigateur, en exploitant le mécanisme de redirection :
@@ -883,7 +881,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
       - `state` : un paramètre opaque représentant de manière unique la session utilisateur (il peut s'agir par exemple de la valeur du cookie de session, si les sessions sont associées à un tel élément dans le cadre de la technologie utilisée pour le développement de l'application, de la valeur d'une donnée associée uniquement à la session sans être transportée dans un cookie, ou encore du résultat de l'application d'une fonction de hash d'une de ces valeurs, comme SHA-256)
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
 
-  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux critères normatifs lui permettant d'être transportée dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+  Chacun de ces deux paramètres doit être composé d'une chaîne de caractères répondant aux exigences normatives lui permettant d'être transportée dans un paramètre d'une URL (cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
 
 - de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
 
@@ -895,6 +893,10 @@ Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de
 
 Ce protocole est donc particulièrement léger à implémenter côté application puisque cette dernière n'a aucun endpoint à gérer.
 
+L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
+
+Dans le cadre des exemples qui suivent, on suppose que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, il pourra donc accéder au endpoint de KIF-IdP avec l'URL suivante : http://127.0.0.1/idp
+
 ### Fonction de cryptographie
 
 La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
@@ -904,6 +906,25 @@ Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
 - avec un padding préalable de type CBC
 - en utilisant une taille de bloc de 128 bits (PKCS#7)
 - donc avec un vecteur d'initialisation de 128 bits
+
+On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide de cette fonction cryptographique :
+````shell
+% KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+% IV=87b7225d16ea2ae1f41d0b13fdce9bba
+% echo "Texte en clair" | openssl aes-256-cbc -K $KEY -iv $IV > contenu-chiffre.bin
+%
+````
+
+Pour le déchiffrer, on peut aussi utiliser openssl, comme ceci :
+````shell
+% KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
+% IV=87b7225d16ea2ae1f41d0b13fdce9bba
+% openssl -d aes-256-cbc -K $KEY -iv $IV < contenu-chiffre.bin
+Texte en clair
+%
+````
+
+
 
 ### Représentation textuelle d'un message chiffré
 
