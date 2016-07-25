@@ -176,8 +176,6 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 Les valeurs par défaut permettent de communiquer avec l'application exemple disponible sur https://fenyo.net/fc/index.cgi
 
-#### Paramètres pour la fonction KIF-SP (POC de fournisseur de services)
-
 ### Fichier de paramétrage
 
 Voici un exemple complet de fichier de paramétrage `config.properties` :
@@ -1193,7 +1191,7 @@ Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-I
 
 **Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
 
-## Exemple d'application
+## Sources de l'application exemple
 
 L'application de démonstration est constituée de trois scripts, dont voici les contenus :
 
@@ -1250,6 +1248,29 @@ echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
 
+## Configuration
+
+KIF-IdP s'appuie sur KIF-SP pour la relation avec FranceConnect. Sa configuration est présentée dans la [section correspondante de KIF-SP](#fichiers-de-configuration).
+
+## Traces
+
+En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au même format que celles de KIF-IdP :
+
+- `accès à /idp` : cette trace survient lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
+
+- `accès à /id: redirection [URL de redirection]` : cette trace indique l'URL de redirection de l'application vers laquelle l'utilisateur authentifié est redirigé, au moment où cette redirection se produit
+
+- `accès à /idp: requête chiffrée [requête chiffrée]` : cette trace permet de conserver le message chiffré par l'application
+
+- `accès à /idp: requête déchiffrée [requête déchiffrée]` : cette trace permet de conserver le message envoyé par l'application, après qu'il ait été correctement déchiffré
+
+- `accès à /idp: exception`  : cette trace indique qu'une erreur de chiffrement/déchiffrement ou de conversion d'un message de l'application s'est produite (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
+
+- `accès à /idp: renvoi vers la page d'erreur d'authentification` : cette trace indique que la requête ne contient pas de paramètre `nonce` ou de paramètre `state` (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
+
+## Déploiement
+
+KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même manière que celui décrit dans [la section correspondante de KIF-SP](#déploiement).
 
 ----------
 
