@@ -703,7 +703,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 - disposer d'un environnement Unix, Linux ou Windows
 - installer un environnement JDK 7 ou version supérieure
 - installer Maven 3.0.4 ou version supérieure
-- disposer d'une connexion Internet (accès direct ou proxy)
+- disposer d'une connexion Internet (accès direct ou par proxy)
 - disposer d'un navigateur Internet
 
 ### Fichier pom pour Maven
