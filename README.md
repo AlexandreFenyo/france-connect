@@ -870,7 +870,7 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
-L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relai les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
+L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
 La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
@@ -890,10 +890,10 @@ La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP po
 
 ### Représentation textuelle des messages chiffrés
 
-Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondance US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
+Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
-> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondance (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommé *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt)).
 > 
 > On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quel bibliothèque informatique capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
 
@@ -913,7 +913,7 @@ La fonction de cryptographie n'agit que sur des messages binaires, constitués d
       - `state` : un paramètre opaque représentant de manière unique la session utilisateur
       - `nonce` : un code aléatoire opaque permettant d'éviter les attaques par rejeu
     - la chaîne de caractères représentant l'URL de callback est alors chiffrée comme ceci :
-	    - chaque caractère est transformé en octet à l'aide de la table de correspondance (*charset*) US-ASCII (pour rappel, une URL ne contient que des caractères de cette table : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt))
+	    - chaque caractère est transformé en octet à l'aide de la table de correspondances (*charset*) US-ASCII (pour rappel, une URL ne contient que des caractères de cette table : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt))
 	    - la chaîne d'octets constituée est alors chiffrée avec l'algorithme de cryptographie symétrique AES-256-CBC :
 		    - chiffrement symétrique AES, s'appuyant sur une clé secrête de 256 bits
 		    - avec un padding préalable de type CBC
