@@ -91,7 +91,7 @@ public class WebController {
 		}
 
 		final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
+		final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
 
 		// exemples d'accès en Java aux informations d'authentification :
 		//   oidcauth.getIdToken().getJWTClaimsSet().getIssuer()
@@ -185,7 +185,7 @@ public class WebController {
 			
 			// on récupère l'identité de l'utilisateur et on y rajoute les paramètres nonce et state
 			final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
+			final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
 			final JsonObject gson = oidcauth.getUserInfo().toJson();
 			gson.addProperty("nonce", nonce);
 			gson.addProperty("state", nonce);
