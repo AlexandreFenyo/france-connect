@@ -48,7 +48,7 @@ limitations under the License.
       - [Phase de logout](#phase-de-logout)
   - [Cinématique d'authentification](#cin%C3%A9matique-dauthentification)
   - [Cinématique de déconnexion](#cin%C3%A9matique-de-d%C3%A9connexion)
-  - [Intégration de MitreID Connect dans Spring](#int%C3%A9gration-de-mitreid-connect-dans-spring)
+  - [Intégration de MITREid Connect dans Spring](#int%C3%A9gration-de-mitreid-connect-dans-spring)
   - [Création de nouvelles ressources](#cr%C3%A9ation-de-nouvelles-ressources)
     - [Répertoires](#r%C3%A9pertoires)
     - [Ressources statiques](#ressources-statiques)
@@ -179,7 +179,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/openid_connect_login
- - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MitreID Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MitreID Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
+ - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MITREid Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MITREid Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
 
 ##### Configuration de la relation de confiance mutuelle avec FranceConnect
 
@@ -372,7 +372,7 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 
 ##### Comportement attendu
 
-Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique configurable par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
+Le comportement standard de MITREid Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique configurable par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
 
 ##### Session expirée
 
@@ -428,7 +428,7 @@ Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si 
 
 La cinématique d'authentification est constituée des étapes suivantes :
 
-1. Lorsque le filtre Spring MitreID Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
+1. Lorsque le filtre Spring MITREid Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MITREid Connect redirige alors l'utilisateur vers son endpoint de callback.
 2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
 3. Il entame donc la cinématique OpenID Connect pour demander un code d'autorisation à l'authorization endpoint et ce code est renvoyé par FranceConnect sur ce endpoint.
 4. À la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
@@ -441,7 +441,7 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Cinématique de déconnexion
 
-**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
+**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MITREid Connect et a donc dû être développée spécifiquement dans KIF-SP.
 
 La cinématique de déconnexion est constituée des étapes suivantes :
 
@@ -455,9 +455,9 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ![déconnexion - diagramme de séquence UML](docs/deconnexion1.png "déconnexion - diagramme de séquence UML")
 
-## Intégration de MitreID Connect dans Spring
+## Intégration de MITREid Connect dans Spring
 
-MitreID Connect est un filtre de sécurité [Spring Security](http://projects.spring.io/spring-security/). L'intégration de l'authentification OpenID Connect dans KIF-SP a donc consisté à configurer [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) pour s'appuyer sur [Spring Security](http://projects.spring.io/spring-security/) afin de protéger les ressources et à configurer un filtre [Spring Security](http://projects.spring.io/spring-security/) à l'aide de MitreID Connect.
+MITREid Connect est un filtre de sécurité [Spring Security](http://projects.spring.io/spring-security/). L'intégration de l'authentification OpenID Connect dans KIF-SP a donc consisté à configurer [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html) pour s'appuyer sur [Spring Security](http://projects.spring.io/spring-security/) afin de protéger les ressources et à configurer un filtre [Spring Security](http://projects.spring.io/spring-security/) à l'aide de MITREid Connect.
 
 Cette configuration a été mise en place dans le fichier décrivant la servlet [Spring MVC](http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html), `franceconnect-servlet.xml` :
 
@@ -510,7 +510,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
       <bean class="org.mitre.openid.connect.web.UserInfoInterceptor" />
     </mvc:interceptors>
 	
-    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
+    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MITREid Connect -->
     <!-- OIDCAuthenticationProvider se charge de contacter le user info endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
 
@@ -520,15 +520,15 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
       <security:authentication-provider ref="openIdConnectAuthenticationProvider" />
     </security:authentication-manager>
 
-    <!-- création du authRequestUrlBuilder, utilisé par le filtre de pré-authentification MitreID Connect fourni à Spring Security -->
+    <!-- création du authRequestUrlBuilder, utilisé par le filtre de pré-authentification MITREid Connect fourni à Spring Security -->
     <bean class="org.mitre.openid.connect.client.service.impl.PlainAuthRequestUrlBuilder" id="plainAuthRequestUrlBuilder" />
 
-    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean servant à stocker l'URI correspondant au fournisseur d'identité (provider représentant l'issuer) FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MITREid Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
       <property name="issuer" value="${net.fenyo.franceconnect.config.oidc.issuer}" />
     </bean>	
 
-    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean stockant les trois enpoints du fournisseur d'identité FranceConnect (https://fcp.integ01.dev-franceconnect.fr), ce bean étant fourni par la suite au filtre MITREid Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService" id="staticServerConfigurationService">
       <property name="servers">
         <map>
@@ -544,7 +544,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
       </property>
     </bean>
 
-    <!-- création d'un bean stockant les paramètres et le endpoint du fournisseur de service, ce bean étant fourni par la suite au filtre MitreID Connect -->
+    <!-- création d'un bean stockant les paramètres et le endpoint du fournisseur de service, ce bean étant fourni par la suite au filtre MITREid Connect -->
     <bean class="org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService" id="staticClientConfigurationService">
       <property name="clients">
         <map>
@@ -572,7 +572,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
             <property name="clientId" value="${net.fenyo.franceconnect.config.oidc.clientid}" />
             <property name="clientSecret" value="${net.fenyo.franceconnect.config.oidc.clientsecret}" />
 
-            <!-- l'URI de redirection est imposée par MitreID Connect (en dur dans le code source de MitreID Connect) : /openid_connect_login -->
+            <!-- l'URI de redirection est imposée par MITREid Connect (en dur dans le code source de MITREid Connect) : /openid_connect_login -->
             <!-- cette configuration ne sert qu'aux validations de sécurité -->
             <property name="redirectUris">
               <set>
@@ -596,7 +596,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     </property>
   </bean>
 
-  <!-- création d'un filtre de pré-authentification Spring Security implémenté par MitreID Connect et configuré en référençant les beans MitreID Connect de configuration définis précédemment -->
+  <!-- création d'un filtre de pré-authentification Spring Security implémenté par MITREid Connect et configuré en référençant les beans MITREid Connect de configuration définis précédemment -->
   <bean id="openIdConnectAuthenticationFilter" class="org.mitre.openid.connect.client.OIDCAuthenticationFilter">
     <property name="authenticationManager" ref="authenticationManager" />
     <property name="issuerService" ref="staticIssuerService" />
@@ -624,7 +624,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
        note : l'attribut entry-point-ref sert à déclarer le point d'entrée d'authentification en cas d'accès à une URI nécessitant un rôle authentifié -->
   <security:http auto-config="false" use-expressions="true" disable-url-rewriting="true" entry-point-ref="authenticationEntryPoint" pattern="/**">
 
-    <!-- déclaration du filtre MitreID Connect -->
+    <!-- déclaration du filtre MITREid Connect -->
     <security:custom-filter before="PRE_AUTH_FILTER" ref="openIdConnectAuthenticationFilter" />
 
     <!--
@@ -817,7 +817,7 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 
 Les conflits rencontrés concernaient les problématiques suivantes :
 
-- MITREiD Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives provenant de Spring. Or on utilise ici la dernière version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on exclue donc du traitement des dépendances par Maven  :
+- MITREid Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives provenant de Spring. Or on utilise ici la dernière version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, MITREid Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MITREid Connect, qu'on exclue donc du traitement des dépendances par Maven  :
   - org.springframework/spring-core
   - org.springframework/spring-webmvc
   - org.springframework.security/spring-security-core
@@ -827,7 +827,7 @@ Les conflits rencontrés concernaient les problématiques suivantes :
   - org.slf4j/jcl-over-slf4j
   - com.fasterxml.jackson.core/jackson-annotations
 
-- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
+- MITREid Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MITREid Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
 
 - Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
   - org.springframework/spring-core
@@ -1138,7 +1138,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 ### Création d'une réponse à une requête
 
-Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MitreID Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
+Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématique d'authentification avec FranceConnect en s'appuyant sur MITREid Connect au travers de KIF-SP, récupère l'identité de l'utilisateur et construit une réponse à destination de l'application :
 
 - le paramètre `msg`, représentation textuelle du message chiffré, est extrait de la requête de l'application,
 
