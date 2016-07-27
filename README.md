@@ -266,7 +266,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 - `net.fenyo.franceconnect.config.idp.redirecturi`
  
- - type : Chaîne de caractères
+ - type : URL
  - valeur par défaut : `https://fenyo.net/fc/identite.cgi?`
  - usage :  début de l'URL de callback de l'application.
 
