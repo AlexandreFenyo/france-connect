@@ -701,7 +701,7 @@ Voici un exemple de méthode spécifique qui mappe l'accès à /user et invoque 
 	}
 ````
 
-La vue a accès à l'identité de l'utilisateur via la variable `userInfo` automatiquement injectée dans le modèle (sauf pour birthplace et birthcountry : consulter l'exemple de code ci-dessus pour leur traitement particulier). Elle doit inclure le bouton FranceConnect, notamment pour permettre la déconnexion de l'utilisateur.
+La vue a accès à l'identité de l'utilisateur via la variable `userInfo` automatiquement injectée dans le modèle (mais elle ne contient pas les champs birthplace ni birthcountry : consulter l'exemple de code ci-dessus pour leur traitement particulier). Elle doit inclure le bouton FranceConnect, notamment pour permettre la déconnexion de l'utilisateur.
 
 Voici un exemple de vue affichant les informations d'identité de l'utilisateur :
 ````html
