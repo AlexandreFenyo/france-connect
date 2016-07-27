@@ -697,6 +697,9 @@ Voici un exemple de méthode spécifique qui mappe l'accès à /user et invoque 
 		mav.addObject("oidcBirthplace", oidcauth.getUserInfo().getSource().get("birthplace"));
 		mav.addObject("oidcBirthcountry", oidcauth.getUserInfo().getSource().get("birthcountry"));
 
+		// on injecte dans le modèle les paramètres de configuration, notamment pour le bouton FranceConnect
+		mav.addObject("oidcAttributes", oidcAttributes);
+
 		return mav;
 	}
 ````
