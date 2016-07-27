@@ -796,7 +796,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 ### Fichier pom pour Maven
 
-Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un autre composant partagé. Dans un tel cas, il est préférable d'imposer le choix de la version partagée retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cet optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
+Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un même autre composant. Dans un tel cas, il est préférable d'imposer le choix de la version retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cette optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
 
 | groupe | artefact   | version |
 | :------------- | :------------- |---------:|
@@ -815,19 +815,20 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 | org.apache.commons | commons-lang3 | 3.4 |
 | org.apache.httpcomponents | httpclient | 4.5.2 |
 
-Les conflits rencontrés concernaient les problématiques suivantes :
+Les conflits potentiels qui sont résolus par ces choix de version concernaient les problématiques suivantes :
 
-- MITREiD Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives provenant de Spring. Or on utilise ici la dernière version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on exclue donc du traitement des dépendances par Maven  :
+- MitreID Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives issues de Spring (on appelle ici *dépendances transitives* les dépendances de dépendances). Or on utilise ici la version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, les dépendances de MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on a donc exclus du traitement des dépendances par Maven  :
   - org.springframework/spring-core
   - org.springframework/spring-webmvc
   - org.springframework.security/spring-security-core
   - org.springframework.security/spring-security-config
   - org.springframework.security.oauth/spring-security-oauth2
-  - org.apache.httpcomponents/httpclient, org.slf4j/slf4j-api
+  - org.apache.httpcomponents/httpclient
+  - org.slf4j/slf4j-api
   - org.slf4j/jcl-over-slf4j
   - com.fasterxml.jackson.core/jackson-annotations
 
-- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
+- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4J en lieu et place de commons-logging. On exclut donc la dépendance de spring-context vers commons-logging.
 
 - Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
   - org.springframework/spring-core
@@ -838,9 +839,9 @@ Les conflits rencontrés concernaient les problématiques suivantes :
   - org.springframework.security/spring-security-config
   - org.springframework.security/spring-security-web
 
-- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
+- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommée bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car les références à la bibliothèque Bouncy Castle Crypto n'apparaissent qu'à partir de la version 1.2.3.
 
-- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
+- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle Crypto plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
 
 Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traitement :
 
