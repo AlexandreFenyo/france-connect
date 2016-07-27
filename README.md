@@ -1274,13 +1274,15 @@ Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat e
 
 ### Vérifications de sécurité
 
-Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
+Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues ainsi que de leur provenance :
 
 - l'application vérifie que le paramètre `state` contenu dans le message JSON correspond bien à la session utilisateur en cours, afin d'éviter les attaques par saut de session,
 
 - l'application vérifie que le paramètre `nonce` contenu dans le message JSON correspond bien à celui fourni dans la requête d'authentification initiale, afin d'éviter les attaques par rejeu.
 
 **Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
+
+On peut noter que la vérification par l'application de la présence de paramètres connus dans la réponse chiffrée reçue correspond à une opération de vérification de signature. En effet, pour produire un message chiffré contenant ces valeurs imposées, il faut connaître la clé secrète partagée. L'application récupère donc ici la garantie que le message a été produit par KIF-IdP, sans avoir eu à implémenter un quelconque mécanisme de signature numérique.
 
 ### Sources de l'application exemple
 
