@@ -689,7 +689,10 @@ Voici un exemple de méthode spécifique qui mappe l'accès à /user et invoque 
 		Tools.log("accès à /user", logger);
 		final ModelAndView mav = new ModelAndView("user");
 
-		// On rajoute dans le modèle les champs de userinfo qui ne sont pas dans le standard OpenID Connect mais néanmoins transportés dans les identités FranceConnect, car la variable userinfo automatiquement insérée dans le modèle par MitreID Connect ne contient pas de getters pour ces champs. Il s'agit uniquement de birthplace et birthcountry.
+		// On rajoute dans le modèle les champs de userinfo qui ne sont pas dans le standard OpenID Connect
+		// mais néanmoins transportés dans les identités FranceConnect, car la variable userinfo automatiquement
+		// insérée dans le modèle par MitreID Connect ne contient pas de getters pour ces champs.
+		// Il s'agit uniquement de birthplace et birthcountry.
 		final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 		mav.addObject("oidcBirthplace", oidcauth.getUserInfo().getSource().get("birthplace"));
 		mav.addObject("oidcBirthcountry", oidcauth.getUserInfo().getSource().get("birthcountry"));
