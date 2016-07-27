@@ -98,9 +98,17 @@ public class WebController {
 		//   oidcauth.getUserInfo().getAddress().getPostalCode()
 		
 		final ModelAndView mav = new ModelAndView("user");
+
+		// On injecte dans le modèle les champs de userinfo qui ne sont pas dans le standard OpenID Connect
+	    // mais néanmoins transportés dans les identités FranceConnect, car la variable userinfo
+	    // automatiquement insérée dans le modèle par MitreID Connect ne contient pas de getter
+	    // pour ces champs. Il s'agit uniquement de birthplace et birthcountry.
 		mav.addObject("oidcBirthplace", oidcauth.getUserInfo().getSource().get("birthplace"));
 		mav.addObject("oidcBirthcountry", oidcauth.getUserInfo().getSource().get("birthcountry"));
+
+		// on injecte dans le modèle les paramètres de configuration, notamment pour le bouton FranceConnect
 		mav.addObject("oidcAttributes", oidcAttributes);
+
 		return mav;
 	}
 
