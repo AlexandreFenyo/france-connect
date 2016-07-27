@@ -974,7 +974,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 - de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
 
-On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
+On peut noter, pour confirmer la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
 
 ### Endpoint
 
@@ -1001,7 +1001,7 @@ Elle est développée en langage shell, déployée via l'interface CGI sur un se
 - une page protégée : https://fenyo.net/fc/identite.cgi
 - une page de déconnexion : https://fenyo.net/fc/logout.cgi
 
-**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration d'une application à FranceConnect, en tant que fournisseur de services, à l'aide de KIF-IdP.
 
 ### Fonction de cryptographie
 
