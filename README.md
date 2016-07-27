@@ -1345,11 +1345,11 @@ KIF-IdP s'appuie sur KIF-SP pour la relation avec FranceConnect. Sa configuratio
 
 ### Traces
 
-En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au même format que celles de KIF-IdP :
+En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au même format que celles de KIF-IdP :
 
-- `accès à /idp` : cette trace survient lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
+- `accès à /idp` : cette trace est produite lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
 
-- `accès à /id: redirection [URL de redirection]` : cette trace indique l'URL de redirection de l'application vers laquelle l'utilisateur authentifié est redirigé, au moment où cette redirection se produit
+- `accès à /idp: redirection [URL de redirection]` : cette trace indique l'URL de redirection de l'application vers laquelle l'utilisateur authentifié est redirigé, au moment où cette redirection se produit
 
 - `accès à /idp: requête chiffrée [requête chiffrée]` : cette trace permet de conserver le message chiffré par l'application
 
