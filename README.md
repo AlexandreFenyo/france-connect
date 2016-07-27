@@ -45,7 +45,7 @@ limitations under the License.
         - [Code d'autorisation invalide](#code-dautorisation-invalide)
         - [Nonce invalide](#nonce-invalide)
         - [Autres cas d'erreur d'authentification](#autres-cas-derreur-dauthentification)
-      - [Phase de logout](#phase-de-logout)
+      - [Phase de déconnexion](#phase-de-déconnexion)
   - [Cinématique d'authentification](#cin%C3%A9matique-dauthentification)
   - [Cinématique de déconnexion](#cin%C3%A9matique-de-d%C3%A9connexion)
   - [Intégration de MitreID Connect dans Spring](#int%C3%A9gration-de-mitreid-connect-dans-spring)
@@ -98,7 +98,7 @@ limitations under the License.
 1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade* et correctement documenté :
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html), à l'aide du framework [Spring Security](http://projects.spring.io/spring-security/)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
-  - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
+  - en intégrant le mécanisme de déconnexion, la gestion des traces et celle des erreurs d'authentification
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
@@ -113,14 +113,14 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 ### Fichiers de configuration
 
 >:information_source:  
-> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet d'adresser le fournisseur de service avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut substituer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
+> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet de contacter le fournisseur de services avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut remplacer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web-services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut remplacer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
 
 Deux fichiers de configuration sont utilisés :
 
 - le fichier de configuration des paramètres
 - le fichier de configuration des traces
 
-La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
+La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du modèle `config.properties-template` déjà présent dans ce même répertoire.
 
 > :warning:  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration des paramètres car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
@@ -132,10 +132,10 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 
 - `log4j-prod.xml` avec un niveau de trace peu verbeux, intégrant néanmoins toutes les traces nécessaires pour un système en production :
   - conservation des traces de niveau `warn` et supérieurs pour tous les composants
-  - conservation des traces de niveau `info` et supérieurs pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
+  - conservation des traces de niveau `info` et supérieurs pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de déconnexion global) :
     - l'identifiant de session (valeur du cookie JSESSIONID)
-    - la référence à l'objet Java représentant la requête, pour croiser les traces correspondant à une même requête si besoin
-    - l'adresse IP du navigateur client
+    - la référence à l'objet Java représentant la requête, permettant de croiser les traces correspondant à une même requête si besoin
+    - l'adresse IP d'origine de la connexion TCP contenant le flux HTTP provenant du navigateur client
     - le port TCP côté client, pour différencier différents navigateurs présentant une adresse IP commune (cas où l'utilisateur emprunte un proxy ou un réseau NATé, par exemple)
     - la cause d'erreur le cas échéant (jeton invalide, tentative de rejeu, etc.)
     - le nom de la session créée ou détruite le cas échéant
@@ -167,19 +167,19 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
+ - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
 
 - `net.fenyo.franceconnect.config.oidc.userinfoendpointuri`
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
+ - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
 - `net.fenyo.franceconnect.config.oidc.redirecturi`
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/openid_connect_login
- - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MitreID Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MitreID Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
+ - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MitreID Connect, one ne doit donc pas lui substituer une autre chaîne**. Cette URL est le endpoint fournisseur de services de MitreID Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
 
 ##### Configuration de la relation de confiance mutuelle avec FranceConnect
 
@@ -199,7 +199,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : chaîne de caractères
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+ - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
 
 - `net.fenyo.franceconnect.config.oidc.fcbuttonuri`
 
@@ -213,19 +213,19 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services.
+ - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services. Il est à noter que si l'utilisateur fait le choix de se connecter de FranceConnect, il ne sera pas pour autant déconnecté des autres fournisseurs de services auxquels il pourrait être simultanément connecté (hormis le fournisseur de services par lequel il a initié la demande de déconnexion). Ce mécanisme correspond donc un "global logout" partiel.
 
 - `net.fenyo.franceconnect.config.oidc.afterlogouturi`
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/
- - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
+ - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou non la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
 
 - `net.fenyo.franceconnect.config.oidc.startlogouturi`
 
  - type : URL
  - valeur par défaut : j_spring_security_logout
- - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout.
+ - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de déconnexion.
 
 ##### Configuration du comportement du fournisseur de services
 
@@ -236,13 +236,13 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
-    - l'utilisateur se connecte au fournisseur de service et s'authentifie via FranceConnect à t0
+    - l'utilisateur se connecte au fournisseur de services et s'authentifie via FranceConnect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
-    - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
+    - sa session chez le fournisseur de services est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
-    - la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
-    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
-    - le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
+    - la session ayant expiré, le fournisseur de services renvoie l'utilisateur s'authentifier chez FranceConnect
+    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de services ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de services sans interaction utilisateur
+    - le fournisseur de services utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
 
 - `net.fenyo.franceconnect.config.oidc.authenticationerroruri`
 
@@ -322,7 +322,7 @@ Voici un exemple complet de fichier de configuration des traces `log4j.xml` pour
 </log4j:configuration>
 ````
 
-Fournir les traces sur la sortie standard du serveur d'application n'est pas toujours le moyen le plus adapté pour les conserver. C'est un moyen idéal dans le cadre d'un serveur d'application hébergé dans un micro-conteneur [Docker](www.docker.com), mais dans le cas contraire, on peut remplacer l'appender de type `ConsoleAppender` pour les stocker plutôt :
+Fournir les traces sur la sortie standard du serveur d'application n'est pas toujours le moyen le plus adapté pour les conserver. C'est un moyen idéal dans le cadre d'un serveur d'application hébergé dans un micro-conteneur [Docker](www.docker.com), mais dans la plupart des autres situations, on peut remplacer l'appender de type `ConsoleAppender` pour les stocker plutôt :
 
 - dans un fichier, que l'on fait tourner régulièrement : avec un appender de type [`DailyRollingFileAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/DailyRollingFileAppender.html)
 
@@ -386,7 +386,7 @@ Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond p
 
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
-- le fournisseur de service émet la requête suivante au token endpoint de FranceConnect :
+- le fournisseur de services émet la requête suivante au token endpoint de FranceConnect :
   ````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
@@ -420,7 +420,7 @@ Si le nonce reçu n'est pas celui attendu, une Une trace d'erreur](#traces-derre
 
 De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des token id JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
-#### Phase de logout
+#### Phase de déconnexion
 
 Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
 
@@ -431,8 +431,8 @@ La cinématique d'authentification est constituée des étapes suivantes :
 1. Lorsque le filtre Spring MitreID Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MitreID Connect redirige alors l'utilisateur vers son endpoint de callback.
 2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
 3. Il entame donc la cinématique OpenID Connect pour demander un code d'autorisation à l'authorization endpoint et ce code est renvoyé par FranceConnect sur ce endpoint.
-4. À la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
-5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
+4. À la reception du code, le endpoint de callback invoque alors un web-services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
+5. Un nouveau web-service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
 6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
 
 Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité). Les informations d'état civil de l'utilisateur, renvoyées par le fournisseur d'identité, sont redressées par FranceConnect pour constituer une identité dite pivot, à l'aide d'un rapprochement avec le contenu du Répertoire national d’identification des personnes physiques ([RNIPP](https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0)). L'identité fournie par le fournisseur d'identité n'est donc pas forcément celle relayée au fournisseur de services par FranceConnect : **le fournisseur de services reçoit systématiquement un extrait de l'état civil provenant du RNIPP**.
@@ -511,7 +511,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
     </mvc:interceptors>
 	
     <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
-    <!-- OIDCAuthenticationProvider se charge de contacter le user info endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
+    <!-- OIDCAuthenticationProvider se charge de contacter le userinfo endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
 
     <bean id="openIdConnectAuthenticationProvider" class="org.mitre.openid.connect.client.OIDCAuthenticationProvider" />
@@ -629,7 +629,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
     <!--
      configuration de Spring Security avec :
-     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
+     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
      - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de FranceConnect :
        - redirection de l'utilisateur chez FranceConnect, qui lui propose aussi de se déloguer de FranceConnect,
        - retour vers le fournisseur de service
@@ -933,7 +933,7 @@ Voici une liste des goals Maven utilisés régulièrement :
 
 #### Chiffrement des flux
 
-En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services dans le fichier de configuration `franceconnect-servlet.xml`. Il faut substituer le protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple. Pour que les flux soient effectivement chiffrés, la pratique habituelle consiste à faire porter l'adresse IP associée au nom public du fournisseur de services par un reverse-proxy de type Apache ou Nginx, ou par un équilibreur de flux, points de terminaison des sessions SSL/TLS. C'est alors le reverse-proxy ou l'équilibreur de charge qui est doté d'un certificat X.509 et de la clé privée associée. Les flux entre le reverse-proxy ou l'équilibreur de charge et le fournisseur de services restent non chiffrés. Les invocations, par le fournisseur de services, de web services REST vers FranceConnect sont chiffrés car les endpoints FranceConnect sont accessibles uniquement via SSL/TLS.
+En production, il faut remplacer 127.0.0.1 par le nom DNS du fournisseur de services dans le fichier de configuration `franceconnect-servlet.xml`. Il faut remplacer le protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple. Pour que les flux soient effectivement chiffrés, la pratique habituelle consiste à faire porter l'adresse IP associée au nom public du fournisseur de services par un reverse-proxy de type Apache ou Nginx, ou par un équilibreur de flux, points de terminaison des sessions SSL/TLS. C'est alors le reverse-proxy ou l'équilibreur de charge qui est doté d'un certificat X.509 et de la clé privée associée. Les flux entre le reverse-proxy ou l'équilibreur de charge et le fournisseur de services restent non chiffrés. Les invocations, par le fournisseur de services, de web-services REST vers FranceConnect sont chiffrés car les endpoints FranceConnect sont accessibles uniquement via SSL/TLS.
 
 #### &Eacute;quilibrage de charge et haute disponibilité
 
@@ -957,7 +957,7 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
-L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
+L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web-services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
 La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
@@ -981,7 +981,7 @@ Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de
 
 Ce protocole est donc particulièrement léger à implémenter côté application puisque cette dernière n'a aucun endpoint à gérer.
 
-L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
+L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL/TLS, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
 
 ### Cinématique
 
