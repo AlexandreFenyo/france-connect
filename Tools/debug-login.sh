@@ -3,7 +3,8 @@
 I=0
 
 setopt NULLGLOB
-rm -f tmp/{cookies-,output-,logs-}*.txt
+rm -f tmp/{headers-,cookies-,output-,logs-}*.txt
+mkdir -p tmp
 
 preproc() {
   echo -n appuyez sur Entrée: ; read X
@@ -222,7 +223,7 @@ Avec https://jwt.io, on analyse le contenu et la signature de l'id token :
       "sub": "785235c5a60e8b0667c436200209fc4ae007d9e87dc82a6c3786c0d38efd96a7v1",
 Le subject représente de manière unique et pérenne l'utilisateur qui s'est authentifié.
       "aud": "9ebf1ad9084207c5e4939bcc6c758c80f260ee70177a424e94754becefcb457e",
-L'audience est bien le client id fournir par France Connect au fournisseur de service.
+L'audience est bien le client id fourni par France Connect au fournisseur de service.
       "exp": 1468771230,
       "iat": 1468770030,
       "nonce": "387336036d8e0",
