@@ -877,10 +877,10 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
   
 - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run`
-  - Attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
-  - Lancer alors un navigateur sur http://127.0.0.1/
+  - attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans un serveur Jetty embarqué
 
@@ -888,18 +888,18 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 
 - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run`
-  - Attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante.
-- Lancer alors un navigateur sur http://127.0.0.1/
+  - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
+- lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans Eclipse
 
-- installer [Eclipse](https://www.eclipse.org/downloads/) Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
-- importer le projet dans [Eclipse](https://www.eclipse.org/downloads/)
-- &Agrave; chaque modification du fichier `pom`, sélectionner l'élément racine du projet dans l'explorateur de projet, faire "bouton droite" sur cet élément, choisir *Maven* dans le menu déroulant puis *Update Project...*.
-- Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
-- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
+- Installer [Eclipse](https://www.eclipse.org/downloads/) Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
+- Importer le projet dans [Eclipse](https://www.eclipse.org/downloads/)
+- &Agrave; chaque modification du fichier `pom.xml`, sélectionner l'élément racine du projet dans l'explorateur de projet, faire "bouton droite" sur cet élément, choisir *Maven* dans le menu déroulant puis *Update Project...*.
+- Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*
+- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur
 
 ### Points d'attention avec Eclipse
 
