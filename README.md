@@ -199,7 +199,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : chaîne de caractères
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+ - usage : identifiant de l'émetteur des id token JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
 
 - `net.fenyo.franceconnect.config.oidc.fcbuttonuri`
 
@@ -242,7 +242,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
     - la session ayant expiré, le fournisseur de services renvoie l'utilisateur s'authentifier chez FranceConnect
     - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de services ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de services sans interaction utilisateur
-    - le fournisseur de services utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
+    - le fournisseur de services utilise ce jeton d'autorisation pour récupérer l' id token et l'identité de l'utilisateur
 
 - `net.fenyo.franceconnect.config.oidc.authenticationerroruri`
 
@@ -372,7 +372,7 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 
 ##### Comportement attendu
 
-Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique configurable par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
+Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique qu'on peut positionner par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
 
 ##### Session expirée
 
@@ -414,15 +414,15 @@ Vary: Accept-Encoding
 
 ##### Nonce invalide
 
-Si le nonce reçu n'est pas celui attendu, une Une trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par *replay*. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si le nonce reçu n'est pas celui attendu, une [trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par rejeu (*replay*). L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Autres cas d'erreur d'authentification
 
-De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des token id JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des id token JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Phase de déconnexion
 
-Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
+Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a plus de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
 
 ## Cinématique d'authentification
 
@@ -441,7 +441,7 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Cinématique de déconnexion
 
-**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
+**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout (déconnexion) et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
 
 La cinématique de déconnexion est constituée des étapes suivantes :
 
@@ -451,7 +451,7 @@ La cinématique de déconnexion est constituée des étapes suivantes :
 4. Selon le choix de l'utilisateur, FranceConnect invalide éventuellement la session utilisateur et, dans tous les cas, redirige son navigateur vers l'URL post-logout du fournisseur de services.
 5. Le fournisseur de services fournit la page HTML correspondant à son URL post-logout.
 
-Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase de déconnexion où interviennent le navigateur, le fournisseur de services et FranceConnect (le fournisseur d'identité n'est pas concerné) :
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase de déconnexion où interviennent le navigateur, le fournisseur de services et FranceConnect (le fournisseur d'identité n'est pas concerné, ni informé de la déconnexion) :
 
 ![déconnexion - diagramme de séquence UML](docs/deconnexion1.png "déconnexion - diagramme de séquence UML")
 
@@ -652,9 +652,9 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
 Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](#intégration-de-mitreid-connect-dans-spring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où rajouter :
 
-- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible sans nécessiter une authentification au préalable
+- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessibles sans qu'ils ne nécessitent une authentification au préalable
 
-- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible nécessitant une authentification au préalable
+- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessibles uniquement après une authentification préalable
 
 En cas d'accès à une ressource protégée mais sans authentification préalable de l'utilisateur, la cinématique d'authentification est automatiquement lancée puis le navigateur est redigiré à nouveau vers la ressource à laquelle il peut enfin accéder.
 
@@ -724,13 +724,13 @@ Utilisateur (user info) :
     - pays              : ${ userInfo.address.country }
     - lieu de naissance : ${ oidcBirthplace }
     - pays de naissance : ${ oidcBirthcountry }
-valeur JSON complète : ${ userInfo.source }
+Valeur JSON complète : ${ userInfo.source }
     </pre>
   </body>
 </html>
 ````
 
-Une méthode spécifique peut ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée. Pour cela, il faut utiliser la bibliothèse que tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
+Une méthode spécifique du contrôleur a la possibilité de ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée ou non. Pour cela, il faut utiliser la bibliothèque de tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
 
 Voici un exemple de méthode spécifique correspondant à ce scénario :
 ````java
