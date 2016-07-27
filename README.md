@@ -264,6 +264,12 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - valeur par défaut : `87b7225d16ea2ae1f41d0b13fdce9bba`
  - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
 
+- `net.fenyo.franceconnect.config.idp.redirecturi`
+ 
+ - type : Chaîne de caractères
+ - valeur par défaut : `https://fenyo.net/fc/identite.cgi?`
+ - usage :  début de l'URL de callback de l'application.
+
 Les valeurs par défaut permettent de communiquer avec l'application exemple disponible sur https://fenyo.net/fc/index.cgi
 
 ### Fichier de paramétrage
@@ -289,6 +295,7 @@ net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceco
 # pour la fonction KIF-IdP (IdP relai)
 net.fenyo.franceconnect.config.idp.key=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 net.fenyo.franceconnect.config.idp.iv=87b7225d16ea2ae1f41d0b13fdce9bba
+net.fenyo.franceconnect.config.idp.redirecturi=https://fenyo.net/fc/identite.cgi?
 ````
 
 ### Configuration des traces
@@ -1159,7 +1166,7 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
   ````
 
-- le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` ,
+- le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` , KIF-IdP vérifie que le début de cette URL correspond au contenu du paramètre de configuration `net.fenyo.franceconnect.config.idp.redirecturi`, afin de s'assurer que le message provient bien de l'application,
 
 - KIF-IdP enrichit l'identité au format JSON, récupérée par KIF-SP, les paramètres `state` et `nonce`, ce qui constitue le message en clair qui doit être adressé au serveur d'application,
 
@@ -1359,7 +1366,11 @@ En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au m�
 
 - `accès à /idp: exception`  : cette trace indique qu'une erreur de chiffrement/déchiffrement ou de conversion d'un message de l'application s'est produite (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
 
-- `accès à /idp: renvoi vers la page d'erreur d'authentification` : cette trace indique que la requête ne contient pas de paramètre `nonce` ou de paramètre `state` (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
+- `accès à /idp: renvoi vers la page d'erreur d'authentification (null nonce)` : cette trace indique que la requête ne contient pas de paramètre `nonce` (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
+
+- `accès à /idp: renvoi vers la page d'erreur d'authentification (null state)` : cette trace indique que la requête contient un paramètre `nonce` mais pas de paramètre `state` (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
+
+- `accès à /idp: renvoi vers la page d'erreur d'authentification (url de callback invalide)` : cette trace indique que la requête ne commence pas par le début de l'URL de callback qui est configuré dans le paramètre `net.fenyo.franceconnect.config.idp.redirecturi`, ce qui prouve que cette requête ne provient pas de l'application (l'utilisateur est redirigé vers une page signalant une erreur d'authentification)
 
 ### Déploiement
 
