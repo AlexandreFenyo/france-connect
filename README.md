@@ -757,6 +757,8 @@ Voici un exemple de méthode spécifique correspondant à ce scénario :
 	public ModelAndView user(final Principal p) {
 		Tools.log("accès à /user", logger);
 		final ModelAndView mav = new ModelAndView("user");
+		// on injecte dans le modèle les paramètres de configuration, notamment pour le bouton FranceConnect
+		mav.addObject("oidcAttributes", oidcAttributes);
 		return mav;
 	}
 ````
