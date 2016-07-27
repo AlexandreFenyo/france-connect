@@ -45,7 +45,7 @@ limitations under the License.
         - [Code d'autorisation invalide](#code-dautorisation-invalide)
         - [Nonce invalide](#nonce-invalide)
         - [Autres cas d'erreur d'authentification](#autres-cas-derreur-dauthentification)
-      - [Phase de logout](#phase-de-logout)
+      - [Phase de déconnexion](#phase-de-déconnexion)
   - [Cinématique d'authentification](#cin%C3%A9matique-dauthentification)
   - [Cinématique de déconnexion](#cin%C3%A9matique-de-d%C3%A9connexion)
   - [Intégration de MITREid Connect dans Spring](#int%C3%A9gration-de-mitreid-connect-dans-spring)
@@ -98,7 +98,7 @@ limitations under the License.
 1. **fournir un exemple complet d'implémentation d'un fournisseur [FranceConnect](https://franceconnect.gouv.fr/)** de niveau *production-grade* et correctement documenté :
   - en environnement [JEE](http://www.oracle.com/technetwork/java/javaee/overview/index.html), à l'aide du framework [Spring Security](http://projects.spring.io/spring-security/)
   - en s'appuyant sur [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server#mitreid-connect), l'implémentation de référence d'[OpenID Connect](http://openid.net/connect/) développée par le [MIT](http://web.mit.edu/)
-  - en intégrant le mécanisme de déconnexion, la gestion des niveaux de traces requis et des erreurs
+  - en intégrant le mécanisme de déconnexion, la gestion des traces et celle des erreurs d'authentification
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
@@ -113,14 +113,14 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 ### Fichiers de configuration
 
 >:information_source:  
-> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet d'adresser le fournisseur de service avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut substituer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
+> Tous les exemples de configuration supposent que l'utilisateur a lancé un navigateur sur le hôte de KIF-IdP, ce qui permet de contacter le fournisseur de services avec l'adresse de boucle locale 127.0.0.1. Cela simplifie le déploiement et les tests car cette adresse est valide sur tout système intégrant une pile TCP/IP. Néanmoins, cela impose que le navigateur utilisé pour les tests soit démarré sur le même hôte que le fournisseur de services, afin qu'il puisse le contacter en s'adressant à 127.0.0.1. En production, il faut remplacer 127.0.0.1 par le nom DNS du fournisseur de services. Les flux directs entre le fournisseur de services et FranceConnect (web-services REST) sont par défaut chiffrés à l'aide de SSL/TLS. Par contre, les connexions au fournisseur de services sont configurées par défaut pour être réalisées via le protocole non chiffré HTTP, afin d'éviter d'imposer la mise en place d'un certificat de sécurité X.509 sur le fournisseur de services. En production, il faut remplacer ce protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple.
 
 Deux fichiers de configuration sont utilisés :
 
 - le fichier de configuration des paramètres
 - le fichier de configuration des traces
 
-La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du template `config.properties-template` déjà présent dans ce même répertoire.
+La configuration des paramètres consiste à créer le fichier de paramétrage `config.properties` dans le répertoire `FournisseurDeServices/src/main/webapp/META-INF` à partir du modèle `config.properties-template` déjà présent dans ce même répertoire.
 
 > :warning:  
 > Le démarrage de l'application n'est pas possible avant d'avoir réalisé la configuration des paramètres car le fichier `config.properties` est référencé par le descripteur de déploiement d'application (*web application deployment descriptor*) `web.xml`.  
@@ -132,10 +132,10 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 
 - `log4j-prod.xml` avec un niveau de trace peu verbeux, intégrant néanmoins toutes les traces nécessaires pour un système en production :
   - conservation des traces de niveau `warn` et supérieurs pour tous les composants
-  - conservation des traces de niveau `info` et supérieurs pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de logout global) :
+  - conservation des traces de niveau `info` et supérieurs pour KIF, incluant pour chaque événement de création ou suppression de session, d'authentification, d'erreur d'authentification ou de déconnexion (mécanisme de déconnexion global) :
     - l'identifiant de session (valeur du cookie JSESSIONID)
-    - la référence à l'objet Java représentant la requête, pour croiser les traces correspondant à une même requête si besoin
-    - l'adresse IP du navigateur client
+    - la référence à l'objet Java représentant la requête, permettant de croiser les traces correspondant à une même requête si besoin
+    - l'adresse IP d'origine de la connexion TCP contenant le flux HTTP provenant du navigateur client
     - le port TCP côté client, pour différencier différents navigateurs présentant une adresse IP commune (cas où l'utilisateur emprunte un proxy ou un réseau NATé, par exemple)
     - la cause d'erreur le cas échéant (jeton invalide, tentative de rejeu, etc.)
     - le nom de la session créée ou détruite le cas échéant
@@ -167,13 +167,13 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
+ - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
 
 - `net.fenyo.franceconnect.config.oidc.userinfoendpointuri`
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de service (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
+ - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
 - `net.fenyo.franceconnect.config.oidc.redirecturi`
 
@@ -199,7 +199,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : chaîne de caractères
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : identifiant de l'émetteur des token id JWT, attendu dans le claim *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+ - usage : identifiant de l'émetteur des id token JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
 
 - `net.fenyo.franceconnect.config.oidc.fcbuttonuri`
 
@@ -213,19 +213,19 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services.
+ - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services. Il est à noter que si l'utilisateur fait le choix de se connecter de FranceConnect, il ne sera pas pour autant déconnecté des autres fournisseurs de services auxquels il pourrait être simultanément connecté (hormis le fournisseur de services par lequel il a initié la demande de déconnexion). Ce mécanisme correspond donc un "global logout" partiel.
 
 - `net.fenyo.franceconnect.config.oidc.afterlogouturi`
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/
- - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
+ - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou non la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
 
 - `net.fenyo.franceconnect.config.oidc.startlogouturi`
 
  - type : URL
  - valeur par défaut : j_spring_security_logout
- - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout.
+ - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de déconnexion.
 
 ##### Configuration du comportement du fournisseur de services
 
@@ -236,13 +236,13 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
-    - l'utilisateur se connecte au fournisseur de service et s'authentifie via FranceConnect à t0
+    - l'utilisateur se connecte au fournisseur de services et s'authentifie via FranceConnect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
-    - sa session chez le fournisseur de service est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
+    - sa session chez le fournisseur de services est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
     - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
-    - la session ayant expiré, le fournisseur de service renvoie l'utilisateur s'authentifier chez FranceConnect
-    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de service ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de service sans interaction utilisateur
-    - le fournisseur de service utilise ce jeton d'autorisation pour récupérer le token id et l'identité de l'utilisateur
+    - la session ayant expiré, le fournisseur de services renvoie l'utilisateur s'authentifier chez FranceConnect
+    - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de services ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de services sans interaction utilisateur
+    - le fournisseur de services utilise ce jeton d'autorisation pour récupérer l' id token et l'identité de l'utilisateur
 
 - `net.fenyo.franceconnect.config.oidc.authenticationerroruri`
 
@@ -322,7 +322,7 @@ Voici un exemple complet de fichier de configuration des traces `log4j.xml` pour
 </log4j:configuration>
 ````
 
-Fournir les traces sur la sortie standard du serveur d'application n'est pas toujours le moyen le plus adapté pour les conserver. C'est un moyen idéal dans le cadre d'un serveur d'application hébergé dans un micro-conteneur [Docker](www.docker.com), mais dans le cas contraire, on peut remplacer l'appender de type `ConsoleAppender` pour les stocker plutôt :
+Fournir les traces sur la sortie standard du serveur d'application n'est pas toujours le moyen le plus adapté pour les conserver. C'est un moyen idéal dans le cadre d'un serveur d'application hébergé dans un micro-conteneur [Docker](www.docker.com), mais dans la plupart des autres situations, on peut remplacer l'appender de type `ConsoleAppender` pour les stocker plutôt :
 
 - dans un fichier, que l'on fait tourner régulièrement : avec un appender de type [`DailyRollingFileAppender`](https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/DailyRollingFileAppender.html)
 
@@ -372,7 +372,7 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 
 ##### Comportement attendu
 
-Le comportement standard de MITREid Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers un page d'erreur générique configurable par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
+Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers une page d'erreur générique qu'on peut positionner par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
 
 ##### Session expirée
 
@@ -386,7 +386,7 @@ Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond p
 
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
-- le fournisseur de service émet la requête suivante au token endpoint de FranceConnect :
+- le fournisseur de services émet la requête suivante au token endpoint de FranceConnect :
   ````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
@@ -414,15 +414,15 @@ Vary: Accept-Encoding
 
 ##### Nonce invalide
 
-Si le nonce reçu n'est pas celui attendu, une Une trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par *replay*. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si le nonce reçu n'est pas celui attendu, une [trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par rejeu (*replay*). L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Autres cas d'erreur d'authentification
 
-De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des token id JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des id token JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
-#### Phase de logout
+#### Phase de déconnexion
 
-Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a pas de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
+Au moment d'une tentative de déconnexion, si la session a déjà expiré ou si une déconnexion s'est déjà produite, le fournisseur de services redirige le navigateur vers l'URL configurée après déconnexion sans passer par FranceConnect puisqu'il ne dispose plus d'id token à lui indiquer. Ce cas se produit par exemple si deux onglets sont ouverts sur l'application et sont connectés via la même session, et que l'un des onglets a réalisé une déconnexion via le bouton FranceConnect. Si une déconnexion est alors initiée par le bouton FranceConnect du second onglet, il n'y a plus de contexte d'authentification, donc on ne peut ni ne doit renvoyer vers FranceConnect pour une déconnexion.
 
 ## Cinématique d'authentification
 
@@ -431,8 +431,8 @@ La cinématique d'authentification est constituée des étapes suivantes :
 1. Lorsque le filtre Spring MITREid Connect détecte l'accès a une ressource protégée et qu'il n'y a pas eu de précédente authentification pour la session courante,  MITREid Connect redirige alors l'utilisateur vers son endpoint de callback.
 2. Ce endpoint constate qu'aucun id token n'est associé à cette session et qu'aucun paramètre contenant un code d'autorisation n'est fourni dans la requête qu'il reçoit.
 3. Il entame donc la cinématique OpenID Connect pour demander un code d'autorisation à l'authorization endpoint et ce code est renvoyé par FranceConnect sur ce endpoint.
-4. À la reception du code, le endpoint de callback invoque alors un web services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
-5. Un nouveau web service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
+4. À la reception du code, le endpoint de callback invoque alors un web-services REST vers le token endpoint de FranceConnect pour récuperer un id token et un access token.
+5. Un nouveau web-service REST présentant l'access token est invoqué sur le userinfo endpoint de FranceConnect pour récupérer le userinfo qui représente l'identité de l'utilisateur au format JSON.
 6. L'utilisateur est enfin renvoyé vers la ressource protégée, à laquelle il a désormais accès.
 
 Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase d'authentification entre les différents acteurs (navigateur, fournisseur de services, FranceConnect, fournisseur d'identité). Les informations d'état civil de l'utilisateur, renvoyées par le fournisseur d'identité, sont redressées par FranceConnect pour constituer une identité dite pivot, à l'aide d'un rapprochement avec le contenu du Répertoire national d’identification des personnes physiques ([RNIPP](https://www.cnil.fr/fr/rnipp-repertoire-national-didentification-des-personnes-physiques-0)). L'identité fournie par le fournisseur d'identité n'est donc pas forcément celle relayée au fournisseur de services par FranceConnect : **le fournisseur de services reçoit systématiquement un extrait de l'état civil provenant du RNIPP**.
@@ -441,7 +441,7 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Cinématique de déconnexion
 
-**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MITREid Connect et a donc dû être développée spécifiquement dans KIF-SP.
+**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout (déconnexion) et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
 
 La cinématique de déconnexion est constituée des étapes suivantes :
 
@@ -451,7 +451,7 @@ La cinématique de déconnexion est constituée des étapes suivantes :
 4. Selon le choix de l'utilisateur, FranceConnect invalide éventuellement la session utilisateur et, dans tous les cas, redirige son navigateur vers l'URL post-logout du fournisseur de services.
 5. Le fournisseur de services fournit la page HTML correspondant à son URL post-logout.
 
-Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase de déconnexion où interviennent le navigateur, le fournisseur de services et FranceConnect (le fournisseur d'identité n'est pas concerné) :
+Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cette phase de déconnexion où interviennent le navigateur, le fournisseur de services et FranceConnect (le fournisseur d'identité n'est pas concerné, ni informé de la déconnexion) :
 
 ![déconnexion - diagramme de séquence UML](docs/deconnexion1.png "déconnexion - diagramme de séquence UML")
 
@@ -510,8 +510,8 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
       <bean class="org.mitre.openid.connect.web.UserInfoInterceptor" />
     </mvc:interceptors>
 	
-    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MITREid Connect -->
-    <!-- OIDCAuthenticationProvider se charge de contacter le user info endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
+    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
+    <!-- OIDCAuthenticationProvider se charge de contacter le userinfo endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
 
     <bean id="openIdConnectAuthenticationProvider" class="org.mitre.openid.connect.client.OIDCAuthenticationProvider" />
@@ -629,7 +629,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
     <!--
      configuration de Spring Security avec :
-     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de service pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
+     - l'URI de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de logout, afin que Spring Security puisse détecter la demande de logout
      - le bean à invoquer après le logout effectif de l'application : ce bean se charge d'implémenter la cinématique de logout de FranceConnect :
        - redirection de l'utilisateur chez FranceConnect, qui lui propose aussi de se déloguer de FranceConnect,
        - retour vers le fournisseur de service
@@ -652,9 +652,9 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
 
 Consultez les mappings au début du fichier [`franceconnect-servlet.xml`](#intégration-de-mitreid-connect-dans-spring) afin de connaître les sous-répertoires de `FournisseurDeServices/src/main/webapp/` où rajouter :
 
-- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible sans nécessiter une authentification au préalable
+- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessibles sans qu'ils ne nécessitent une authentification au préalable
 
-- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessible nécessitant une authentification au préalable
+- des fichiers statiques, des pages html, du code JavaScript, des pages de styles CSS et des images accessibles uniquement après une authentification préalable
 
 En cas d'accès à une ressource protégée mais sans authentification préalable de l'utilisateur, la cinématique d'authentification est automatiquement lancée puis le navigateur est redigiré à nouveau vers la ressource à laquelle il peut enfin accéder.
 
@@ -724,13 +724,13 @@ Utilisateur (user info) :
     - pays              : ${ userInfo.address.country }
     - lieu de naissance : ${ oidcBirthplace }
     - pays de naissance : ${ oidcBirthcountry }
-valeur JSON complète : ${ userInfo.source }
+Valeur JSON complète : ${ userInfo.source }
     </pre>
   </body>
 </html>
 ````
 
-Une méthode spécifique peut ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée. Pour cela, il faut utiliser la bibliothèse que tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
+Une méthode spécifique du contrôleur a la possibilité de ne pas imposer une authentification préalable. Dans ce cas, la vue peut être construite de manière à activer ou désactiver des blocs selon que l'authentification a été réalisée ou non. Pour cela, il faut utiliser la bibliothèque de tags de Spring Security et encadrer les blocs nécessitant une authentification dans un élément `<authorize access="isFullyAuthenticated()">` et ceux à afficher uniquement en l'absence d'authentification dans un élément `<authorize access="!isFullyAuthenticated()">`. Le bouton FranceConnect doit être inclus uniquement lors d'un accès authentifié.
 
 Voici un exemple de méthode spécifique correspondant à ce scénario :
 ````java
@@ -796,7 +796,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 ### Fichier pom pour Maven
 
-Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un autre composant partagé. Dans un tel cas, il est préférable d'imposer le choix de la version partagée retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cet optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
+Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un même autre composant. Dans un tel cas, il est préférable d'imposer le choix de la version retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cette optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
 
 | groupe | artefact   | version |
 | :------------- | :------------- |---------:|
@@ -815,19 +815,20 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 | org.apache.commons | commons-lang3 | 3.4 |
 | org.apache.httpcomponents | httpclient | 4.5.2 |
 
-Les conflits rencontrés concernaient les problématiques suivantes :
+Les conflits potentiels qui sont résolus par ces choix de version concernaient les problématiques suivantes :
 
-- MITREid Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives provenant de Spring. Or on utilise ici la dernière version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, MITREid Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MITREid Connect, qu'on exclue donc du traitement des dépendances par Maven  :
+- MitreID Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives issues de Spring (on appelle ici *dépendances transitives* les dépendances de dépendances). Or on utilise ici la version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, les dépendances de MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on a donc exclus du traitement des dépendances par Maven  :
   - org.springframework/spring-core
   - org.springframework/spring-webmvc
   - org.springframework.security/spring-security-core
   - org.springframework.security/spring-security-config
   - org.springframework.security.oauth/spring-security-oauth2
-  - org.apache.httpcomponents/httpclient, org.slf4j/slf4j-api
+  - org.apache.httpcomponents/httpclient
+  - org.slf4j/slf4j-api
   - org.slf4j/jcl-over-slf4j
   - com.fasterxml.jackson.core/jackson-annotations
 
-- MITREid Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MITREid Connect s'appuie sur SLF4j en lieu et place de commons-logging. On exclut donc la dépendance de spring-context avec commons-logging.
+- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4J en lieu et place de commons-logging. On exclut donc la dépendance de spring-context vers commons-logging.
 
 - Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
   - org.springframework/spring-core
@@ -838,9 +839,9 @@ Les conflits rencontrés concernaient les problématiques suivantes :
   - org.springframework.security/spring-security-config
   - org.springframework.security/spring-security-web
 
-- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommé bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car il n'y a pas de référence à cette Bouncy Castle Crypto.
+- Les versions 1.2.3 à 1.2.7 de MITREid Connect référencent la bibliothèque Bouncy Castle Crypto nommée bcprov-jdk15on. Sachant que cette bibliothèque est utilisée par MITREid Connect uniquement pour chiffrer et déchiffrer des jetons, mais pas pour les signer ou vérifier leur signature, cette bibliothèque est donc inutile dans le cadre des cinématiques FranceConnect. Or ce package induit des délais de recherche d'annotations importants (cf. http://stackoverflow.com/questions/17584495/unable-to-complete-the-scan-for-annotations-for-web-application-app-due-to-a), pouvant conduire à un timeout au chargement de l'application sous Jetty. On évite donc l'importation de la version bcprov-jdk15on de cette bibliothèque. Ce phénomène n'apparaît pas jusqu'à la version 1.2.2 de MITREid Connect, car les références à la bibliothèque Bouncy Castle Crypto n'apparaissent qu'à partir de la version 1.2.3.
 
-- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
+- On importe une version récente de Bouncy Castle Crypto n'impliquant pas des délais de recherche d'annotations importants, non pas pour utilisation par MITREid Connect, mais pour utilisation par l'implémentation d'un IdP dans ce package. Cet IdP est implémenté par la méthode idp() de la classe WebController (contrôleur Spring). Cet IdP n'est pas utile pour mettre en oeuvre la cinématique FranceConnect. Cette dépendance peut donc être supprimée à condition de supprimer aussi le code de l'IdP. Dans cet IdP, on utilise Bouncy Castle Crypto plutôt que l'implémentation native de Sun/Oracle via l'API JCE car cette dernière limite par défaut les clés AES à 128 bits alors qu'on souhaite utiliser une clé de 256 bits pour des raisons de force de chiffrement.
 
 Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traitement :
 
@@ -876,10 +877,10 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
   
 - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run`
-  - Attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
-  - Lancer alors un navigateur sur http://127.0.0.1/
+  - attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans un serveur Jetty embarqué
 
@@ -887,18 +888,18 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 
 - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run`
-  - Attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante.
-- Lancer alors un navigateur sur http://127.0.0.1/
+  - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
+- lancer alors un navigateur sur http://127.0.0.1/
 
-- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (inférieur strict à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+- Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
 ### Démarrage dans Eclipse
 
-- installer [Eclipse](https://www.eclipse.org/downloads/) Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
-- importer le projet dans [Eclipse](https://www.eclipse.org/downloads/)
-- &Agrave; chaque modification du fichier `pom`, sélectionner l'élément racine du projet dans l'explorateur de projet, faire "bouton droite" sur cet élément, choisir *Maven* dans le menu déroulant puis *Update Project...*.
-- Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*.
-- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur.
+- Installer [Eclipse](https://www.eclipse.org/downloads/) Neon ou version supérieure (afin d'éviter de devoir installer certaines extensions spécifiques pour le support de composants comme Maven par exemple)
+- Importer le projet dans [Eclipse](https://www.eclipse.org/downloads/)
+- &Agrave; chaque modification du fichier `pom.xml`, sélectionner l'élément racine du projet dans l'explorateur de projet, faire "bouton droite" sur cet élément, choisir *Maven* dans le menu déroulant puis *Update Project...*.
+- Pour (re-)compiler le projet, sélectionner dans le menu Projet l'entrée *Clean...* puis *Build Project*
+- Pour démarrer l'application, utiliser le menu Run pour accéder à *Run configurations...* ou *Debug configurations...*, créer une configuration Apache Tomcat (vous devrez disposer d'une distribution Tomcat 7 ou version supérieure), publier l'application dans le serveur et démarrer le serveur
 
 ### Points d'attention avec Eclipse
 
@@ -933,13 +934,13 @@ Voici une liste des goals Maven utilisés régulièrement :
 
 #### Chiffrement des flux
 
-En production, il faut substituer 127.0.0.1 par le nom DNS du fournisseur de services dans le fichier de configuration `franceconnect-servlet.xml`. Il faut substituer le protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple. Pour que les flux soient effectivement chiffrés, la pratique habituelle consiste à faire porter l'adresse IP associée au nom public du fournisseur de services par un reverse-proxy de type Apache ou Nginx, ou par un équilibreur de flux, points de terminaison des sessions SSL/TLS. C'est alors le reverse-proxy ou l'équilibreur de charge qui est doté d'un certificat X.509 et de la clé privée associée. Les flux entre le reverse-proxy ou l'équilibreur de charge et le fournisseur de services restent non chiffrés. Les invocations, par le fournisseur de services, de web services REST vers FranceConnect sont chiffrés car les endpoints FranceConnect sont accessibles uniquement via SSL/TLS.
+En production, il faut remplacer 127.0.0.1 par le nom DNS du fournisseur de services dans le fichier de configuration `franceconnect-servlet.xml`. Il faut remplacer le protocole http dans les URL de configuration du fournisseur de services par https. Cela permet de chiffrer les flux entre le navigateur et le fournisseur de services avec SSL/TLS. Ce chiffrement est essentiel car ces flux contiennent des secrets, comme le cookie de session par exemple. Pour que les flux soient effectivement chiffrés, la pratique habituelle consiste à faire porter l'adresse IP associée au nom public du fournisseur de services par un reverse-proxy de type Apache ou Nginx, ou par un équilibreur de flux, points de terminaison des sessions SSL/TLS. C'est alors le reverse-proxy ou l'équilibreur de charge qui est doté d'un certificat X.509 et de la clé privée associée. Les flux entre le reverse-proxy ou l'équilibreur de charge et le fournisseur de services restent non chiffrés. Les invocations, par le fournisseur de services, de web-services REST vers FranceConnect sont chiffrés car les endpoints FranceConnect sont accessibles uniquement via SSL/TLS.
 
 #### &Eacute;quilibrage de charge et haute disponibilité
 
 ##### Multi-centres de production
 
-Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité. Si le serveur d'application a été configuré en cluster, afin que les données de sessions des serveurs de servlets soient repliquées entre les différents hôtes hébergeant KIF, le partage de charges multi-centres de production est possible via un simple round-robin DNS (exemple de configuration avec Tomcat 8 : https://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html). Avec une telle architecture, aucun équilibreur de charge n'est requis, sauf si on veut rajouter la fonction failover pour laquelle une paire d'équilibreurs (une paire en fonctionnement actif/passif suffit, pour éviter que l'équilibreur soit un SPOF : *Single Point Of Failure*) de type GSLB (Global Server Load Balancing) est nécessaire, comme par exemple la solution d'[équilibrage F5 BIG-IP munie du module GTM (Global Traffic Management)](https://www.f5.com/pdf/products/big-ip-global-traffic-manager-ds.pdf). Le principe de fonctionnement de ce type d'équilibreur consiste à gérer dynamiquement le contenu d'une zone DNS contenant des enregistrements à durée de vie courte (quelques secondes) pour associer le nom global du service aux adresses IP des instances du cluster de servlets constituant le fournisseur de services. La zone est gérée par plusieurs serveurs faisant autorité (*authoritative DNS servers*) afin que le service DNS ne constitue pas un SPOF (*Single Point Of Failure*).
+Plusieurs instances de KIF peuvent être déployées simultanément pour la montée en charge et/ou la haute-disponibilité. Si le serveur d'application a été configuré en cluster, afin que les données de sessions des serveurs de servlets soient repliquées entre les différents hôtes hébergeant KIF, le partage de charges multi-centres de production est possible via un simple round-robin DNS (exemple de configuration avec Tomcat 8 : https://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html). Avec une telle architecture, aucun équilibreur de charge n'est requis, sauf si on veut rajouter la fonction failover pour laquelle une paire d'équilibreurs (une paire en fonctionnement actif/passif suffit, pour éviter que l'équilibreur soit un SPOF : *Single Point Of Failure*) de type GSLB (Global Server Load Balancing) est nécessaire, comme par exemple la solution d'[équilibrage F5 BIG-IP munie du module GTM (Global Traffic Management)](https://www.f5.com/pdf/products/big-ip-global-traffic-manager-ds.pdf). Le principe de fonctionnement de ce type d'équilibreur consiste à gérer dynamiquement le contenu d'une zone DNS contenant des enregistrements à durée de vie courte (quelques secondes) pour associer le nom global du service aux adresses IP des instances du cluster de servlets constituant le fournisseur de services. La zone est gérée par plusieurs serveurs faisant autorité (*authoritative name servers*) afin que le service DNS ne constitue pas un SPOF (*Single Point Of Failure*).
 
 ##### Mono-centre de production
 
@@ -957,7 +958,7 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
   - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
 
-L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
+L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web-services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
 La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
@@ -973,7 +974,7 @@ Deux types de messages chiffrés sont échangés entre l'application et KIF-IdP,
 
 - de KIF-IdP vers l'application : les réponses aux précédentes requêtes, contenant l'identité pivot ainsi que les valeurs des paramètres `state`et `nonce` de la requête associée, au format JSON avec encodage UTF-8
 
-On peut noter, pour valider la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
+On peut noter, pour confirmer la cohérence de ce mode d'échange, que les critères normatifs permettant d'être transporté dans un paramètre d'une URL impliquent qu'un encodage UTF-8 est aussi possible (la réciproque n'étant pas vraie).
 
 ### Endpoint
 
@@ -981,7 +982,7 @@ Ce protocole n'utilise qu'un seul endpoint : celui de KIF-IdP, qui lui permet de
 
 Ce protocole est donc particulièrement léger à implémenter côté application puisque cette dernière n'a aucun endpoint à gérer.
 
-L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
+L'URL relative du endpoint de KIF-IdP est `/idp`. Si KIF-IdP est par exemple lancé sur une hôte nommé kif-idp.mon-domaine-institutionnel.fr protégé par un reverse proxy qui termine les sessions SSL/TLS, alors le endpoint de KIF-IdP sera accessible à l'URL suivante : https://kif-idp.mon-domaine-institutionnel.fr/idp
 
 ### Cinématique
 
@@ -1000,7 +1001,7 @@ Elle est développée en langage shell, déployée via l'interface CGI sur un se
 - une page protégée : https://fenyo.net/fc/identite.cgi
 - une page de déconnexion : https://fenyo.net/fc/logout.cgi
 
-**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration à FranceConnect à l'aide de KIF-IdP.
+**Au total, ces trois scripts comptabilisent moins de 30 lignes de shell**, en incluant la gestion du bouton FranceConnect. Ils permettent de démontrer la facilité d'intégration d'une application à FranceConnect, en tant que fournisseur de services, à l'aide de KIF-IdP.
 
 ### Fonction de cryptographie
 
@@ -1039,12 +1040,12 @@ Texte en clair
 
 ### Représentation textuelle d'un message chiffré
 
-Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
+Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
-> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
+> La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
 > 
-> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré dans sa représentation textuelle, et réciproquement.
+> On peut aussi noter que les charsets UTF-8 (utilisé mondialement), ISO-8859-1 (utilisé essentiellement pour les langues latines) et ISO-8859-15 (utilisé essentiellement en Europe) sont des sur-ensembles du charset US-ASCII. La représentation textuelle d'un message chiffré est donc identique dans ces trois charsets et dans le charset US-ASCII. N'importe quelle bibliothèque de fonctions capable d'utiliser l'un ou l'autre de ces charsets est donc capable de transformer un message chiffré vers sa représentation textuelle, et réciproquement.
 
 On peut, par exemple, utiliser hexdump pour convertir un message chiffré vers sa représentation textuelle :
 
@@ -1064,7 +1065,7 @@ Les fichiers contenu-chiffre.bin et contenu-chiffre-2.bin sont identiques
 ````
 ### Représentation binaire d'un message en clair
 
-La fonction de cryptographie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
+La fonction de cryptographie choisie n'agit que sur des messages binaires, constitués de chaînes d'octets. Les messages textuels échangés doivent donc pouvoir être transformés en binaire avant chiffrement et, réciproquement, les messages chiffrés doivent pouvoir être transformés en messages textuels après déchiffrement.
 
 - Une requête d'authentification est une URL. Elle est donc formée d'une suite des caractères du charset US-ASCII. On choisit la représentation binaire canonique constituée d'une chaîne d'octets directement issue de ce charset. La taille de la représentation binaire est donc identique à celle de la requête en clair.
 
@@ -1273,13 +1274,15 @@ Dans notre exemple, pour afficher cette chaîne, il suffit d'utiliser /bin/cat e
 
 ### Vérifications de sécurité
 
-Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues :
+Avant d'utiliser l'identité de l'utilisateur dans la réponse fournie par KIF-IdP, l'application doit réaliser deux vérifications de sécurité afin de s'assurer de l'intégrité des informations reçues ainsi que de leur provenance :
 
 - l'application vérifie que le paramètre `state` contenu dans le message JSON correspond bien à la session utilisateur en cours, afin d'éviter les attaques par saut de session,
 
 - l'application vérifie que le paramètre `nonce` contenu dans le message JSON correspond bien à celui fourni dans la requête d'authentification initiale, afin d'éviter les attaques par rejeu.
 
 **Si l'une ou l'autre de ces vérifications s'avère négative, l'utilisateur doit être renvoyé vers une page d'erreur d'authentification.**
+
+On peut noter que la vérification par l'application de la présence de paramètres connus dans la réponse chiffrée reçue correspond à une opération de vérification de signature. En effet, pour produire un message chiffré contenant ces valeurs imposées, il faut connaître la clé secrète partagée. L'application récupère donc ici la garantie que le message a été produit par KIF-IdP, sans avoir eu à implémenter un quelconque mécanisme de signature numérique.
 
 ### Sources de l'application exemple
 
@@ -1344,11 +1347,11 @@ KIF-IdP s'appuie sur KIF-SP pour la relation avec FranceConnect. Sa configuratio
 
 ### Traces
 
-En complément des traces de KIF-SP, KIF-IdP rajoute les traces suivantes, au même format que celles de KIF-IdP :
+En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au même format que celles de KIF-IdP :
 
-- `accès à /idp` : cette trace survient lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
+- `accès à /idp` : cette trace est produite lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
 
-- `accès à /id: redirection [URL de redirection]` : cette trace indique l'URL de redirection de l'application vers laquelle l'utilisateur authentifié est redirigé, au moment où cette redirection se produit
+- `accès à /idp: redirection [URL de redirection]` : cette trace indique l'URL de redirection de l'application vers laquelle l'utilisateur authentifié est redirigé, au moment où cette redirection se produit
 
 - `accès à /idp: requête chiffrée [requête chiffrée]` : cette trace permet de conserver le message chiffré par l'application
 
