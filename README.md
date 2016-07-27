@@ -254,7 +254,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 - `net.fenyo.franceconnect.config.idp.key`
 
- - type : Cle AES 256 bits en hexadecimal (generation via openssl : `openssl rand -hex 32`)
+ - type : Clé AES 256 bits en hexadecimal (generation via openssl : `openssl rand -hex 32`)
  - valeur par défaut : `a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224`
  - usage :  secret partagé permettant le chiffrement entre l'application à intégrer et KIF-IdP.
 
