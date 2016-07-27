@@ -149,10 +149,17 @@ public class WebController {
 			// on récupère les paramètres nonce et state de l'URL de callback
 			// s'ils sont présents plusieurs fois, on ne récupère que leurs premières instances respectives
 			if (url.getQuery() == null) {
-				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification (null query)", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}
+
+			if (plaintext.startsWith(oidcAttributes.getIdpRedirectUri()) == false) {
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification (url de callback invalide)", logger);
+				redirectView.setUrl("/authenticationError");
+			    return redirectView;
+			}
+
 			String nonce = null;
 			String state = null;
 			final List<NameValuePair> params = URLEncodedUtils.parse(url.getQuery(), Charset.forName("UTF-8"));
@@ -166,12 +173,12 @@ public class WebController {
 			// nonce : anti-rejeu
 			// state : protection contre le saut de session
 			if (nonce == null) {
-				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification (null nonce)", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}
 			if (state == null) {
-				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification", logger);
+				Tools.log("accès à /idp: renvoi vers la page d'erreur d'authentification (null state)", logger);
 				redirectView.setUrl("/authenticationError");
 			    return redirectView;
 			}

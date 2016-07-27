@@ -38,6 +38,7 @@
 	    <property name="sessionTimeout" value="${net.fenyo.franceconnect.config.oidc.sessiontimeout}" />
 	    <property name="idpKey" value="${net.fenyo.franceconnect.config.idp.key}" />
 	    <property name="idpIv" value="${net.fenyo.franceconnect.config.idp.iv}" />
+	    <property name="idpRedirectUri" value="${net.fenyo.franceconnect.config.idp.redirecturi}" />
   	</bean>
 	
 	<!-- Permettre la configuration de la sécurité par les annotations -->

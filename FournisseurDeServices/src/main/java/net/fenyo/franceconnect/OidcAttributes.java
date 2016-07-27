@@ -25,6 +25,7 @@ public class OidcAttributes {
 	private Integer sessionTimeout;
 	private String idpKey;
 	private String idpIv;
+	private String idpRedirectUri;
 
 	public Boolean isDebug() {
 		return debug;
@@ -80,5 +81,13 @@ public class OidcAttributes {
 
 	public void setIdpIv(final String idpIv) {
 		this.idpIv = idpIv;
+	}
+
+	public String getIdpRedirectUri() {
+		return idpRedirectUri;
+	}
+
+	public void setIdpRedirectUri(final String idpRedirectUri) {
+		this.idpRedirectUri = idpRedirectUri;
 	}
 }
