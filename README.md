@@ -796,7 +796,7 @@ Voici la liste des prérequis nécessaires à l'utilisation opérationnelle de c
 
 ### Fichier pom pour Maven
 
-Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaire à l'application s'appuient sur des versions distinctes d'un même autre composant. Dans un tel cas, il est préférable d'imposer le choix de la version retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cette optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
+Les dépendances implicites lors de l'intégration d'un composant Java dans un application JEE conduisent souvent, si l'on n'y prend pas garde, à des conflits entre versions. En effet, il arrive souvent que deux composants nécessaires à l'application s'appuient sur des versions distinctes d'un même autre composant. Dans un tel cas, il est préférable d'imposer le choix de la version retenue afin d'éviter un comportement incohérent de l'application. Le fichier `pom.xml` a été spécifiquement écrit dans cette optique, après une analyse des conflits de versions, et les versions des composants retenus sont les suivantes :
 
 | groupe | artefact   | version |
 | :------------- | :------------- |---------:|
