@@ -1,0 +1,82 @@
+From fenyoa/franceconnect-kif
+RUN apt-get update && apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages apache2 curl
+WORKDIR "/etc/apache2"
+CMD rm sites-enabled/000-default.conf && cp -p sites-available/default-ssl.conf sites-enabled && cp -p mods-available/ssl.conf mods-available/ssl.load mod-available/socache_shmcb.load mods-enabled
+#CMD ["/bin/bash"]
+#CMD ["mvn", "tomcat7:run"]
+#CMD ["apachectl", "start"]
+
+cd /etc/apache2
+echo ServerName test.xfenyo.net >> apache2.conf
+cp sites-available/default-ssl.conf sites-enabled
+rm sites-enabled/000-default.conf
+mv mods-available/ssl.* mods-enabled
+mv mods-available/socache_shmcb.load mods-enabled
+
+dans ports.conf : commenter Listen 80
+
+apachectl restart
+
+
+
+------------------------------------------------------------
+
+docker build -t fenyo/kif .
+
+docker run -p 80:80 -v $(pwd)/config.properties:/kif/src/main/webapp/META-INF/config.properties -v $(pwd)/log4j.xml:/kif/src/main/resources/log4j.xml -t -i fenyo/kif
+
+From ubuntu:xenial
+EXPOSE 80
+ENV TERM vt100
+ENV LANG C.UTF-8
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV CATALINA_HOME /usr/share/tomcat8
+ENV CATALINA_BASE /var/lib/tomcat8
+RUN apt-get update && apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages libterm-ui-perl less zsh vim telnet net-tools openjdk-8-jdk git maven
+RUN git clone https://github.com/AlexandreFenyo/france-connect.git
+RUN mv france-connect/FournisseurDeServices /kif && rm -rf /france-connect
+WORKDIR "/kif"
+RUN cp src/main/webapp/META-INF/config.properties-template src/main/resources/log4j-devel.xml src/main/resources/log4j-prod.xml /root && cp src/main/webapp/META-INF/config.properties-template src/main/webapp/META-INF/config.properties && cp src/main/resources/log4j-devel.xml src/main/resources/log4j.xml
+RUN mvn tomcat7:deploy || true
+CMD ["mvn", "tomcat7:run"]
+
+/kif/src/main/webapp/META-INF/config.properties
+/kif/src/main/resources/log4j.xml
+
+docker run -t -i ubuntu:xenial /bin/bash
+
+From ubuntu:xenial
+ENV TERM vt100
+ENV LANG C.UTF-8
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+RUN cd /root
+RUN apt-get update && apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages libterm-ui-perl less zsh vim telnet net-tools openjdk-8-jdk git maven
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+git clone https://github.com/AlexandreFenyo/france-connect.git
+cd france-connect/FournisseurDeServices
+cp src/main/webapp/META-INF/config.properties-template src/main/webapp/META-INF/config.properties
+mvn tomcat7:deploy
+mvn tomcat7:run
+
+libgtk2.0-0 xterm tcpdump tshark
+
+export CATALINA_HOME=/usr/share/tomcat8
+export CATALINA_BASE=/var/lib/tomcat8
+mkdir $CATALINA_HOME/temp
+
+/usr/share/tomcat8/bin/catalina.sh run
+
+ # docker exec -t -i naughty_mccarthy /bin/bash
+
+cd france-connect/FournisseurDeServices
+cp src/main/webapp/META-INF/config.properties-template src/main/webapp/META-INF/config.properties
+
+mvn tomcat7:deploy
+mvn tomcat7:run
+
+logs:
+src/main/resources
+config:
+src/main/webapp/META-INF
+port 8080=>80
+
