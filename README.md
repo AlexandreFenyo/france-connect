@@ -108,6 +108,10 @@ KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services F
 
 L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provider*) et l'implémentation de la fonction relai est dénommée **KIF-IdP** (*Identity Provider*).
 
+Ce produit est accessible en ligne afin de vous permettre de le tester :
+- KIF-SP : https://fenyo.net/kif-sp
+- KIF-IdP : https://fenyo.net/fc-online
+
 ## Configuration
 
 ### Fichiers de configuration
