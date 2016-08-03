@@ -116,8 +116,7 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 > https://hub.docker.com/r/fenyoa/franceconnect-kif/  
 
-Elle vous permet de démarrer rapidement une expérimentation à l'aide de votre propre instance de KIF, sans avoir à préparer une environnement JEE+Tomcat ni avoir à compiler l'application et à la déployer.
-
+Elle vous permet de démarrer rapidement une expérimentation à l'aide de votre propre instance de KIF, sans avoir à préparer une environnement JEE+Tomcat ni la nécessité de devoir compiler l'application et la déployer vous-même. En quelques minutes, vous disposerez d'une solution opérationnelle déployée sur un de vos serveurs.
 
 ## Configuration
 
