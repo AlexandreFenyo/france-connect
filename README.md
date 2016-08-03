@@ -102,7 +102,7 @@ limitations under the License.
 
 2. **permettre l'intégration facile de l'authentification FranceConnect dans une application existante :**
   -  quelle que soit la technologie utilisée (JEE, Ruby on Rails, Perl/CGI, PHP, Node.js, etc.)
-  - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services.
+  - en raccordant cette application à l'IdP (*Identity Provider*) interne de KIF, qui se charge d'implémenter la cinématique d'interfaçage avec FranceConnect en se présentant comme un fournisseur de services
 
 KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services FranceConnect en environnement JEE et un IdP relai entre une application existante (*legacy application*) et l'IdP FranceConnect.
 
@@ -1378,7 +1378,7 @@ KIF-IdP s'appuie sur KIF-SP pour la relation avec FranceConnect. Sa configuratio
 
 ### Traces
 
-En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au même format que celles de KIF-IdP :
+En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au même format que celles de KIF-SP :
 
 - `accès à /idp` : cette trace est produite lorsque KIF-IdP a récupéré l'identité de l'utilisateur pour le compte de l'application
 
