@@ -112,7 +112,10 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 - KIF-SP : https://fenyo.net/kif-sp
 - KIF-IdP : https://fenyo.net/fc-online
 
-**Une image Docker intégrant KIF-SP et KIF-IdP est disponible sur Docker Hub** : https://hub.docker.com/r/fenyoa/franceconnect-kif/  
+**Une image Docker intégrant KIF-SP et KIF-IdP est disponible sur Docker Hub** :
+
+> https://hub.docker.com/r/fenyoa/franceconnect-kif/  
+
 Elle vous permet de démarrer rapidement une expérimentation à l'aide de votre propre instance de KIF, sans avoir à préparer une environnement JEE+Tomcat ni avoir à compiler l'application et à la déployer.
 
 
