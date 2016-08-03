@@ -3,8 +3,6 @@ EXPOSE 80
 ENV TERM vt100
 ENV LANG C.UTF-8
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV CATALINA_HOME /usr/share/tomcat8
-ENV CATALINA_BASE /var/lib/tomcat8
 RUN apt-get update && apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages libterm-ui-perl less zsh vim telnet net-tools openjdk-8-jdk git maven
 RUN git clone https://github.com/AlexandreFenyo/france-connect.git
 RUN mv france-connect/FournisseurDeServices /kif && rm -rf /france-connect
