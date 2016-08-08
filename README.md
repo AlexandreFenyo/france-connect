@@ -258,7 +258,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/authenticationError
- - usage :  URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+ - usage :  URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Paramètres pour la fonction KIF-IdP (Identity Provider)
 
@@ -389,15 +389,15 @@ INFO : 2016-07-24 03:47:24,138 net.fenyo.franceconnect.AuthenticationFailureHand
 
 ##### Comportement attendu
 
-Le comportement standard de MitreID Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers une page d'erreur générique qu'on peut positionner par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
+Le comportement standard de MITREid Connect, en cas d'erreur d'authentification, consiste à indiquer au navigateur une erreur de type 401, incluant un descriptif de la cause de l'erreur. Dans KIF, ce comportement a été remplacé par la bonne pratique de sécurité consistant à cacher les précisions concernant la cause de l'erreur d'authentification. La cause de l'erreur est tracée et l'utilisateur est renvoyé vers une page d'erreur générique qu'on peut positionner par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`.
 
 ##### Session expirée
 
-Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si la session a expiré entre l'envoi vers FranceConnect et le retour avec le code d'autorisation, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : "Authentication Failed: State parameter mismatch on return. Expected null got 2f3e7b5c97c0c". La valeur null indique que l'état associé à la session (paramètre `state` dans le protocole OpenID Connect) n'a pas pu être trouvé car il n'y a pas de session ou que cette session n'a jamais tenté de se connecter via FranceConnect. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### &Eacute;tat invalide
 
-Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à FranceConnect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond pas à celui envoyé à FranceConnect dans le cadre de l'authentification de cette session, alors une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: State parameter mismatch on return. Expected 3f3222875114b got 2f3e7b5c97c0c`. La valeur attendue (3f3222875114b) est celle de l'état envoyé à FranceConnect et le faux état reçu est 2f3e7b5c97c0c. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Code d'autorisation invalide
 
@@ -427,15 +427,15 @@ ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
 Vary: Accept-Encoding
   ````
 
-- Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+- Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Nonce invalide
 
-Si le nonce reçu n'est pas celui attendu, une [trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par rejeu (*replay*). L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+Si le nonce reçu n'est pas celui attendu, une [trace d'erreur](#traces-derreurs) est générée avec un message indiquant une possible tentative d'attaque par rejeu (*replay*). L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 ##### Autres cas d'erreur d'authentification
 
-De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des id token JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposé de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+De nombreuses vérifications de sécurité sont imposées par le protocole OpenID Connect, par exemple la vérification de la signature des id token JWT. Si une de ces vérifications conduit à une erreur, une [trace d'erreur](#traces-derreurs) est générée avec un message décrivant la raison de cette erreur. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Phase de déconnexion
 
@@ -458,7 +458,7 @@ Ce diagramme de séquence UML présente l'ensemble des échanges en jeu dans cet
 
 ## Cinématique de déconnexion
 
-**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout (déconnexion) et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MitreID Connect et a donc dû être développée spécifiquement dans KIF-SP.
+**La cinématique de déconnexion n'est pas spécifiée dans le protocole OpenID Connect**, mais directement par FranceConnect. C'est pour cela que l'on n'évoque pas ici des endpoints mais simplement des URL de logout (déconnexion) et de post-logout. N'étant pas une cinématique normée, elle n'est pas implémentée par MITREid Connect et a donc dû être développée spécifiquement dans KIF-SP.
 
 La cinématique de déconnexion est constituée des étapes suivantes :
 
@@ -527,7 +527,7 @@ Cette configuration a été mise en place dans le fichier décrivant la servlet 
       <bean class="org.mitre.openid.connect.web.UserInfoInterceptor" />
     </mvc:interceptors>
 	
-    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MitreID Connect -->
+    <!-- signaler à Spring Security d'utiliser un authentication manager contenant un authentication provider qui est une instance de OIDCAuthenticationProvider fourni par MITREid Connect -->
     <!-- OIDCAuthenticationProvider se charge de contacter le userinfo endpoint avec l'authorization bearer pour récupérer les informations détaillées concernant l'utilisateur -->
     <security:global-method-security pre-post-annotations="enabled" proxy-target-class="true" authentication-manager-ref="authenticationManager" />
 
@@ -701,7 +701,7 @@ Voici un exemple de méthode spécifique qui mappe l'accès à /user et invoque 
 
 		// On injecte dans le modèle les champs de userinfo qui ne sont pas dans le standard OpenID Connect
 		// mais néanmoins transportés dans les identités FranceConnect, car la variable userinfo
-		// automatiquement insérée dans le modèle par MitreID Connect ne contient pas de getter
+		// automatiquement insérée dans le modèle par MITREid Connect ne contient pas de getter
 		// pour ces champs. Il s'agit uniquement de birthplace et birthcountry.
 		final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 		mav.addObject("oidcBirthplace", oidcauth.getUserInfo().getSource().get("birthplace"));
@@ -835,7 +835,6 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 | org.springframework.security | spring-security-config | 4.0.4 |
 | org.springframework.security.oauth | spring-security-oauth2 | 2.0.9 |
 | org.mitre | openid-connect-client | 1.2.6 |
-| org.slf4j | slf4j-api | 1.7.21 |
 | javax.servlet | servlet-api | 2.5 |
 | javax.servlet.jsp | jsp-api | 2.1 |
 | javax.servlet | jstl | 1.2 |
@@ -848,7 +847,7 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 
 Les conflits potentiels qui sont résolus par ces choix de version concernaient les problématiques suivantes :
 
-- MitreID Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives issues de Spring (on appelle ici *dépendances transitives* les dépendances de dépendances). Or on utilise ici la version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, les dépendances de MitreID Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MitreID Connect, qu'on a donc exclus du traitement des dépendances par Maven  :
+- MITREid Connect 1.2.x induit des dépendances directes vers la version 3 du framework Spring ainsi que certaines dépendances transitives issues de Spring (on appelle ici *dépendances transitives* les dépendances de dépendances). Or on utilise ici la version 4 de Spring, plus évoluée. On s'est donc affranchi de ces dépendances directes ou transitives, pour profiter pleinement de Spring framework 4. De même, les dépendances de MITREid Connect implique d'autres conflits avec certains composants utilisés par ailleurs par KIF. L'ensemble de ces conflits concernent précisément les artefacts Maven suivants de MITREid Connect, qu'on a donc exclus du traitement des dépendances par Maven  :
   - org.springframework/spring-core
   - org.springframework/spring-webmvc
   - org.springframework.security/spring-security-core
@@ -859,7 +858,7 @@ Les conflits potentiels qui sont résolus par ces choix de version concernaient 
   - org.slf4j/jcl-over-slf4j
   - com.fasterxml.jackson.core/jackson-annotations
 
-- MitreID Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MitreID Connect s'appuie sur SLF4J en lieu et place de commons-logging. On exclut donc la dépendance de spring-context vers commons-logging.
+- MITREid Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MITREid Connect s'appuie sur SLF4J en lieu et place de commons-logging. On exclut donc la dépendance de spring-context vers commons-logging.
 
 - Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
   - org.springframework/spring-core
