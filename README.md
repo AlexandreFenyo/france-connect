@@ -249,7 +249,7 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
     - l'utilisateur se connecte au fournisseur de services et s'authentifie via FranceConnect à t0
     - à partir de t0 + 5 min, l'utilisateur devient inactif
     - sa session chez le fournisseur de services est donc invalide à partir de t0 + 5 min + `sessiontimeout`, c'est-à-dire t0 + 15 min
-    - à t0 + 20 min, l'utilisateur reprend son activité en accedant à une page protégée
+    - à t0 + 20 min, l'utilisateur reprend son activité en accédant à une page protégée
     - la session ayant expiré, le fournisseur de services renvoie l'utilisateur s'authentifier chez FranceConnect
     - la session FranceConnect n'ayant pas expiré (si l'utilisateur n'a pas réalisé une déconnexion via le bouton FranceConnect entre-temps, depuis ce fournisseur de services ou un autre), FranceConnect fournit un jeton d'autorisation au fournisseur de services sans interaction utilisateur
     - le fournisseur de services utilise ce jeton d'autorisation pour récupérer l' id token et l'identité de l'utilisateur
