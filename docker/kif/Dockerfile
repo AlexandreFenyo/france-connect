@@ -9,4 +9,4 @@ RUN mv france-connect/FournisseurDeServices /kif && rm -rf /france-connect
 WORKDIR "/kif"
 RUN cp src/main/webapp/META-INF/config.properties-template src/main/resources/log4j-devel.xml src/main/resources/log4j-prod.xml /root && cp src/main/webapp/META-INF/config.properties-template src/main/webapp/META-INF/config.properties && cp src/main/resources/log4j-devel.xml src/main/resources/log4j.xml
 RUN mvn tomcat7:deploy || true
-CMD ["mvn", "tomcat7:run"]
+CMD ["mvn", "-Dmaven.tomcat.ajp.port=8009", "-Dnet.fenyo.franceconnect.config.listen.port=8080", "tomcat7:run"]
