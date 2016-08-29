@@ -1399,7 +1399,7 @@ En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au m�
 
 KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même manière que celui décrit dans [la section correspondante de KIF-SP](#déploiement).
 
-Après avoir réalisé les tests d'intégration à l'aide de l'image Docker intégrant KIF-SP et KIF-IdP disponible sur Docker Hub** à l'adresse https://hub.docker.com/r/fenyoa/franceconnect-kif/, vous pouvez directement déployer KIF-IdP en production à l'aide de cette image dédiée qui intègre, en plus des composants précédents, un reverse-proxy Apache pour le support de SSL/TLS : https://hub.docker.com/r/fenyoa/franceconnect-kif-ssl/
+Après avoir réalisé les tests d'intégration à l'aide de l'image Docker embarquant KIF-SP et KIF-IdP disponible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/franceconnect-kif/, vous pouvez directement déployer KIF-IdP en production à l'aide de cette autre image dédiée qui intègre, en plus des composants précédents, un reverse-proxy Apache pour le support de SSL/TLS : https://hub.docker.com/r/fenyoa/franceconnect-kif-ssl/
 
 Cette dernière image est spécifiquement dédiée à un déploiement en production :
 - seul le port TCP/443 est publié (le port TCP/80 n'est pas publié),
