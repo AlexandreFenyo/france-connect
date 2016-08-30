@@ -287,7 +287,7 @@ Les valeurs par défaut permettent de communiquer avec l'application exemple dis
 Voici un exemple complet de fichier de paramétrage `config.properties` :
 
 ````properties
-# pour la fonction KIF-FS (POC de fournisseur de services)
+# pour la fonction KIF-SP (POC de fournisseur de services)
 net.fenyo.franceconnect.config.oidc.debug=true
 net.fenyo.franceconnect.config.oidc.clientid=a100f6923ae93e2e5a8e2e2fb1d0c1e988d8c06c43a8ef838e64eeb932750405
 net.fenyo.franceconnect.config.oidc.clientsecret=f7cf2c8cf9863e009c3a520b5f380d9849adad21fe21c0e2782bc9cb25908a67
