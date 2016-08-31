@@ -1,6 +1,8 @@
-#!/bin/zsh
+#!/usr/bin/perl -W
 
-echo -n $REQUEST_URI | sed 's/.*post_logout_redirect_uri=//' | sed 's/&.*//' | perl -MURI::Escape -e 'print uri_unescape(<>);' | read LOC
-echo Content-type: text/html
-echo Location: $LOC
-echo
+use URI::Query;
+
+my %qq = URI::Query->new($ENV{"REQUEST_URI"})->hash;
+print "Content-type: text/html\nLocation: ".$qq{"post_logout_redirect_uri"}."\n\n";
+
+__END__

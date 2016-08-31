@@ -11,6 +11,15 @@ push-kif:
 run-kif:
 	@docker run -p 80:80 -v ${PWD}/kif/config.properties:/kif/src/main/webapp/META-INF/config.properties -v ${PWD}/kif/log4j.xml:/kif/src/main/resources/log4j.xml -t -i fenyoa/franceconnect-kif
 
+build-bouchon:
+	@cd fc-bouchon && docker build -t fenyoa/fc-bouchon .
+
+push-bouchon:
+	@docker push fenyoa/fc-bouchon
+
+run-bouchon:
+	@docker run -p 8080:80 -t -i fenyoa/fc-bouchon
+
 build-kif-ssl:
 	@cd kif-ssl && docker build -t fenyoa/franceconnect-kif-ssl .
 
