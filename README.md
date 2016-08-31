@@ -287,7 +287,7 @@ Les valeurs par défaut permettent de communiquer avec l'application exemple dis
 Voici un exemple complet de fichier de paramétrage `config.properties` :
 
 ````properties
-# pour la fonction KIF-FS (POC de fournisseur de services)
+# pour la fonction KIF-SP (POC de fournisseur de services)
 net.fenyo.franceconnect.config.oidc.debug=true
 net.fenyo.franceconnect.config.oidc.clientid=a100f6923ae93e2e5a8e2e2fb1d0c1e988d8c06c43a8ef838e64eeb932750405
 net.fenyo.franceconnect.config.oidc.clientsecret=f7cf2c8cf9863e009c3a520b5f380d9849adad21fe21c0e2782bc9cb25908a67
@@ -1398,6 +1398,14 @@ En complément des traces de KIF-SP, KIF-IdP produit les traces suivantes, au m�
 ### Déploiement
 
 KIF-IdP étant intégré à KIF-SP, le déploiement est réalisé de la même manière que celui décrit dans [la section correspondante de KIF-SP](#déploiement).
+
+Après avoir réalisé les tests d'intégration à l'aide de l'image Docker embarquant KIF-SP et KIF-IdP disponible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/franceconnect-kif/, vous pouvez directement déployer KIF-IdP en production à l'aide de cette autre image dédiée qui intègre, en plus des composants précédents, un reverse-proxy Apache pour le support de SSL/TLS : https://hub.docker.com/r/fenyoa/franceconnect-kif-ssl/
+
+Cette dernière image est spécifiquement dédiée à un déploiement en production :
+- seul le port TCP/443 est publié (le port TCP/80 n'est pas publié),
+- les traces ont été positionnées à un niveau de verbosité intermédiaire (pas de traces de niveaux info ni debug),
+- les fonctions KIF-SP inutiles pour le mode KIF-IdP ont été désactivées.
+
 
 ## Support
 
