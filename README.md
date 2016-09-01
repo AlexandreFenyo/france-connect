@@ -1421,7 +1421,7 @@ Le bouchon FranceConnect est disponible sous forme d'une image Docker accessible
 
 D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet, sans inscription, pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de services FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et le bouchon FranceConnect.
 
-Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux fournis dans le tableau suivant :
+Pour l'utiliser, il suffit de substituer aux endpoints de FranceConnect ceux fournis dans le tableau suivant :
 
 | endpoint | URL FranceConnect  | URL du bouchon FranceConnect |
 | :------------- | :------------- |:---------|
