@@ -1409,16 +1409,17 @@ Cette dernière image est spécifiquement dédiée à un déploiement en product
 
 ## Bouchon FranceConnect
 
-KIF est livré avec un bouchon FranceConnect, qui permet à un développeur de travailler sur un fournisseur de services sans disposer d'accès à FranceConnect. Disposer d'un mode bouchonné est utile dans de nombreux cas :
+KIF est livré avec un bouchon FranceConnect, qui permet à un développeur de travailler sur un fournisseur de services sans disposer d'accès à FranceConnect.
+
+Disposer d'un mode bouchonné est utile dans de nombreux cas, lors des phases de développement et d'intégration, notamment :
 - lorsque le développeur n'a pas accès à Internet,
 - lorsque celui-ci réalise des tests de montée en charge,
 - lorsqu'il veut simuler des erreurs particulières et observer le comportement de son application,
-- lorsque la plate-forme d'intégration de FranceConnect est en maintenance,
-- etc.
+- lorsque la plate-forme d'intégration de FranceConnect est en maintenance.
 
-Le bouchon FranceConnect est disponible sous forme d'une image Docker disponible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/fc-bouchon/
+Le bouchon FranceConnect est disponible sous forme d'une image Docker accessible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/fc-bouchon/
 
-D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet et accessible sans inscription pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de service FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et ce bouchon.
+D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet, sans inscription, pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de service FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et le bouchon FranceConnect.
 
 Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux fournis dans le tableau suivant :
 
@@ -1429,10 +1430,10 @@ Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
 
-Le fournisseur de service qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres :
-- se présenter avec l'issuer : `http://fenyo.net/fc-idp`
-- utiliser le clientid suivant : `1111111111111111111111111111111111111111111111111111111111111111`
-- utiliser le secretid suivant : `2222222222222222222222222222222222222222222222222222222222222222`
+Le fournisseur de service qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres suivants :
+- se présenter avec l'issuer `http://fenyo.net/fc-idp`
+- utiliser le clientid `1111111111111111111111111111111111111111111111111111111111111111`
+- utiliser le secretid `2222222222222222222222222222222222222222222222222222222222222222`
 
 ## Support
 
