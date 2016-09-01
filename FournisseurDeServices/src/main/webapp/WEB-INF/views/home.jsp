@@ -65,7 +65,18 @@
       <p/>
       Pour vous authentifier sur ce service via France Connect et accéder à la page de fourniture du service, veuillez cliquer sur le lien suivant :<br/> 
       <a href="user"><img alt="France Connect" src="static/FCboutons-10.png" /></a>
+<p/>
+Pour vous connecter, il faudra choisir "impots.gouv.fr" et utiliser l'identifiant suivant :<br/>
+- numéro fiscal : 123<br/>
+- mot de passe : 123
+<p/>
     </security:authorize>
+
+<HR/>
+Essayer l'application de test, qui s'appuie sur KIF-IdP : <a href="https://fenyo.net/fc-online">https://fenyo.net/fc-online</a>
+<br/>
+Retour à la documentation : <a href="https://github.com/AlexandreFenyo/france-connect">https://github.com/AlexandreFenyo/france-connect</a>
+
 
   </body>
 </html>
