@@ -84,6 +84,7 @@ limitations under the License.
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
+  - [Bouchon FranceConnect](#BouchonFranceConnect)
   - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1406,6 +1407,27 @@ Cette dernière image est spécifiquement dédiée à un déploiement en product
 - les traces ont été positionnées à un niveau de verbosité intermédiaire (pas de traces de niveaux info ni debug),
 - les fonctions KIF-SP inutiles pour le mode KIF-IdP ont été désactivées.
 
+## Bouchon FranceConnect
+
+KIF est livré avec un bouchon FranceConnect, qui permet à un développeur de travailler sur un fournisseur de services sans disposer d'accès à FranceConnect. Disposer d'un mode bouchonné est utile dans de nombreux cas :
+- lorsque le développeur n'a pas accès à Internet,
+- lorsque celui-ci réalise des tests de montée en charge,
+- lorsqu'il veut simuler des erreurs particulières et observer le comportement de son application,
+- lorsque la plate-forme d'intégration de FranceConnect est en maintenance,
+- etc.
+
+Le bouchon FranceConnect est disponible sous forme d'une image Docker disponible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/fc-bouchon/
+
+D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet et accessible sans inscription pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de service FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et ce bouchon.
+
+Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux fournis dans le tableau suivant :
+
+| endpoint | URL FranceConnect  | URL du bouchon FranceConnect |
+| :------------- | :------------- |---------:|
+| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize | https://fenyo.net/fc-idp/authorize.cgi |
+| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/token | https://fenyo.net/fc-idp/token.cgi |
+| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
+| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
 
 ## Support
 
