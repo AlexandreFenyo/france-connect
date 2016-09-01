@@ -1419,7 +1419,7 @@ L'utilisation d'un mode bouchonné peut être utile dans de nombreux cas, lors d
 
 Le bouchon FranceConnect est disponible sous forme d'une image Docker accessible sur Docker Hub à l'adresse https://hub.docker.com/r/fenyoa/fc-bouchon/
 
-D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet, sans inscription, pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de service FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et le bouchon FranceConnect.
+D'autre part, une instance opérationnelle du bouchon FranceConnect est active 24h/24 sur Internet, sans inscription, pour les développeurs qui veulent tester l'interconnexion entre leur implémentation d'un fournisseur de services FranceConnect (par ex. KIF-IdP, ou une application basée sur KIF-SP, ou encore toute autre application implémentant la cinématique Fournisseur de Services de FranceConnect) et le bouchon FranceConnect.
 
 Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux fournis dans le tableau suivant :
 
@@ -1432,7 +1432,7 @@ Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux
 
 L'URL de la bibliothèque JavaScript de FranceConnect `http(s)://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js` doit être remplacée par `http(s)://fenyo.net/franceconnect.js`
 
-Le fournisseur de service qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres suivants :
+Le fournisseur de services qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres suivants :
 - le bouchon se présente avec l'issuer `http://fenyo.net/fc-idp`
 - utiliser le clientid `1111111111111111111111111111111111111111111111111111111111111111`
 - utiliser le secretid `2222222222222222222222222222222222222222222222222222222222222222`
