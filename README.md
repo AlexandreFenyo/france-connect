@@ -119,6 +119,8 @@ L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provide
 
 Elle vous permet de démarrer rapidement une expérimentation à l'aide de votre propre instance de KIF, sans avoir à préparer une environnement JEE+Tomcat ni la nécessité de devoir compiler l'application et la déployer vous-même. En quelques minutes, vous disposerez d'une solution opérationnelle déployée sur un de vos serveurs, ou chez un des fournisseurs de Cloud majeurs supportant Docker ([Amazon Web Services](https://aws.amazon.com/), [Google Cloud Platform](https://cloud.google.com/), [Microsoft Azure](https://azure.microsoft.com/fr-fr/), [RedHat OpenShift Online](https://www.openshift.com/features/), [OVH](https://www.ovh.com/fr/news/a2185.seance-rattrapage-docker), [Cloudwatt](https://www.cloudwatt.com/fr/applications/docker.html), ...).
 
+Enfin, un [Bouchon FranceConnect](#bouchon-franceconnect), fourni sous la forme d'une image Docker, permet à tout développeur d'un fournisseur de services FranceConnect de travailler de manière autonome sans dépendre d'un accès Internet. Ce bouchon permet aussi de réaliser des montées en charge d'un fournisseur de services ou de tester le comportement d'une application en simulant des cas d'erreurs. Ce bouchon est indépendant de KIF-SP et de KIF-IdP, il peut donc être utilisé pour le développement ou l'intégration de n'importe quel fournisseur de services FranceConnect basé sur une autre bibliothèque que KIF.
+
 ## Configuration
 
 ### Fichiers de configuration
