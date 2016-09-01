@@ -84,7 +84,7 @@ limitations under the License.
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
-  - [Bouchon FranceConnect](#Bouchon-FranceConnect)
+  - [Bouchon FranceConnect](#bouchon-franceconnect)
   - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
