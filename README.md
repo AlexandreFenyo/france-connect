@@ -1426,14 +1426,29 @@ Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux
 | endpoint | URL FranceConnect  | URL du bouchon FranceConnect |
 | :------------- | :------------- |:---------|
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize | https://fenyo.net/fc-idp/authorize.cgi |
-| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/token | https://fenyo.net/fc-idp/token.cgi |
-| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
-| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
+| Token | https://fcp.integ01.dev-franceconnect.fr/api/v1/token | https://fenyo.net/fc-idp/token.cgi |
+| UserInfo | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
+| Logout | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
+
+L'URL de la bibliothèque JavaScript de FranceConnect `http(s)://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js` doit être remplacée par `http(s)://fenyo.net/franceconnect.js`
 
 Le fournisseur de service qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres suivants :
-- se présenter avec l'issuer `http://fenyo.net/fc-idp`
+- le bouchon se présente avec l'issuer `http://fenyo.net/fc-idp`
 - utiliser le clientid `1111111111111111111111111111111111111111111111111111111111111111`
 - utiliser le secretid `2222222222222222222222222222222222222222222222222222222222222222`
+
+Voici le sous-ensemble de paramètres spécifiques à utiliser pour connecter KIF-SP ou KIF-IdP au bouchon FranceConnect accessible sur Internet :
+
+````properties
+net.fenyo.franceconnect.config.oidc.clientid=1111111111111111111111111111111111111111111111111111111111111111
+net.fenyo.franceconnect.config.oidc.clientsecret=2222222222222222222222222222222222222222222222222222222222222222
+net.fenyo.franceconnect.config.oidc.issuer=http://fenyo.net/fc-idp
+net.fenyo.franceconnect.config.oidc.authorizationendpointuri=https://fenyo.net/kif-idp/authorize.cgi
+net.fenyo.franceconnect.config.oidc.tokenendpointuri=https://fenyo.net/kif-idp/token.cgi
+net.fenyo.franceconnect.config.oidc.userinfoendpointuri=https://fenyo.net/kif-idp/userinfo.cgi
+net.fenyo.franceconnect.config.oidc.logouturi=https://fenyo.net/kif-idp/logout.cgi
+net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fenyo.net/franceconnect.js
+````
 
 ## Support
 
