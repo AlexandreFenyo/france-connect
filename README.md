@@ -1411,7 +1411,7 @@ Cette dernière image est spécifiquement dédiée à un déploiement en product
 
 KIF est livré avec un bouchon FranceConnect, qui permet à un développeur de travailler sur un fournisseur de services sans disposer d'accès à FranceConnect.
 
-Disposer d'un mode bouchonné est utile dans de nombreux cas, lors des phases de développement et d'intégration, notamment :
+L'utilisation d'un mode bouchonné peut être utile dans de nombreux cas, lors des phases de développement et d'intégration, notamment :
 - lorsque le développeur n'a pas accès à Internet,
 - lorsque celui-ci réalise des tests de montée en charge,
 - lorsqu'il veut simuler des erreurs particulières et observer le comportement de son application,
