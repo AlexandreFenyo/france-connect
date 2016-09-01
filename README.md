@@ -15,6 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+![KIF](https://fenyo.net/kif.png "logo KIF")
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
@@ -88,8 +90,6 @@ limitations under the License.
   - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-![KIF](https://fenyo.net/kif.png "logo KIF")
 
 # **KIF** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
 
