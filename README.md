@@ -89,6 +89,7 @@ limitations under the License.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+![KIF](https://fenyo.net/kif.png "logo KIF")
 
 # **KIF** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
 
