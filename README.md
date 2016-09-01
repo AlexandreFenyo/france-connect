@@ -1425,10 +1425,10 @@ Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux
 
 | endpoint | URL FranceConnect  | URL du bouchon FranceConnect |
 | :------------- | :------------- |:---------|
-| Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize | https://fenyo.net/fc-idp/authorize.cgi |
-| Token | https://fcp.integ01.dev-franceconnect.fr/api/v1/token | https://fenyo.net/fc-idp/token.cgi |
-| UserInfo | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
-| Logout | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
+| Authorization | http(s)://fcp.integ01.dev-franceconnect.fr/api/v1/authorize | http(s)://fenyo.net/fc-idp/authorize.cgi |
+| Token | http(s)://fcp.integ01.dev-franceconnect.fr/api/v1/token | http(s)://fenyo.net/fc-idp/token.cgi |
+| UserInfo | http(s)://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | http(s)://fenyo.net/fc-idp/userinfo.cgi |
+| Logout | http(s)://fcp.integ01.dev-franceconnect.fr/api/v1/logout | http(s)://fenyo.net/fc-idp/logout.cgi |
 
 L'URL de la bibliothèque JavaScript de FranceConnect `http(s)://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js` doit être remplacée par `http(s)://fenyo.net/franceconnect.js`
 
