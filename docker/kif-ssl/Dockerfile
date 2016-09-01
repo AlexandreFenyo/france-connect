@@ -1,4 +1,5 @@
 From fenyoa/franceconnect-kif
+MAINTAINER Alexandre Fenyo <alex@fenyo.net>
 EXPOSE 443
 RUN apt-get update && apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages apache2 curl
 WORKDIR /etc/apache2

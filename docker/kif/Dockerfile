@@ -1,4 +1,5 @@
 From ubuntu:xenial
+MAINTAINER Alexandre Fenyo <alex@fenyo.net>
 EXPOSE 80
 ENV TERM vt100
 ENV LANG C.UTF-8
