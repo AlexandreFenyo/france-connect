@@ -84,7 +84,7 @@ limitations under the License.
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
-  - [Bouchon FranceConnect](#BouchonFranceConnect)
+  - [Bouchon FranceConnect](#Bouchon-FranceConnect)
   - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1423,11 +1423,16 @@ D'autre part, une instance opérationnelle du bouchon FranceConnect est active 2
 Pour l'utiliser, il suffit de substituer les endpoints de FranceConnect par ceux fournis dans le tableau suivant :
 
 | endpoint | URL FranceConnect  | URL du bouchon FranceConnect |
-| :------------- | :------------- |---------:|
+| :------------- | :------------- |:---------|
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize | https://fenyo.net/fc-idp/authorize.cgi |
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/token | https://fenyo.net/fc-idp/token.cgi |
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo | https://fenyo.net/fc-idp/userinfo.cgi |
 | Authorization | https://fcp.integ01.dev-franceconnect.fr/api/v1/logout | https://fenyo.net/fc-idp/logout.cgi |
+
+Le fournisseur de service qui se connecte au bouchon FranceConnect accessible sur Internet ou à un conteneur basé sur l'image Docker référencée ci-dessus doit utiliser les paramètres :
+- se présenter avec l'issuer : `http://fenyo.net/fc-idp`
+- utiliser le clientid suivant : `1111111111111111111111111111111111111111111111111111111111111111`
+- utiliser le secretid suivant : `2222222222222222222222222222222222222222222222222222222222222222`
 
 ## Support
 
