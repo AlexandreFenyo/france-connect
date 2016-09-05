@@ -20,6 +20,13 @@ push-bouchon:
 run-bouchon:
 	@docker run -p 8080:80 -t -i fenyoa/fc-bouchon
 
+build-bouchon-ssl:
+	@cd fc-bouchon-ssl && docker build -t fenyoa/fc-bouchon-ssl .
+
+run-bouchon-ssl:
+	-docker rm bouchon-ssl
+	docker run --name bouchon-ssl -p 443:443 -p 80:80 -v ${PWD}/fc-bouchon-ssl/ssl.conf:/etc/apache2/sites-enabled/default-ssl.conf -v ${PWD}/fc-bouchon-ssl/pki:/etc/apache2/pki -t -i fenyoa/fc-bouchon-ssl
+
 build-kif-ssl:
 	@cd kif-ssl && docker build -t fenyoa/franceconnect-kif-ssl .
 
@@ -35,3 +42,4 @@ run-kif-ssl-background:
 rm-kif-ssl-background:
 	docker stop kif-ssl
 	docker rm kif-ssl
+
