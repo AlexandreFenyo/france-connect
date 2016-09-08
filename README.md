@@ -1447,6 +1447,8 @@ Voici les performances atteintes en régime permanent :
 - avec une plate-forme d'accélération matérielle : **76 authentifications par seconde** et par coeur de processeur Xeon E5-2666 v3
 - sans plate-forme d'accélération matérielle : **23 authentifications par seconde** et par coeur de processeur Xeon E5-2666 v3
 
+**L'occupation mémoire est d'environ 16 Ko par session utilisateur**.
+
 Les performances atteintes sont particulièrement importantes, même avec une configuration minimaliste et sans accélérateur matériel : **2 millions d'authentifications quotidiennes** avec un seul coeur de processeur Xeon E5-2666 v3.
 
 Voici les résultats bruts pour un tir de 12000 authentifications utilisateurs réalisé avec un taux de sollicitation de 300 authentifications simultanées sur 1 coeur d'Intel Xeon E5-2666 v3, avec un accélérateur matériel du chiffrement. Le graphique de gauche montre la part d'utilisation CPU de la JVM (le CPU est à près de 100% d'utilisation pendant le tir). Le graphique de droite montre l'évolution de l'occupation mémoire. La durée de sollicitation CPU permet de déterminer le taux d'authentification par unité de temps.
