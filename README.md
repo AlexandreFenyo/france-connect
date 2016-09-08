@@ -1449,9 +1449,9 @@ Voici les performances atteintes en régime permanent :
 
 Les performances atteintes sont particulièrement importantes, même avec une configuration minimaliste et sans accélérateur matériel (2 millions d'authentifications quotidienne avec un seul coeur de processeur Xeron E5-2666 v3)
 
-[KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs1.png "performances")
+![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs1.png "performances")
 
-[KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs2.png "performances")
+![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs2.png "performances")
 
 ## Bouchon FranceConnect
 
