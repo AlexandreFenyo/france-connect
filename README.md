@@ -1414,16 +1414,16 @@ Cette dernière image est spécifiquement dédiée à un déploiement en product
 ### Dimensionnement
 
 Un  test de montée en charge de KIF a été réalisé dans un environnement du cloud Amazon Web Services, avec les composants suivants :
-- une machine virtuelle Amazon Linux sur Intel Xeon E5-2666 avec 18 coeurs et 36 threads - 2,9 GHz (burst à 3,5 GHz), stockage SSD,
-  - générateur de trafic : 300 threads, chacun réalisant en boucle les requêtes web d'authentification d'un utilisateur auprès de KIF. Le trafic généré correspond à celui de 300 accès utilisateur simultanés.
+- une machine virtuelle Amazon Linux sur Intel Xeon E5-2666 v3 avec 18 coeurs et 36 threads - 2,9 GHz (burst à 3,5 GHz), stockage SSD :
+  - générateur de trafic : 300 threads, chacun réalisant en boucle les requêtes web d'authentification d'un utilisateur auprès de KIF. Le trafic généré correspond à celui de 300 accès utilisateur simultanés ;
   - bouchon FranceConnect : fourniture des identités en réponse aux invocations de KIF.
-- une machine virtuelle Amazon Linux sur Intel Xeon E5-2666 avec 1 coeur et 2 threads - 2,9 GHz (burst à 3,5 GHz), stockage SSD,
-  - KIF-SP : réponse aux requêtes du générateur de trafic
-  - KIF-IdP : invocation des web services d'authentification sur le bouchon FranceConnect
+- une machine virtuelle Amazon Linux sur Intel Xeon E5-2666 v3 avec 1 coeur et 2 threads - 2,9 GHz (burst à 3,5 GHz), stockage SSD :
+  - KIF-SP : réponse aux requêtes du générateur de trafic ;
+  - KIF-IdP : invocation des web services d'authentification sur le bouchon FranceConnect.
   
 En surdimensionnant ainsi le générateur de trafic et le bouchon FranceConnect, on s'assure que les performances mesurées sont celles de l'instance Linux de KIF.
 
-Deux lancés ont été réalisés :
+Deux tirs ont été réalisés :
 - avec SSL/TLS :
   - le générateur de trafic invoque KIF via https (http sur SSL/TLS)
   - KIF invoque les web services du bouchon FranceConnect via https (http sur SSL/TLS)
@@ -1435,13 +1435,19 @@ Les mesures de performances sans SSL/TLS permettent de simuler l'insertion dans 
 
 On constate que le goulot d'étranglement qui détermine les performances atteignables est la puissance CPU. Les effets de la charge I/O et de la charge réseau sont marginaux. D'autrep part, l'utilisation mémoire évolue aussi de manière marginale avec le nombre de sessions utilisateur actives. Enfin, la scalabilité horizontale est très forte : les performances évoluent de manière linéaire avec le nombre de threads affectés à KIF.
 
-Une fois en régime permanent, le CPU de la machine virtuelle KIF est chargé à 100%, réparti comme suit :
+Une fois en régime permanent, le CPU de la machine virtuelle KIF est chargé à 100%, son utilisation est répartie comme suit :
 - avec une une plate-forme d'accélération matérielle du chiffrement :
   - 85% pour le run-time Java de KIF
   - 15% pour le reverse proxy Apache
 - sans plate-forme d'accélération matérielle du chiffrement :
   - 25% pour le run-time Java de KIF, qui gère le chiffrement des invocations des web services du bouchon FranceConnect
   - 75% pour le reverse proxy Apache, qui gère le chiffrement des requêtes web en provenance du générateur de trafic
+
+Voici les performances atteintes en régime permanent :
+- avec une plate-forme d'accélération matérielle : 76 authentifications par seconde et par coeur de processeur Xeon E5-2666 v3
+- sans plate-forme d'accélération matérielle : 23 authentifications par seconde et par coeur de processeur Xeon E5-2666 v3
+
+Les performances atteintes sont particulièrement importantes, même avec une configuration minimaliste et sans accélérateur matériel (2 millions d'authentifications quotidienne avec un seul coeur de processeur Xeron E5-2666 v3)
 
 
 
