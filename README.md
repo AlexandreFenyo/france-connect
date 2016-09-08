@@ -123,6 +123,8 @@ Elle vous permet de démarrer rapidement une expérimentation à l'aide de votre
 
 Enfin, un [Bouchon FranceConnect](#bouchon-franceconnect), fourni sous la forme d'une image Docker, permet à tout développeur d'un fournisseur de services FranceConnect de travailler de manière autonome sans dépendre d'un accès Internet. Ce bouchon permet aussi de réaliser des montées en charge d'un fournisseur de services ou de tester le comportement d'une application en simulant des cas d'erreurs. Ce bouchon est indépendant de KIF-SP et de KIF-IdP, il peut donc être utilisé pour le développement ou l'intégration de n'importe quel fournisseur de services FranceConnect basé sur une autre bibliothèque que KIF.
 
+Les [performances de KIF](#dimensionnement) permettent d'envisager facilement un déploiement à grande échelle : en effet, KIF peut réaliser 2 millions d'authentifications quotidiennes avec un seul coeur de processeur Xeon E5-2666 v3. En déportant la charge de chiffrement SSL/TLS sur un accélérateur matériel, KIF est capable d'atteindre 6,5 millions d'authentifications quotidiennes, toujours sur un seul coeur de processeur Xeon E5-2666 v3.
+
 ## Configuration
 
 ### Fichiers de configuration
