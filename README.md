@@ -1459,7 +1459,7 @@ Lors de chaque tir, on a vérifié que la charge CPU de la machine virtuelle KIF
 
 ![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/proc2.png "performances")
 
-Lors de chaque tir, on a vérifié que la charge CPU des 18 coeurs (36 threads) du générateur de trafic était loin de la saturation :
+De même, on a vérifié que la charge CPU des 18 coeurs (36 threads) du générateur de trafic était loin de la saturation :
 
 ![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/proc1.png "performances")
 
