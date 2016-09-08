@@ -1435,7 +1435,7 @@ Les mesures de performances sans SSL/TLS permettent de simuler l'insertion dans 
 
 On constate que le goulot d'étranglement qui détermine les performances atteignables est la puissance CPU. Les effets de la charge I/O et de la charge réseau sont marginaux. D'autrep part, l'utilisation mémoire évolue aussi de manière marginale avec le nombre de sessions utilisateur actives. Enfin, la scalabilité horizontale est très forte : les performances évoluent de manière linéaire avec le nombre de threads affectés à KIF.
 
-Une fois en régime permanent, le CPU de la machine virtuelle KIF est chargé à 100%, son utilisation est répartie comme suit :
+Une fois en régime permanent, le CPU de la machine virtuelle KIF est chargé à près de 100%, son utilisation est répartie comme suit :
 - avec une une plate-forme d'accélération matérielle du chiffrement :
   - 85% pour le run-time Java de KIF
   - 15% pour le reverse proxy Apache
@@ -1449,11 +1449,17 @@ Voici les performances atteintes en régime permanent :
 
 Les performances atteintes sont particulièrement importantes, même avec une configuration minimaliste et sans accélérateur matériel (2 millions d'authentifications quotidienne avec un seul coeur de processeur Xeron E5-2666 v3)
 
-Voici les résultats bruts pour un tir de 12000 authentifications utilisateur réalisé avec un taux de sollicitation de 300 authentifications simultanées sur 1 coeur d'Intel Xeon E5-2666 v3, avec un accélérateur matériel du chiffrement. Le graphique de gauche montre la part d'utilisation CPU de la JVM (le CPU est à 100% d'utilisation pendant le tir). Le graphique de droite montre l'évolution de l'occupation mémoire. La durée de sollicitation CPU permet de déterminer le taux d'authentification par unité de temps.
+Voici les résultats bruts pour un tir de 12000 authentifications utilisateur réalisé avec un taux de sollicitation de 300 authentifications simultanées sur 1 coeur d'Intel Xeon E5-2666 v3, avec un accélérateur matériel du chiffrement. Le graphique de gauche montre la part d'utilisation CPU de la JVM (le CPU est à près de 100% d'utilisation pendant le tir). Le graphique de droite montre l'évolution de l'occupation mémoire. La durée de sollicitation CPU permet de déterminer le taux d'authentification par unité de temps.
 ![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs1.png "performances")
 
 Voici les résultats bruts pour un tir dans les mêmes conditions que précédemment, mais sans accélérateur matériel du chiffrement. On constate que la part CPU de la JVM est inférieure au tir précédent puisque le déchiffrement des requêtes web provenant du générateur de trafic est réalisé par les threads du reverse proxy apache.
 ![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/perfs2.png "performances")
+
+Lors de chaque tir, on a vérifié que la charge CPU de la machine virtuelle KIF était proche de la saturation :
+![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/proc2.png "performances")
+
+Lors de chaque tir, on a vérifié que la charge CPU des 18 coeurs (36 threads) du générateur de trafic était loin de la saturation :
+![KIF](https://raw.githubusercontent.com/AlexandreFenyo/france-connect/master/docs/proc1.png "performances")
 
 ## Bouchon FranceConnect
 
