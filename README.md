@@ -86,7 +86,7 @@ limitations under the License.
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
-    - [Dimensionnement](#dimensionnement)
+  - [Dimensionnement](#dimensionnement)
   - [Bouchon FranceConnect](#bouchon-franceconnect)
   - [Support](#support)
 
@@ -1411,7 +1411,7 @@ Cette dernière image est spécifiquement dédiée à un déploiement en product
 - les traces ont été positionnées à un niveau de verbosité intermédiaire (pas de traces de niveaux info ni debug),
 - les fonctions KIF-SP inutiles pour le mode KIF-IdP ont été désactivées.
 
-### Dimensionnement
+## Dimensionnement
 
 Un  test de montée en charge de KIF a été réalisé dans un environnement du cloud Amazon Web Services, avec les composants suivants :
 - une machine virtuelle Amazon Linux sur Intel Xeon E5-2666 v3 avec 18 coeurs et 36 threads - 2,9 GHz (burst à 3,5 GHz), stockage SSD :
