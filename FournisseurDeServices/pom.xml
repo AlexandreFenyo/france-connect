@@ -83,6 +83,7 @@
         <maven-war-plugin-version>2.6</maven-war-plugin-version>
         <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
         <jetty-maven-plugin-version>9.3.8.v20160314</jetty-maven-plugin-version>
+        <version.wildfly.maven.plugin>1.0.2.Final</version.wildfly.maven.plugin>
 	</properties>
 
     <!-- déclaration des dépendances avec MITREid Connect, les composants Spring, les frameworks de traces et les API servlet -->
@@ -435,5 +436,27 @@
             </plugins>
         </pluginManagement>
     </build>
+
+  <profiles>
+    <profile>
+      <id>wildlfy</id>
+      <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.0.0</version>
+              <configuration>
+                <packagingExcludes>WEB-INF/lib/log4j*.jar,WEB-INF/lib/slf4j*.jar,WEB-INF/lib/jcl-over-slf4j-*.jar,WEB-INF/lib/commons-logging-*.jar,WEB-INF/classes/log4j*.xml</packagingExcludes>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.wildfly.plugins</groupId>
+              <artifactId>wildfly-maven-plugin</artifactId>
+              <version>${version.wildfly.maven.plugin}</version>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 
 </project>
