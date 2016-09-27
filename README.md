@@ -1503,10 +1503,10 @@ Voici le sous-ensemble de paramètres spécifiques à utiliser pour connecter KI
 net.fenyo.franceconnect.config.oidc.clientid=1111111111111111111111111111111111111111111111111111111111111111
 net.fenyo.franceconnect.config.oidc.clientsecret=2222222222222222222222222222222222222222222222222222222222222222
 net.fenyo.franceconnect.config.oidc.issuer=http://fenyo.net/fc-idp
-net.fenyo.franceconnect.config.oidc.authorizationendpointuri=https://fenyo.net/kif-idp/authorize.cgi
-net.fenyo.franceconnect.config.oidc.tokenendpointuri=https://fenyo.net/kif-idp/token.cgi
-net.fenyo.franceconnect.config.oidc.userinfoendpointuri=https://fenyo.net/kif-idp/userinfo.cgi
-net.fenyo.franceconnect.config.oidc.logouturi=https://fenyo.net/kif-idp/logout.cgi
+net.fenyo.franceconnect.config.oidc.authorizationendpointuri=https://fenyo.net/fc-idp/authorize.cgi
+net.fenyo.franceconnect.config.oidc.tokenendpointuri=https://fenyo.net/fc-idp/token.cgi
+net.fenyo.franceconnect.config.oidc.userinfoendpointuri=https://fenyo.net/fc-idp/userinfo.cgi
+net.fenyo.franceconnect.config.oidc.logouturi=https://fenyo.net/fc-idp/logout.cgi
 net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fenyo.net/franceconnect.js
 ````
 
