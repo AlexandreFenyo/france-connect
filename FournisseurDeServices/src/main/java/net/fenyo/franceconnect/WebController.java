@@ -196,7 +196,7 @@ public class WebController {
 			final OIDCAuthenticationToken oidcauth = (OIDCAuthenticationToken) auth;
 			final JsonObject gson = oidcauth.getUserInfo().toJson();
 			gson.addProperty("nonce", nonce);
-			gson.addProperty("state", nonce);
+			gson.addProperty("state", state);
 			final String info = gson.toString();
 			final byte [] info_plaintext = info.getBytes();
 
