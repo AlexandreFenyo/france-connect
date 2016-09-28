@@ -913,11 +913,12 @@ DANS src/main/webapp/META-INF/config.properties
 ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
 ````
 
-
 ### Démarrage dans un serveur Tomcat embarqué
 
 - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
-  `mvn clean tomcat7:run`
+  - `mvn clean tomcat7:run`
+  - attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
   
 - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run`
@@ -928,7 +929,10 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 
 ### Démarrage dans un serveur Jetty embarqué
 
-- Démarrage avec Jetty sur un serveur avec accès direct à Internet : `mvn clean jetty:run`
+- Démarrage avec Jetty sur un serveur avec accès direct à Internet :
+  - `mvn clean jetty:run`
+  - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
 
 - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run`
@@ -936,6 +940,18 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 - lancer alors un navigateur sur http://127.0.0.1/
 
 - Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+
+### Déploiement dans un serveur WildFly
+
+- Déploiement vers un serveur WildFly local :
+  - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
+  - déployer l'application: `mvn clean package wildfly:deploy -P wildfly`
+  - lancer alors un navigateur sur http://127.0.0.1/
+
+- Déploiement vers un serveur WildFly distant :
+  - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
+  - déployer l'application : `mvn clean package wildfly:deploy -P wildfly -Dwildfly.hostname=HOSTNAME -Dwildfly.port=PORT -Dwildfly.username=USERNAME wildfly.password=PASSWORD`
+  - lancer alors un navigateur sur http://127.0.0.1/
 
 ### Démarrage dans Eclipse
 
