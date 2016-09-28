@@ -134,9 +134,9 @@ Enfin, un [Bouchon FranceConnect](#bouchon-franceconnect), fourni sous la forme 
 Les [performances de KIF](#dimensionnement) permettent d'envisager facilement un déploiement à grande échelle : en effet, KIF peut réaliser 2 millions d'authentifications quotidiennes avec un seul cœur de processeur Xeon E5-2666 v3. En déportant la charge de chiffrement SSL/TLS sur un accélérateur matériel, KIF est capable d'atteindre 6,5 millions d'authentifications quotidiennes, toujours sur un seul cœur de processeur Xeon E5-2666 v3.
 
 Le déploiement de KIF a été testé sur les serveurs d'application suivants :
-- (Tomcat)[#démarrage-dans-un-serveur-tomcat-embarqué]
-- (Jetty)[#démarrage-dans-un-serveur-jetty-embarqué]
-- (WildFly)[#déploiement-dans-un-serveur-wildfly]
+- [Tomcat](#démarrage-dans-un-serveur-tomcat-embarqué)
+- [Jetty](#démarrage-dans-un-serveur-jetty-embarqué)
+- [WildFly](#déploiement-dans-un-serveur-wildfly)
 
 ## Configuration
 
