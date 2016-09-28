@@ -62,7 +62,7 @@ limitations under the License.
     - [Fichier pom pour Maven](#fichier-pom-pour-maven)
     - [Démarrage dans un serveur Tomcat embarqué](#d%C3%A9marrage-dans-un-serveur-tomcat-embarqu%C3%A9)
     - [Démarrage dans un serveur Jetty embarqué](#d%C3%A9marrage-dans-un-serveur-jetty-embarqu%C3%A9)
-    - [Déploiement dans un serveur WildFly](#d%C3%A9ploiement-dans-un-serveu-wildfly)
+    - [Déploiement dans un serveur WildFly](#d%C3%A9ploiement-dans-un-serveur-wildfly)
     - [Démarrage dans Eclipse](#d%C3%A9marrage-dans-eclipse)
     - [Points d'attention avec Eclipse](#points-dattention-avec-eclipse)
     - [Goals Maven](#goals-maven)
