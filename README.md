@@ -22,7 +22,7 @@ limitations under the License.
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [**ʞif** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect](#ʞif--kit-dintégration-à-franceconnect)
-  - [Contributeurs](#Contributeurs)
+  - [Contributeurs](#contributeurs)
   - [Introduction](#introduction)
   - [Configuration](#configuration)
     - [Fichiers de configuration](#fichiers-de-configuration)
