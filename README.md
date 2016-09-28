@@ -62,6 +62,7 @@ limitations under the License.
     - [Fichier pom pour Maven](#fichier-pom-pour-maven)
     - [Démarrage dans un serveur Tomcat embarqué](#d%C3%A9marrage-dans-un-serveur-tomcat-embarqu%C3%A9)
     - [Démarrage dans un serveur Jetty embarqué](#d%C3%A9marrage-dans-un-serveur-jetty-embarqu%C3%A9)
+    - [Déploiement dans un serveur WildFly](#d%C3%A9ploiement-dans-un-serveu-wildfly)
     - [Démarrage dans Eclipse](#d%C3%A9marrage-dans-eclipse)
     - [Points d'attention avec Eclipse](#points-dattention-avec-eclipse)
     - [Goals Maven](#goals-maven)
@@ -937,7 +938,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run`
   - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
-- lancer alors un navigateur sur http://127.0.0.1/
+  - lancer alors un navigateur sur http://127.0.0.1/
 
 - Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
 
@@ -951,7 +952,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 - Déploiement vers un serveur WildFly distant :
   - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
   - déployer l'application : `mvn clean package wildfly:deploy -P wildfly -Dwildfly.hostname=HOSTNAME -Dwildfly.port=PORT -Dwildfly.username=USERNAME wildfly.password=PASSWORD`
-  - lancer alors un navigateur sur http://127.0.0.1/
+  - lancer alors un navigateur sur http://HOSTNAME/
 
 ### Démarrage dans Eclipse
 
