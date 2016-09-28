@@ -22,6 +22,7 @@ limitations under the License.
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [**ʞif** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect](#ʞif--kit-dintégration-à-franceconnect)
+  - [Contributeurs](#Contributeurs)
   - [Introduction](#introduction)
   - [Configuration](#configuration)
     - [Fichiers de configuration](#fichiers-de-configuration)
@@ -93,6 +94,12 @@ limitations under the License.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # **ʞif** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
+
+## Contributeurs
+
+- [Alexandre Fenyo](https://fenyo.net)
+- [Greg A.](https://github.com/gautric)
+- [Laurent Barbareau](https://github.com/LaurentBarbareau)
 
 ## Introduction
 
