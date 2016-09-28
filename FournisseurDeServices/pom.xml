@@ -28,6 +28,13 @@
         (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web)
         Lancer alors un navigateur sur http://127.0.0.1/
 
+      Déployer dans un Wildfly local / distant :
+      - Déployement vers un Wildfly local avec une configuration normale :
+        mvn clean package  wildfly:deploy -P wildfly
+      - Déployement vers un Wildfly distant :
+        mvn clean package  wildfly:deploy -P wildfly -Dwildfly.hostname=<hostname> -Dwildfly.port=<port> -Dwildfly.username=<username> wildfly.password=<password>
+
+
       Note : le fichier de configuration config.properties contient deux URLs déclarées chez FranceConnect :
              - l'URL de callback (paramètres net.fenyo.franceconnect.config.oidc.redirecturi de config.properties)
              - l'URL de redirection de déconnexion (paramètre net.fenyo.franceconnect.config.oidc.afterlogouturi de config.properties)
@@ -83,6 +90,7 @@
         <maven-war-plugin-version>2.6</maven-war-plugin-version>
         <maven-resources-plugin-version>2.7</maven-resources-plugin-version>
         <jetty-maven-plugin-version>9.3.8.v20160314</jetty-maven-plugin-version>
+        <version.wildfly.maven.plugin>1.0.2.Final</version.wildfly.maven.plugin>
 	</properties>
 
     <!-- déclaration des dépendances avec MITREid Connect, les composants Spring, les frameworks de traces et les API servlet -->
@@ -435,5 +443,27 @@
             </plugins>
         </pluginManagement>
     </build>
+
+  <profiles>
+    <profile>
+      <id>wildfly</id>
+      <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.0.0</version>
+              <configuration>
+                <packagingExcludes>WEB-INF/lib/log4j*.jar,WEB-INF/lib/slf4j*.jar,WEB-INF/lib/jcl-over-slf4j-*.jar,WEB-INF/lib/commons-logging-*.jar,WEB-INF/classes/log4j*.xml</packagingExcludes>
+              </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.wildfly.plugins</groupId>
+              <artifactId>wildfly-maven-plugin</artifactId>
+              <version>${version.wildfly.maven.plugin}</version>
+            </plugin>
+          </plugins>
+        </build>
+    </profile>
+  </profiles>
 
 </project>
