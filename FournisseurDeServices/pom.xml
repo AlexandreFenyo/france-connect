@@ -13,6 +13,8 @@
       Démarrage dans un Jetty embarqué :
       - Démarrage avec Jetty sur un serveur avec accès direct à Internet :
         mvn clean jetty:run
+        Attendre le message '[INFO] Started Jetty Server', signifiant le lancement complet de Jetty, avant de passer à l'étape suivante.
+        Lancer alors un navigateur sur http://127.0.0.1/
       - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet :
         mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run 
         (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web).
@@ -22,17 +24,21 @@
       Démarrage dans un Tomcat embarqué :
       - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
         mvn clean tomcat7:run
+        Attendre le message 'INFOS: Starting ProtocolHandler ["http-bio-80"]', signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante.
+	Lancer alors un navigateur sur http://127.0.0.1/
       - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet :
         mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run 
-        Attendre le message 'INFOS: Starting ProtocolHandler ["http-bio-80"]', signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante.
         (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web)
+        Attendre le message 'INFOS: Starting ProtocolHandler ["http-bio-80"]', signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante.
         Lancer alors un navigateur sur http://127.0.0.1/
 
-      Déployer dans un Wildfly local / distant :
-      - Déploiement vers un Wildfly local avec une configuration normale :
+      Déployer dans un WildFly local / distant :
+      - Déploiement vers un WildFly local avec une configuration normale :
         mvn clean package wildfly:deploy -P wildfly
-      - Déployement vers un Wildfly distant :
+	Lancer alors un navigateur sur http://127.0.0.1/
+      - Déploiement vers un WildFly distant :
         mvn clean package wildfly:deploy -P wildfly -Dwildfly.hostname=<hostname> -Dwildfly.port=<port> -Dwildfly.username=<username> wildfly.password=<password>
+	Lancer alors un navigateur sur http://127.0.0.1/
 
       Note : le fichier de configuration config.properties contient deux URLs déclarées chez FranceConnect :
              - l'URL de callback (paramètres net.fenyo.franceconnect.config.oidc.redirecturi de config.properties)
