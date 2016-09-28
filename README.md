@@ -946,7 +946,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 
 - Déploiement vers un serveur WildFly local :
   - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
-  - déployer l'application: `mvn clean package wildfly:deploy -P wildfly`
+  - déployer l'application : `mvn clean package wildfly:deploy -P wildfly`
   - lancer alors un navigateur sur http://127.0.0.1/
 
 - Déploiement vers un serveur WildFly distant :
