@@ -22,6 +22,7 @@ limitations under the License.
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [**ʞif** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect](#ʞif--kit-dintégration-à-franceconnect)
+  - [Contributeurs](#contributeurs)
   - [Introduction](#introduction)
   - [Configuration](#configuration)
     - [Fichiers de configuration](#fichiers-de-configuration)
@@ -61,6 +62,7 @@ limitations under the License.
     - [Fichier pom pour Maven](#fichier-pom-pour-maven)
     - [Démarrage dans un serveur Tomcat embarqué](#d%C3%A9marrage-dans-un-serveur-tomcat-embarqu%C3%A9)
     - [Démarrage dans un serveur Jetty embarqué](#d%C3%A9marrage-dans-un-serveur-jetty-embarqu%C3%A9)
+    - [Déploiement dans un serveur WildFly](#d%C3%A9ploiement-dans-un-serveur-wildfly)
     - [Démarrage dans Eclipse](#d%C3%A9marrage-dans-eclipse)
     - [Points d'attention avec Eclipse](#points-dattention-avec-eclipse)
     - [Goals Maven](#goals-maven)
@@ -93,6 +95,12 @@ limitations under the License.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # **ʞif** : <b>K</b>it d'<b>I</b>ntégration à <b>F</b>ranceConnect
+
+## Contributeurs
+
+- [Alexandre Fenyo](https://fenyo.net)
+- [Greg A.](https://github.com/gautric)
+- [Laurent Barbareau](https://github.com/LaurentBarbareau)
 
 ## Introduction
 
@@ -906,11 +914,12 @@ DANS src/main/webapp/META-INF/config.properties
 ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
 ````
 
-
 ### Démarrage dans un serveur Tomcat embarqué
 
 - Démarrage avec Tomcat sur un serveur avec accès direct à Internet :
-  `mvn clean tomcat7:run`
+  - `mvn clean tomcat7:run`
+  - attendre le message `INFOS: Starting ProtocolHandler ["http-bio-80"]`, signifiant le lancement complet de Tomcat, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
   
 - Démarrage avec Tomcat sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean tomcat7:run`
@@ -921,14 +930,29 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 
 ### Démarrage dans un serveur Jetty embarqué
 
-- Démarrage avec Jetty sur un serveur avec accès direct à Internet : `mvn clean jetty:run`
+- Démarrage avec Jetty sur un serveur avec accès direct à Internet :
+  - `mvn clean jetty:run`
+  - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
+  - lancer alors un navigateur sur http://127.0.0.1/
 
 - Démarrage avec Jetty sur un serveur nécessitant le passage par un proxy web pour accéder à Internet (remplacer PROXYHOST et PROXYPORT par les valeurs correspondant au proxy web) :
   - `mvn -Dhttps.proxyHost=PROXYHOST -Dhttps.proxyPort=PROXYPORT clean jetty:run`
   - attendre le message `[INFO] Started Jetty Server`, signifiant le lancement complet de Jetty, avant de passer à l'étape suivante
-- lancer alors un navigateur sur http://127.0.0.1/
+  - lancer alors un navigateur sur http://127.0.0.1/
 
 - Pour modifier le port local par défaut (80), au cas où il y aurait par exemple déjà un serveur sur ce port, ou au cas où l'utilisateur courant n'aurait pas les droits pour écouter sur un port privilégié (port dont le numéro est strictement inférieur à 1024), rajoutez l'option `-Dnet.fenyo.franceconnect.config.listen.port=PORT` sur la ligne de commande mvn (remplacer PORT par la valeur du port TCP local d'écoute souhaité).
+
+### Déploiement dans un serveur WildFly
+
+- Déploiement vers un serveur WildFly local :
+  - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
+  - déployer l'application : `mvn clean package wildfly:deploy -P wildfly`
+  - lancer alors un navigateur sur http://127.0.0.1/
+
+- Déploiement vers un serveur WildFly distant :
+  - démarrer WildFly (configuration par défaut pour l'API endpoint http : port TCP/9990)
+  - déployer l'application : `mvn clean package wildfly:deploy -P wildfly -Dwildfly.hostname=HOSTNAME -Dwildfly.port=PORT -Dwildfly.username=USERNAME wildfly.password=PASSWORD`
+  - lancer alors un navigateur sur http://HOSTNAME/
 
 ### Démarrage dans Eclipse
 
