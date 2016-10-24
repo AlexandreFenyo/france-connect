@@ -85,6 +85,7 @@ limitations under the License.
     - [Traitement d'une réponse](#traitement-dune-r%C3%A9ponse)
     - [Vérifications de sécurité](#v%C3%A9rifications-de-s%C3%A9curit%C3%A9)
     - [Sources de l'application exemple](#sources-de-lapplication-exemple)
+    - [Bibliothèque Java](#sources-de-lapplication-exemple)
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
@@ -1411,6 +1412,10 @@ echo
 echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
+
+### Bibliothèque Java
+
+La bibliothèque Java libfc-1_0.jar réalise en Java les opérations de chiffrement et de déchiffrement nécessaires pour communiquer avec KIF-IdP, ainsi que le parsing des réponses JSON et les vérifications de sécurité. Elle est documentée et inclut un exemple. Elle est disponible sur https://github.com/AlexandreFenyo/kif-idp-client
 
 ### Configuration
 
