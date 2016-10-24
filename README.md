@@ -85,7 +85,7 @@ limitations under the License.
     - [Traitement d'une réponse](#traitement-dune-r%C3%A9ponse)
     - [Vérifications de sécurité](#v%C3%A9rifications-de-s%C3%A9curit%C3%A9)
     - [Sources de l'application exemple](#sources-de-lapplication-exemple)
-    - [Bibliothèque Java](#sources-de-lapplication-exemple)
+    - [Bibliothèque Java](#bibliothèque-java)
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
