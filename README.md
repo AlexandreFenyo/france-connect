@@ -903,9 +903,9 @@ Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traite
 
 - il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCECONNECT - ERREUR DE CONFIGURATION
+  FRANCECONNECT - ERREUR DE CONFIGURATION
 
-CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
+  CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
   ````
 
 - il vérifie explicitement qu'il est interprété dans un environnement Java 1.7 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
