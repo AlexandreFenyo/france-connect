@@ -85,6 +85,7 @@ limitations under the License.
     - [Traitement d'une réponse](#traitement-dune-r%C3%A9ponse)
     - [Vérifications de sécurité](#v%C3%A9rifications-de-s%C3%A9curit%C3%A9)
     - [Sources de l'application exemple](#sources-de-lapplication-exemple)
+    - [Bibliothèque Java](#bibliothèque-java)
     - [Configuration](#configuration-1)
     - [Traces](#traces)
     - [Déploiement](#d%C3%A9ploiement-1)
@@ -119,7 +120,7 @@ KIF est donc à la fois un POC (*proof of concept*) de fournisseur de services F
 
 L'implémentation de la fonction POC est dénommée **KIF-SP** (*Service Provider*) et l'implémentation de la fonction relai est dénommée **KIF-IdP** (*Identity Provider*).
 
-**Ce produit est accessible en ligne, en IPv4 et en IPv6, afin de vous permettre de le tester sans avoir à l'installer au préalable :**
+**Ce produit est accessible en ligne, hébergé sur un serveur FreeBSD raccordé en IPv4 et en IPv6 à Internet, afin de vous permettre de le tester sans avoir à l'installer au préalable :**
 - KIF-SP : https://fenyo.net/kif-sp
 - KIF-IdP : https://fenyo.net/fc-online
 
@@ -133,10 +134,15 @@ Enfin, un [Bouchon FranceConnect](#bouchon-franceconnect), fourni sous la forme 
 
 Les [performances de KIF](#dimensionnement) permettent d'envisager facilement un déploiement à grande échelle : en effet, KIF peut réaliser 2 millions d'authentifications quotidiennes avec un seul cœur de processeur Xeon E5-2666 v3. En déportant la charge de chiffrement SSL/TLS sur un accélérateur matériel, KIF est capable d'atteindre 6,5 millions d'authentifications quotidiennes, toujours sur un seul cœur de processeur Xeon E5-2666 v3.
 
-Le déploiement de KIF a été testé sur les serveurs d'application suivants :
+Le déploiement de KIF a été testé avec succès sur les serveurs d'application suivants :
 - [Tomcat](#démarrage-dans-un-serveur-tomcat-embarqué)
 - [Jetty](#démarrage-dans-un-serveur-jetty-embarqué)
 - [WildFly](#déploiement-dans-un-serveur-wildfly)
+
+Le déploiement de KIF a été testé avec succès sur les environnements d'exploitation suivants :
+- Linux (Ubuntu, SLES, OpenSuSE, Amazon Linux)
+- Docker
+- FreeBSD
 
 ## Configuration
 
@@ -707,7 +713,7 @@ Les pages jsp à accès direct sans passer par un contrôleur n'ont pas accès �
 
 ### Contrôleur et vues
 
-Le contrôleur a accès à l'identité de l'utilisateur. Les vues, c'est-à-dire les pages jsp accessible après passage par le contrôleur, ont aussi accès au données d'identité de l'utilisateur. 
+Le contrôleur a accès à l'identité de l'utilisateur. Les vues, c'est-à-dire les pages jsp accessible après passage par le contrôleur, ont aussi accès aux données d'identité de l'utilisateur. 
 
 Pour créer un mapping de requête au sein du contrôleur, il faut modifier la classe net.fenyo.franceconnect.WebController en y ajoutant une méthode spécifique. Le mapping est configuré par une annotation `@RequestMapping`, par exemple : `@RequestMapping(value = "/user", method = RequestMethod.GET)`. Si la requête nécessite une authentification, il faut le signaler par l'annotation suivante : `@PreAuthorize("isFullyAuthenticated()")`. Pour tracer cette requête, la méthode spécifique doit débuter par une invocation de la méthode statique `log` de la classe `Tools`, par exemple : `Tools.log("accès à /user", logger);`. La variable ` logger` est une variable d'instance du contrôleur.
 
@@ -897,27 +903,27 @@ Le fichier `pom.xml` effectue plusieurs vérifications avant d'entamer un traite
 
 - il vérifie explicitement qu'il est interprété avec Maven 3.0.4 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCECONNECT - ERREUR DE CONFIGURATION
-
-CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
-````
+  FRANCECONNECT - ERREUR DE CONFIGURATION
+  
+  CE PACKAGE NECESSITE L'UTILISATION DE MAVEN 3.0.4 OU VERSION SUPERIEURE.
+  ````
 
 - il vérifie explicitement qu'il est interprété dans un environnement Java 1.7 ou version supérieure et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCECONNECT - ERREUR DE VERSION MAVEN
-
-CE PACKAGE NECESSITE L'UTILISATION D'UN JDK JAVA VERSION 1.7 AU MINIMUM.
-````
+  FRANCECONNECT - ERREUR DE VERSION MAVEN
+  
+  CE PACKAGE NECESSITE L'UTILISATION D'UN JDK JAVA VERSION 1.7 AU MINIMUM.
+  ````
 
 - il vérifie explicitement que le fichier de paramétrage a été créé et dans le cas contraire, il interrompt le traitement Maven avec le message d'erreur suivant :
   ````
-FRANCECONNECT - ERREUR DE CONFIGURATION
-
-AVANT DE COMMENCER A UTILISER CE PACKAGE,
-VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-template
-DANS src/main/webapp/META-INF/config.properties
-ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
-````
+  FRANCECONNECT - ERREUR DE CONFIGURATION
+  
+  AVANT DE COMMENCER A UTILISER CE PACKAGE,
+  VOUS DEVEZ RECOPIER LE FICHIER src/main/webapp/META-INF/config.properties-template
+  DANS src/main/webapp/META-INF/config.properties
+  ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECONNECT.
+  ````
 
 ### Démarrage dans un serveur Tomcat embarqué
 
@@ -970,7 +976,7 @@ ET Y METTRE A JOUR LES VALEURS REELLES DE VOS IDENTIFIANTS FOURNISSEUR FRANCECON
 ### Points d'attention avec Eclipse
 
 > :warning:  
-> KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans '[Eclipse](https://www.eclipse.org/downloads/), comme ceci :
+> KIF est configuré par défaut pour se déployer dans le contexte racine (`"/"`) du serveur d'application et non pas dans un contexte correspondant à un chemin intermédiaire comme `"/poc-franceconnect"`.  [Eclipse](https://www.eclipse.org/downloads/) peut être amené à modifier le chemin de déploiement de l'application, ce qui empêche son bon fonctionnement car certaines des URL déclarées dans le fichier de configuration ne sont plus valables. Dans ce cas, il faut soit réécrire ces URL, soit repositionner correctement le chemin dans [Eclipse](https://www.eclipse.org/downloads/), comme ceci :
 > - soit interrompre Eclipse et modifier le fichier `FournisseurDeServices/.settings/org.eclipse.wst.common.component`pour que la ligne `<property name="context-root" value=""/>` contienne bien un attribut `value` vide (c'est cet attribut qui est parfois modifié par Eclipse). Puis redémarrer Eclipse.
 > 
 > - soit sélectionner *Show View* dans le menu déroulant Window puis *Servers*. Dans la vue Servers" qui s'affiche, double-cliquer sur le serveur (ex.: `Tomcat v8.0 Server at localhost [Stopped, Synchronized]`), la configuration du serveur s'affiche alors et l'onglet sélectionné par défaut est nommé Overview, changer pour l'onglet Modules et vérifier que la colonne Path du tableau des Web Modules chargés est vide. Si ce n'est pas le cas, cliquer sur la ligne correspondante et sur le bouton `Edit...` pour effacer le contenu du champ Path. Sauver la nouvelle configuration (entrée *Save* du menu Fichier, ou raccourci clavier `Ctrl-S`) et redémarrer le serveur.
@@ -1189,9 +1195,9 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
   Voici un exemple de cette représentation textuelle :
   ````shell
-% hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
-% echo $HEXA
-16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+  % hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
+  % echo $HEXA
+  16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
   ````
 
 - L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
@@ -1199,7 +1205,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
   Voici un exemple d'une telle URL :
   ````url
   https://fenyo.net/fc/msg=16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
-   ````
+  ````
  
 - L'application redirige le navigateur de l'utilisateur vers cette URL de requête.
 
@@ -1211,7 +1217,7 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 
   Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
   ````
-16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
+  16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
   ````
 
 - cette chaîne de caractères, qui représente en hexadécimal une chaîne d'octets, est transformée en chaîne d'octets,
@@ -1222,7 +1228,7 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 
   Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
   ````
-https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
+  https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
   ````
 
 - le message en clair est une URL de callback vers l'application, contenant notamment les paramètres `state` et `nonce` , KIF-IdP vérifie que le début de cette URL correspond au contenu du paramètre de configuration `net.fenyo.franceconnect.config.idp.redirecturi`, afin de s'assurer que le message provient bien de l'application,
@@ -1281,14 +1287,14 @@ https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f
 
   Dans notre exemple, cela correspond à la représentation suivante :
   ````
-b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+  b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
   ````
 
 - l'URL de callback vers l'application est enrichie d'un paramètre `info` contenant la représentation textuelle du message chiffré,
 
   Dans notre exemple, cela correspond à l'URL suivante :
   ````url
-https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2&info=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
+  https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2&info=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
   ````
 
 - KIF-IdP redirige alors le navigateur de l'utilisateur vers cette URL de callback.
@@ -1406,6 +1412,10 @@ echo
 echo
 echo '<a href="http://127.0.0.1/j_spring_security_logout">cliquez ici</a>'
 ````
+
+### Bibliothèque Java
+
+La bibliothèque Java libfc-1_0.jar réalise en Java les opérations de chiffrement et de déchiffrement nécessaires pour communiquer avec KIF-IdP, ainsi que le parsing des réponses JSON et les vérifications de sécurité. Elle est documentée et inclut un exemple. Elle est disponible sur https://github.com/AlexandreFenyo/kif-idp-client
 
 ### Configuration
 
