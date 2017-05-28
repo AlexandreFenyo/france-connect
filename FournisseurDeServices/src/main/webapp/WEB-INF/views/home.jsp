@@ -66,8 +66,12 @@
       Pour vous authentifier sur ce service via France Connect et accéder à la page de fourniture du service, veuillez cliquer sur le lien suivant :<br/> 
       <a href="user"><img alt="France Connect" src="static/FCboutons-10.png" /></a>
 <p/>
-Pour vous connecter, il faudra choisir "impots.gouv.fr" et utiliser l'identifiant suivant :<br/>
-- numéro fiscal : 123<br/>
+Pour vous connecter, il faudra choisir "impots.gouv.fr" ou DGFIP et utiliser l'identifiant suivant :<br/>
+- numéro fiscal : 1234567891011<br/>
+- mot de passe : 123
+<p/>
+ou choisir AMELI et utiliser l'identifiant suivant :<br/>
+- numéro de sécurité sociale : 18712345678912345<br/>
 - mot de passe : 123
 <p/>
     </security:authorize>
