@@ -19,6 +19,7 @@ package net.fenyo.franceconnect;
 // Bean de stockage des paramètres de configuration
 public class OidcAttributes {
 	private Boolean debug;
+	private String tlsVersion;
 	private String startlogouturi;
 	private String afterlogouturi;
 	private String fcbuttonuri;
@@ -33,6 +34,15 @@ public class OidcAttributes {
 
 	public void setDebug(final Boolean debug) {
 		this.debug = debug;
+	}
+
+    	public String getTlsVersion() {
+	    return tlsVersion;
+	}
+
+        public void setTlsVersion(final String tlsVersion) {
+            this.tlsVersion = tlsVersion;
+	    System.setProperty("https.protocols", tlsVersion);
 	}
 
 	public String getStartlogouturi() {

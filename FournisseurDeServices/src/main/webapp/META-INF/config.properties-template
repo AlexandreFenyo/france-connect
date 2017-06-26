@@ -23,6 +23,9 @@ net.fenyo.franceconnect.config.oidc.debug=true
 net.fenyo.franceconnect.config.oidc.clientid=
 net.fenyo.franceconnect.config.oidc.clientsecret=
 
+# version SSL/TLS pour les web services vers FranceConnect
+net.fenyo.franceconnect.config.oidc.tlsversion=TLSv1.2
+
 # timeout de session
 # Sans activite pendant ce delai (en minutes), la session expire donc l'acces a une page protegee necessite une nouvelle authentification via FranceConnect.
 # Si cette valeur est inferieure a la duree de session de FranceConnect (30 minutes), la reconnexion pourra dans certains cas etre transparente.
