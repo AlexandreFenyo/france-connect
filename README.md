@@ -1548,6 +1548,7 @@ Le fournisseur de services qui se connecte au bouchon FranceConnect accessible s
 Voici le sous-ensemble de paramètres spécifiques à utiliser pour connecter KIF-SP ou KIF-IdP au bouchon FranceConnect accessible sur Internet :
 
 ````properties
+net.fenyo.franceconnect.config.oidc.tlsversion=TLSv1.2
 net.fenyo.franceconnect.config.oidc.clientid=1111111111111111111111111111111111111111111111111111111111111111
 net.fenyo.franceconnect.config.oidc.clientsecret=2222222222222222222222222222222222222222222222222222222222222222
 net.fenyo.franceconnect.config.oidc.issuer=http://fenyo.net/fc-idp
