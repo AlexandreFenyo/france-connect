@@ -189,6 +189,14 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
  - valeur par défaut : `true` (fonction KIF-SP activée)
  - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
 
+##### Version TLS supportée par FranceConnect
+
+- `net.fenyo.franceconnect.config.oidc.tlsversion`
+
+ - type : chaîne de caractères
+ - valeur par défaut : `TLSv1.2` (version minimale à partir de mi-2017)
+ - usage : version de TLS à utiliser pour l'invocation des endpoints FranceConnect.
+
 ##### Configuration des endpoints
 
 Quatre endpoints sont déclarés pour la configuration de la cinematique d'authentification via FranceConnect : trois endpoints fournis par FranceConnect et un endpoint pour le fournisseur de service.
@@ -315,6 +323,7 @@ Voici un exemple complet de fichier de paramétrage `config.properties` :
 ````properties
 # pour la fonction KIF-SP (POC de fournisseur de services)
 net.fenyo.franceconnect.config.oidc.debug=true
+net.fenyo.franceconnect.config.oidc.tlsversion=TLSv1.2
 net.fenyo.franceconnect.config.oidc.clientid=a100f6923ae93e2e5a8e2e2fb1d0c1e988d8c06c43a8ef838e64eeb932750405
 net.fenyo.franceconnect.config.oidc.clientsecret=f7cf2c8cf9863e009c3a520b5f380d9849adad21fe21c0e2782bc9cb25908a67
 net.fenyo.franceconnect.config.oidc.sessiontimeout=240
