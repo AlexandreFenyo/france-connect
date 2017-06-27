@@ -1263,7 +1263,7 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
       "country":"France"
     }
   }
-````
+  ````
 
   KIF-IdP enrichit donc ce message JSON comme ceci :
   ````json
@@ -1286,7 +1286,7 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
     "nonce":"2ff22cb9663990d009fd0dfe87d997c6",
     "state":"f894bb7061a7c2a2"
   }
-````
+  ````
 
 - le message en clair est transformé dans sa représentation binaire,
 
