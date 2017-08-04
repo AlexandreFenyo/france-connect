@@ -24,6 +24,7 @@ public class OidcAttributes {
 	private String afterlogouturi;
 	private String fcbuttonuri;
 	private Integer sessionTimeout;
+    private String idpMode;
 	private String idpKey;
 	private String idpIv;
 	private String idpRedirectUri;
@@ -76,6 +77,14 @@ public class OidcAttributes {
 	public void setSessionTimeout(final Integer sessionTimeout) {
 		this.sessionTimeout = sessionTimeout;
 	}
+
+    public String getIdpMode() {
+        return idpMode;
+    }
+
+    public void setIdpMode(final String idpMode) {
+        this.idpMode = idpMode;
+    }
 
 	public String getIdpKey() {
 		return idpKey;

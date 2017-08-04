@@ -48,6 +48,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -138,21 +139,38 @@ public class WebController {
 
 		final String KEY = oidcAttributes.getIdpKey();
 		final String IV = oidcAttributes.getIdpIv();
+        int length1;
+        int length2;
 
 		try {
 			final byte [] ciphertext = Hex.decodeHex(ciphertext_hex.toCharArray());
 		
 			// on décrypte la requête
-			final PaddedBufferedBlockCipher aes = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
-			final CipherParameters ivAndKey = new ParametersWithIV(new KeyParameter(Hex.decodeHex(KEY.toCharArray())), Hex.decodeHex(IV.toCharArray()));
-			aes.init(false, ivAndKey);
-			final int minSize = aes.getOutputSize(ciphertext.length);
-			final byte [] outBuf = new byte[minSize];
-			int length1 = aes.processBytes(ciphertext, 0, ciphertext.length, outBuf, 0);
-			int length2 = aes.doFinal(outBuf, length1);
-			final String plaintext = new String(outBuf, 0, length1 + length2, Charset.forName("UTF-8"));
-			URL url = new URL(plaintext);
-			Tools.log("accès à /idp: requête déchiffrée [" + url + "]", logger);
+			URL url;
+            final String plaintext;
+            PaddedBufferedBlockCipher aes = null;
+            GCMBlockCipher gcm = null;
+            final CipherParameters ivAndKey = new ParametersWithIV(new KeyParameter(Hex.decodeHex(KEY.toCharArray())), Hex.decodeHex(IV.toCharArray()));
+            
+            if (!oidcAttributes.getIdpMode().equals("AES-256-GCM")) {
+			    aes = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()), new PKCS7Padding());
+			    aes.init(false, ivAndKey);
+			    final int minSize = aes.getOutputSize(ciphertext.length);
+			    final byte [] outBuf = new byte[minSize];
+			    length1 = aes.processBytes(ciphertext, 0, ciphertext.length, outBuf, 0);
+			    length2 = aes.doFinal(outBuf, length1);
+	            plaintext = new String(outBuf, 0, length1 + length2, Charset.forName("UTF-8"));
+			} else {
+		        gcm = new GCMBlockCipher(new AESEngine());
+		        gcm.init(false, ivAndKey);
+		        final int minSize = gcm.getOutputSize(ciphertext.length);
+		        final byte [] outBuf = new byte[minSize];
+		        length1 = gcm.processBytes(ciphertext, 0, ciphertext.length, outBuf, 0);
+		        length2 = gcm.doFinal(outBuf, length1);
+	            plaintext = new String(outBuf, 0, length1 + length2, Charset.forName("UTF-8"));
+			}
+            url = new URL(plaintext);
+            Tools.log("accès à /idp: requête déchiffrée [" + url + "]", logger);
 
 			// on récupère les paramètres nonce et state de l'URL de callback
 			// s'ils sont présents plusieurs fois, on ne récupère que leurs premières instances respectives
@@ -201,12 +219,22 @@ public class WebController {
 			final byte [] info_plaintext = info.getBytes();
 
 			// on encrypte l'identité de l'utilisateur
-			aes.init(true, ivAndKey);
-			final byte [] inputBuf = new byte[aes.getOutputSize(info_plaintext.length)];
-			length1 = aes.processBytes(info_plaintext, 0, info_plaintext.length, inputBuf, 0);
-			length2 = aes.doFinal(inputBuf, length1);
-			final byte [] info_ciphertext = ArrayUtils.subarray(inputBuf, 0, length1 + length2);
-			final String info_ciphertext_hex = new String(Hex.encodeHex(info_ciphertext));
+			final String info_ciphertext_hex;
+            if (!oidcAttributes.getIdpMode().equals("AES-256-GCM")) {
+                aes.init(true, ivAndKey);
+                final byte [] inputBuf = new byte[aes.getOutputSize(info_plaintext.length)];
+                length1 = aes.processBytes(info_plaintext, 0, info_plaintext.length, inputBuf, 0);
+                length2 = aes.doFinal(inputBuf, length1);
+                final byte [] info_ciphertext = ArrayUtils.subarray(inputBuf, 0, length1 + length2);
+                info_ciphertext_hex = new String(Hex.encodeHex(info_ciphertext));
+            } else {
+                gcm.init(true, ivAndKey);
+                final byte [] inputBuf = new byte[gcm.getOutputSize(info_plaintext.length)];
+                length1 = gcm.processBytes(info_plaintext, 0, info_plaintext.length, inputBuf, 0);
+                length2 = gcm.doFinal(inputBuf, length1);
+                final byte [] info_ciphertext = ArrayUtils.subarray(inputBuf, 0, length1 + length2);
+                info_ciphertext_hex = new String(Hex.encodeHex(info_ciphertext));
+            }
 
 			// on construit l'URL vers laquelle on redirige le navigateur en ajoutant l'identité chiffrée à l'URL de callback indiquée dans la requête
 			final String return_url;

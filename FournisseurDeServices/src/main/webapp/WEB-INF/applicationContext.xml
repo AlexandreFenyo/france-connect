@@ -37,6 +37,7 @@
 	    <property name="afterlogouturi" value="${net.fenyo.franceconnect.config.oidc.afterlogouturi}" />
 	    <property name="fcbuttonuri" value="${net.fenyo.franceconnect.config.oidc.fcbuttonuri}" />
 	    <property name="sessionTimeout" value="${net.fenyo.franceconnect.config.oidc.sessiontimeout}" />
+	    <property name="idpMode" value="${net.fenyo.franceconnect.config.idp.mode}" />
 	    <property name="idpKey" value="${net.fenyo.franceconnect.config.idp.key}" />
 	    <property name="idpIv" value="${net.fenyo.franceconnect.config.idp.iv}" />
 	    <property name="idpRedirectUri" value="${net.fenyo.franceconnect.config.idp.redirecturi}" />

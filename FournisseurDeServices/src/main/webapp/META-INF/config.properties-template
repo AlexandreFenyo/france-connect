@@ -87,8 +87,11 @@ net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceco
 #################################################################################
 # Parametres exclusivement utilises pour la fonction IdP
 
-# On utilise un chiffrement symetrique de type AES-256-CBC avec padding PKCS#7
+# On utilise un chiffrement symetrique de type AES-256-CBC avec padding PKCS#7, ou AES-256-GCM avec tag de 16 octets
 
+# Mode de chiffrement (AES-256-GCM ou AES-256-CBC): le mode GCM integre une signature, il est donc fortement conseille
+# la valeur par defaut est AES-256-CBC pour compatibilite ascendante
+net.fenyo.franceconnect.config.idp.mode=AES-256-CBC
 # Cle AES 256 bits en hexadecimal (generation via openssl : "openssl rand -hex 32")
 net.fenyo.franceconnect.config.idp.key=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 # Vecteur d'initialisation 128 bits en hexadecimal (generation via openssl : "openssl rand -hex 16")
