@@ -2,15 +2,15 @@
 /* (c) Alexandre Fenyo - 2017 */
 
 // AES-256-GCM with libcrypto
-// gcc -Wall -lcrypto -o aes256gcm aes256gcm.c
+// gcc -Wall -lcrypto -o aes256gcm-decrypt aes256gcm-decrypt.c
 
 // tag is 16 bytes long
 // no AAD (Additional Associated Data)
-// output format: tag is written just after cipher text (see RFC-5116, sections 5.1 and 5.2)
+// input format: tag is read just after cipher text (see RFC-5116, sections 5.1 and 5.2)
 
 // KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 // IV=87b7225d16ea2ae1f41d0b13fdce9bba
-// echo -n 'Texte en clair' | ./aes256gcm $KEY $IV | od -t x1
+// cat ciphertext | ./aes256gcm-decrypt $KEY $IV
 
 #include <stdio.h>
 #include <string.h>
@@ -23,10 +23,13 @@ EVP_CIPHER_CTX *ctx = NULL;
 unsigned char *iv = NULL;
 unsigned char *buf_plain = NULL;
 unsigned char *buf_cipher = NULL;
+unsigned char *input = NULL;
 
 typedef enum { false, true } bool;
 
 void freeCrypto() {
+  if (input) free(input);
+
   if (ctx) {
     EVP_CIPHER_CTX_free(ctx);
     ctx = NULL;
@@ -69,12 +72,41 @@ unsigned char hex2uchar(char *hex) {
   return ret;
 }
 
+unsigned char *loadInput(int *plen) {
+  int len = 0;
+  unsigned char *buf = NULL;
+  unsigned char *old_buf;
+
+  do {
+    int c = fgetc(stdin);
+    if (c == EOF) break;
+    if (c < 0) {
+      perror("fgetc");
+      exit(1);
+    }
+    len++;
+    old_buf = buf;
+    buf = malloc(len);
+    if (buf < 0) {
+      perror("malloc");
+      exit(1);
+    }
+    if (len > 1) bcopy(old_buf, buf, len - 1);
+    buf[len - 1] = c;
+    if (old_buf) free(old_buf);
+  } while (1);
+
+  *plen = len;
+  return buf;
+}
+
 int main(int ac, char **av, char **ae)
 {
   const EVP_CIPHER *cipher;
   unsigned char key[32];
   int iv_len, len, i;
-  unsigned char tag[16];
+  unsigned char *current;
+  int input_len;
 
   if (ac != 3) {
     fprintf(stderr, "usage: %s KEY IV\n", av[0]);
@@ -83,6 +115,9 @@ int main(int ac, char **av, char **ae)
 
   char *key_txt = av[1];
   char *iv_txt = av[2];
+
+  input = loadInput(&input_len);
+  current = input;
 
   ERR_load_crypto_strings();
 
@@ -129,21 +164,20 @@ int main(int ac, char **av, char **ae)
 
   if (!(ctx = EVP_CIPHER_CTX_new())) handleCryptoError();
   if (!(cipher = EVP_aes_256_gcm())) handleCryptoError();
-  if (1 != EVP_EncryptInit_ex(ctx, cipher, NULL, NULL, NULL)) handleCryptoError();
+  if (1 != EVP_DecryptInit_ex(ctx, cipher, NULL, NULL, NULL)) handleCryptoError();
   if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, iv_len, NULL)) handleCryptoError();
-  if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv)) handleCryptoError();
+  if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv)) handleCryptoError();
+  if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, input + input_len - 16)) handleCryptoError();
 
   do {
-    size_t ret = fread(buf_plain, 1, iv_len, stdin);
-    if (!ret) {
-      if (ferror(stdin)) {
-	perror("fread");
-	break;
-      }
-      if (feof(stdin)) break;
-    }
+    int nbytes = input + input_len - 16 - current;
+    if (nbytes > iv_len) nbytes = iv_len;
+    if (!nbytes) break;
 
-    if (1 != EVP_EncryptUpdate(ctx, buf_cipher, &len, buf_plain, ret)) handleCryptoError();
+    bcopy(current, buf_plain, nbytes);
+    current += nbytes;
+
+    if (1 != EVP_DecryptUpdate(ctx, buf_cipher, &len, buf_plain, nbytes)) handleCryptoError();
 
     if (len && !fwrite(buf_cipher, len, 1, stdout)) {
       if (feof(stderr)) fprintf(stderr, "EOF on output stream\n");
@@ -154,17 +188,10 @@ int main(int ac, char **av, char **ae)
 
   } while (1);
 
-  if (1 != EVP_EncryptFinal_ex(ctx, buf_cipher, &len)) handleCryptoError();
+  // correct tag is checked here
+  if (EVP_DecryptFinal_ex(ctx, buf_cipher, &len) <= 0) handleCryptoError();
 
   if (len && !fwrite(buf_cipher, len, 1, stdout)) {
-    if (feof(stderr)) fprintf(stderr, "EOF on output stream\n");
-    else perror("fwrite");
-    freeCrypto();
-    return 1;
-  }
-
-  if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, sizeof tag, tag)) handleCryptoError();
-  if (!fwrite(tag, sizeof tag, 1, stdout)) {
     if (feof(stderr)) fprintf(stderr, "EOF on output stream\n");
     else perror("fwrite");
     freeCrypto();

@@ -29,9 +29,10 @@ void freeCrypto() {
 }
 
 void handle_crypto_error() {
-    ERR_print_errors_fp(stderr);
-    freeCrypto();
-    exit(1);
+  fprintf(stderr, "ERROR\n");
+  ERR_print_errors_fp(stderr);
+  freeCrypto();
+  exit(1);
 }
 
 bool isValidHexChar(char c) {
