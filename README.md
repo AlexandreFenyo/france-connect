@@ -439,7 +439,7 @@ Si l'état (paramètre `state` dans le protocole OpenID Connect) ne correspond p
 Si le code d'autorisation utilisé est faux ou a déjà été utilisé, alors l'échange suivant se produit avec FranceConnect :
 
 - le fournisseur de services émet la requête suivante au token endpoint de FranceConnect :
-  ````http
+````http
 POST /api/v1/token HTTP/1.1
 Accept: text/plain, application/json, application/*+json, */*
 Content-Type: application/x-www-form-urlencoded
@@ -448,11 +448,10 @@ Host: fcp.integ01.dev-franceconnect.fr
 Accept-Encoding: gzip,deflate
 
 grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
-  ````
+````
 
 - FranceConnect signale que le code est invalide :
-
-  ````http
+````http
 HTTP/1.1 400 Bad Request
 Server: nginx
 Date: Wed, 20 Jul 2016 17:09:24 GMT
@@ -461,7 +460,7 @@ Content-Length: 27
 Connection: keep-alive
 ETag: W/"1b-BTGn9J/xQNk2eWB3zdcJSA"
 Vary: Accept-Encoding
-  ````
+````
 
 - Une [trace d'erreur](#traces-derreurs) est générée avec le message suivant : `Authentication Failed: Unable to obtain Access Token: 400 Bad Request`. L'utilisateur est alors redirigé vers la page d'erreur définie par le paramètre de configuration `net.fenyo.franceconnect.config.oidc.authenticationerroruri`. Si la valeur de ce paramètre est une URL qui pointe vers `/authenticationError` sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par la valeur du paramètre `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
