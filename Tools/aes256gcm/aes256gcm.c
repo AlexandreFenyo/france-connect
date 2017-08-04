@@ -138,7 +138,8 @@ int main(int ac, char **av, char **ae)
     if (!ret) {
       if (ferror(stdin)) {
 	perror("fread");
-	break;
+        freeCrypto();
+        return 1;
       }
       if (feof(stdin)) break;
     }

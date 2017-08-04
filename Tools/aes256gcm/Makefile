@@ -1,6 +1,9 @@
 
 all: aes256gcm aes256gcm-decrypt
 
+clean:
+	rm -f aes256gcm aes256gcm-decrypt
+
 aes256gcm:
 	gcc -Wall -lcrypto -o aes256gcm aes256gcm.c
 
