@@ -450,9 +450,8 @@ Accept-Encoding: gzip,deflate
 grant_type=authorization_code&code=1660c04e70db2b5311e6a7ab80c19246c3b7f123354d48c05f40d2aac3fb6c7c&redirect_uri=http%3A%2F%2F127.0.0.1%2Fopenid_connect_login&client_id=CLIENT_ID&client_secret=SECRET_ID
   ````
 
-xxx
-
 - FranceConnect signale que le code est invalide :
+
   ````http
 HTTP/1.1 400 Bad Request
 Server: nginx
