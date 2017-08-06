@@ -1109,7 +1109,7 @@ Le chiffrement symétrique AES-256-CBC est donc caractérisé par :
 - en utilisant une taille de bloc de 128 bits (PKCS#7)
 - donc avec un vecteur d'initialisation de 128 bits
 
-Le chiffrement symétrique AES-256-GCM est donc caractérisé par :
+Le chiffrement symétrique AES-256-GCM est caractérisé par :
 - l'utilisation d'une clé secrête de 256 bits
 - avec un vecteur d'initialisation de 128 bits
 - en mode *stream cipher*
@@ -1146,7 +1146,7 @@ Texte en clair
 %
 ````
 
-Voici la ligne de commande à substituer à l'invocation d'openssl, pour déchiffren en utilisant le  mécanisme AES-256-GCM :
+Voici la ligne de commande à substituer à l'invocation d'openssl, pour déchiffrer en utilisant le  mécanisme AES-256-GCM :
 ````shell
 % aes256gcm-decrypt $KEY $IV < contenu-chiffre.bin
 ````
