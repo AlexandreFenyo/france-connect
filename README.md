@@ -292,9 +292,15 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
  - type : URL
  - valeur par défaut : http://127.0.0.1/authenticationError
- - usage :  URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+ - usage : URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Paramètres pour la fonction KIF-IdP (Identity Provider)
+
+- `net.fenyo.franceconnect.config.idp.key`
+
+  - type : clé AES 256 bits en hexadecimal (generation via openssl : `openssl rand -hex 32`)
+  - valeur par défaut : `a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224`
+  - usage :  secret partagé permettant le chiffrement entre l'application à intégrer et KIF-IdP.
 
 - `net.fenyo.franceconnect.config.idp.key`
 
