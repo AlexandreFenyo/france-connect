@@ -344,7 +344,7 @@ net.fenyo.franceconnect.config.oidc.authenticationerroruri=http://127.0.0.1/auth
 net.fenyo.franceconnect.config.oidc.startlogouturi=j_spring_security_logout
 net.fenyo.franceconnect.config.oidc.fcbuttonuri=https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
 # pour la fonction KIF-IdP (IdP relai)
-net.fenyo.franceconnect.config.idp.mode=AES-256-GCM
+net.fenyo.franceconnect.config.idp.mode=AES-256-CBC
 net.fenyo.franceconnect.config.idp.key=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 net.fenyo.franceconnect.config.idp.iv=87b7225d16ea2ae1f41d0b13fdce9bba
 net.fenyo.franceconnect.config.idp.redirecturi=https://fenyo.net/fc/identite.cgi?
@@ -1048,7 +1048,13 @@ KIF-IdP, inclus dans KIF, est une implémentation d'un fournisseur d'identité (
 
 L'application existante est le fournisseur de services, mais au lieu de s'appuyer directement sur FranceConnect en tant que fournisseur d'identité, elle s'appuie sur KIF-IdP. Celui-ci relaie les demandes d'autorisation ou de déconnexion vers FranceConnect. L'application existente est donc déchargée de l'implémentation du protocole OpenID Connect, de l'invocation de web-services REST chez FranceConnect et de la capacité à vérifier des signatures de jetons JWT.
 
-La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
+La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC (toujours proposé pour compatibilité ascendante), ou du mécanisme de chiffrement authentifié AES-256-GCM. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
+
+Le mécanisme AES-256-GCM est à préférer au mécanisme AES-256-CBC, les deux permettant un chiffrement fort mais seule le second intégrant un mécanisme de  signature des échanges. L'implémentation initiale de KIF-IdP proposait uniquement AES-256-CBC, et intégrait une signature propriétaire (intégration des paramètres `state` et `nonce` dans les réponses). L'implémentation courante propose, en plus du mécanisme initial, le mécanisme AES-256-GCM afin de disposer d'une signature standardisée, dont le niveau de sécurité est public.
+
+Ce mécanisme AES-256-GCM est utilisé avec les options suivantes :
+  - pas de données additionnelles (Additional Associated Data)
+  - tag de 16 octets, concaténé à la suite du contenu chiffré (conformément au RFC-5116, sections 5.1 and 5.2)
 
 ### Messages échangés
 
@@ -1093,20 +1099,34 @@ Elle est développée en langage shell, déployée via l'interface CGI sur un se
 
 ### Fonction de cryptographie
 
-La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits).
+La fonction de cryptographie sur laquelle s'appuient l'application et KIF-IdP pour chiffrer les messages qu'ils échangent est :
+- soit AES-256-CBC (avec padding PKCS#7 par des blocs de 128 bits)
+- soit AES-256-GCM (sans données additionnelles et avec un tag de 16 octets concaténé à la suite du  message chiffré)
 
-Ce chiffrement symétrique AES-256-CBC est donc caractérisé par :
+Le chiffrement symétrique AES-256-CBC est donc caractérisé par :
 - l'utilisation d'une clé secrête de 256 bits
 - avec un padding préalable de type CBC
 - en utilisant une taille de bloc de 128 bits (PKCS#7)
 - donc avec un vecteur d'initialisation de 128 bits
 
-On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide de cette fonction cryptographique :
+Le chiffrement symétrique AES-256-GCM est donc caractérisé par :
+- l'utilisation d'une clé secrête de 256 bits
+- avec un vecteur d'initialisation de 128 bits
+- en mode *stream cipher*
+- sans données additionnelles
+- avec un tag de 16 octets
+
+On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide de la fonction cryptographique AES-256-CBC :
 ````shell
 % KEY=a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224
 % IV=87b7225d16ea2ae1f41d0b13fdce9bba
 % echo Texte en clair | openssl aes-256-cbc -K $KEY -iv $IV > contenu-chiffre.bin
 %
+````
+
+A ce jour (août 2017), openssl ne supporte pas AES-256-GCM en ligne de commande. KIF est donc fourni avec deux programmes développés en C permettant de réaliser respectivement le chiffrement et le déchiffrement AES-256-GCM. Les sources de ces programmes sont situés dans le répertoire `Tools/aes256gcm`. Voici la ligne de commande à substituer à l'invocation d'openssl, pour utilise ce mécanisme de chiffrement :
+````shell
+% echo Texte en clair | aes256gcm $KEY $IV > contenu-chiffre.bin
 ````
 
 On peut constater, en utilisant od, que le message est bien devenu illisible :
@@ -1124,6 +1144,11 @@ Pour le déchiffrer, on peut aussi utiliser openssl, comme ceci :
 % openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin
 Texte en clair
 %
+````
+
+Voici la ligne de commande à substituer à l'invocation d'openssl, pour déchiffren en utilisant le  mécanisme AES-256-GCM :
+````shell
+% aes256gcm-decrypt $KEY $IV < contenu-chiffre.bin
 ````
 
 ### Représentation textuelle d'un message chiffré
@@ -1191,9 +1216,9 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 %
   ````
 
-- La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
+- La chaîne d'octets correspondant à la représentation binaire est chiffrée avec le mécanisme AES-256-CBC ou AES-256-GCM, en utilisant la clé secrète et le vecteur d'initialisation partagés entre l'application et KIF-IdP, afin de produire le message chiffré.
 
-  Voici un exemple de message chiffré de cette manière :
+  Voici un exemple de message chiffré de cette manière avec AES-256-CBC :
  ````shell
 % openssl aes-256-cbc -K $KEY -iv $IV < url.bin > contenu-chiffre.bin
 % od -x contenu-chiffre.bin
@@ -1207,9 +1232,14 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 %
   ````
 
+  Pour utiliser le mécanisme AES-256-GCM, il faut substituer le programme aes256gcm à openssl :
+ ````shell
+% aes256gcm $KEY $IV < url.bin > contenu-chiffre.bin
+  ````
+
 - La représentation textuelle du message chiffré est alors produite par le mécanisme indiqué précédemment.
 
-  Voici un exemple de cette représentation textuelle :
+  Voici un exemple de cette représentation textuelle (exemple avec AES-256-CBC) :
   ````shell
   % hexdump -v -e '1/1 "%02x"' < contenu-chiffre.bin | read HEXA
   % echo $HEXA
@@ -1218,7 +1248,7 @@ Lorsque l'application existante souhaite effectuer une authentification via Fran
 
 - L'application construit enfin une URL de requête pour le endpoint de KIF IdP, constituée de l'URL du endpoint dans laquelle un paramètre est inclus, nommé `msg` et contenant la représentation textuelle du message chiffré.
 
-  Voici un exemple d'une telle URL :
+  Voici un exemple d'une telle URL (exemple avec AES-256-CBC) :
   ````url
   https://fenyo.net/fc/msg=16610e03c5c406a59cbeb6fa493c768d0a5f9db91bc46d3c4f660007816b2f6115ea2c6e9e2433ff4e92293678416dbe46826ee6c4ff23daa0f18c4e111dd4f70f92acd7be3e6707fd03218bea4bce32abd1ba45adafc09d4030b28ae6742428
   ````
@@ -1238,11 +1268,11 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 
 - cette chaîne de caractères, qui représente en hexadécimal une chaîne d'octets, est transformée en chaîne d'octets,
 
-- cette chaîne est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit la représentation binaire d'un message en clair,
+- cette chaîne est déchiffrée avec AES-256-CBC ou AES-256-GCM, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit la représentation binaire d'un message en clair,
 
 - cette représentation binaire est transformée en chaîne de caractères à l'aide du charset US-ASCII, ce qui produit le message en clair,
 
-  Dans notre exemple, KIF-IdP retrouve donc la chaîne suivante :
+  Dans notre exemple (AES-256-CBC), KIF-IdP retrouve donc la chaîne suivante :
   ````
   https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2
   ````
@@ -1297,18 +1327,18 @@ Lorsque KIF-IdP reçoit une requête d'authentification, il engage la cinématiq
 
 - le message en clair est transformé dans sa représentation binaire,
 
-- la représentation binaire est chiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit le message chiffré,
+- la représentation binaire est chiffrée avec AES-256-CBC ou AES-256-GCM, en utilisant la clé secrète et le vecteur d'initialisation partagés avec l'application, ce qui produit le message chiffré,
 
 - le message chiffré est converti dans sa représentation textuelle,
 
-  Dans notre exemple, cela correspond à la représentation suivante :
+  Dans notre exemple, cela correspond à la représentation suivante (AES-256-CBC) :
   ````
   b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
   ````
 
 - l'URL de callback vers l'application est enrichie d'un paramètre `info` contenant la représentation textuelle du message chiffré,
 
-  Dans notre exemple, cela correspond à l'URL suivante :
+  Dans notre exemple, cela correspond à l'URL suivante (AES-256-CBC) :
   ````url
   https://fenyo.net/fc/identite.cgi?nonce=2ff22cb9663990d009fd0dfe87d997c6&state=f894bb7061a7c2a2&info=b74f31907bb2d9be0ab2750c29dc4839061af809ada6217b237690a577f96f76d3f0f8633b28c8125aa89225b47930929e1e406a09ab6488614c312d51ddc8d61f924e11d0b7df694abc197706b9ff4cbbc398c31368c36b54adb232e8bb99ff06f587f97c72c7936d39261126531ce5d0fde886f48f01a3e6b4737f054b9b24acac6d0b6aec2c9d73b2a3e8fa5aee68819e33a083496e712a103bd6adb0abc83521c6c4e1e2d0e28ccf4f35c06c9473e399c258ee98775cda1c83b0c07eaa1072ba513ad7c301376899bd65cb77edc736eb8fff9fd3b41400c1cc455c6dbc6b9f9c8dc464e3f2327ee143f6aa22ee8e3900aba48c7a04998329cfbfc4119788b4b4a61441f059c5c5aa3dfa45de2676ffdfa38c5735c6e6711b2e531c2e11c283fc9fae15922c0ecfdb347fc83832bb88f5bf6820462f9fb683a7b6b0fa0225e5ac13c786eacba05caee8ea1ae97dbd7c851b7fd55fb62a4a30619829c4987a5d723a2f817711fd31996ef95d56500c257315b800f16688926786387d953d7cedd3a1f4e59e689ba0d3ecf61bb1b15059bbdfb3e57b22879a7df34fdb2e41b9e5cf432919f9d3aa90e1c8c3ad78cf87d913735bfd35e8ba31c7013e1778c7670be5c173e7e93e31b3cf923b31c356d7e514ed355bf2b4af7196e2beaee84de254da8e407dae29bdc4071a26a4af9c7d
   ````
@@ -1341,13 +1371,19 @@ Voici un exemple de conversion avec Perl5 :
 %
 ````
 
-- La chaîne d'octets est déchiffrée avec AES-256-CBC, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair.
+- La chaîne d'octets est déchiffrée avec AES-256-CBC ou AES-256-GCM, en utilisant la clé secrète et le vecteur d'initialisation partagés avec KIF-IdP, ce qui produit la représentation binaire d'un message en clair.
 
-Pour déchiffrer cette chaîne, on peut utiliser openssl :
+Pour déchiffrer cette chaîne, on peut utiliser openssl dans le cas d'AES-256-CBC :
 ````
 % openssl aes-256-cbc -d -K $KEY -iv $IV < contenu-chiffre.bin > reponse.bin
 %
 ````
+
+Pour utiliser le mécanisme AES-256-GCM, il suffit de substituer le programme aes256gcm-decrypt à openssl :
+ ````shell
+% aes256gcm-decrypt $KEY $IV < contenu-chiffre.bin > reponse.bin
+  ````
+
 
 - Cette représentation binaire est transformée en chaîne de caractères à l'aide du charset UTF-8, ce qui produit le message en clair.
 
