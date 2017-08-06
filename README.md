@@ -185,17 +185,17 @@ La configuration des traces consiste à adapter le fichier `log4j.xml` (format s
 
 - `net.fenyo.franceconnect.config.oidc.debug`
 
- - type : booléen
- - valeur par défaut : `true` (fonction KIF-SP activée)
- - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
+  - type : booléen
+  - valeur par défaut : `true` (fonction KIF-SP activée)
+  - usage : activation/désactivation de la fonction KIF-SP (POC de fournisseur de service). Positionner la valeur `false` pour le passage en production de la fonction KIF-IdP (IdP relai), afin de désactiver l'exemple de fournisseur de services.
 
 ##### Version TLS supportée par FranceConnect
 
 - `net.fenyo.franceconnect.config.oidc.tlsversion`
 
- - type : chaîne de caractères
- - valeur par défaut : `TLSv1.2` (version minimale à partir de mi-2017)
- - usage : version de TLS à utiliser pour l'invocation des endpoints FranceConnect.
+  - type : chaîne de caractères
+  - valeur par défaut : `TLSv1.2` (version minimale à partir de mi-2017)
+  - usage : version de TLS à utiliser pour l'invocation des endpoints FranceConnect.
 
 ##### Configuration des endpoints
 
@@ -203,81 +203,81 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 - `net.fenyo.franceconnect.config.oidc.authorizationendpointuri`
 
- - type : URL
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : authorization endpoint de FranceConnect, qui réalise l'authentification de l'utilisateur en le renvoyant vers un fournisseur d'identité FranceConnect et qui fournit en retour un authorization code au fournisseur de services.
+  - type : URL
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/authorize (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+  - usage : authorization endpoint de FranceConnect, qui réalise l'authentification de l'utilisateur en le renvoyant vers un fournisseur d'identité FranceConnect et qui fournit en retour un authorization code au fournisseur de services.
 
 - `net.fenyo.franceconnect.config.oidc.tokenendpointuri`
 
- - type : URL
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
+  - type : URL
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/token (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+  - usage : token endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange du code d'autorisation, un id token JWT et un access token. La signature de l'id token par FranceConnect est vérifiée par le fournisseur de service. Si cette signature est invalide ou si d'autres éléments de sécurité contenus dans ce jeton sont incorrects, l'authentification est rejetée et un message d'erreur du type suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: ...]`. Dans ce message d'erreur, la chaîne `...` est remplacée par la cause précise du rejet.
 
 - `net.fenyo.franceconnect.config.oidc.userinfoendpointuri`
 
- - type : URL
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
+  - type : URL
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/userinfo (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+  - usage : userinfo endpoint de FranceConnect, contacté directement par le fournisseur de services (invocation d'un web-service REST, donc sans passer par le navigateur de l'utilisateur) pour récupérer, en échange de l'access token, l'identité pivot de l'utilisateur (userinfo) au format JSON.
 
 - `net.fenyo.franceconnect.config.oidc.redirecturi`
 
- - type : URL
- - valeur par défaut : http://127.0.0.1/openid_connect_login
- - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MITREid Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MITREid Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
+  - type : URL
+  - valeur par défaut : http://127.0.0.1/openid_connect_login
+  - usage : URL du endpoint de callback du fournisseur de services. URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou pas la déconnexion de FranceConnect. **Le choix de la chaîne `openid_connect_login` est imposé par l'implementation MITREid Connect, elle ne doit donc pas être substituée par une autre chaîne**. Cette URL est le endpoint fournisseur de services de MITREid Connect, lui permettant de recevoir le code d'autorisation et d'enchaîner alors la cinématique de récuperation des jetons et de l'identité de l'utilisateur. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de callback".**
 
 ##### Configuration de la relation de confiance mutuelle avec FranceConnect
 
 - `net.fenyo.franceconnect.config.oidc.clientid`
 
- - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeur par défaut : aucune
- - usage : client id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Cet identifiant est public.
+  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+  - valeur par défaut : aucune
+  - usage : client id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Cet identifiant est public.
 
 - `net.fenyo.franceconnect.config.oidc.clientsecret`
 
- - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
- - valeur par défaut : aucune
- - usage : secret id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
+  - type : chaîne de caractères (représentation hexadécimale d'un nombre de 256 bits)
+  - valeur par défaut : aucune
+  - usage : secret id du fournisseur de services, attribué par FranceConnect sur le [portail d'inscription](https://franceconnect.gouv.fr/inscription). Ce secret partagé ne doit pas être divulgué. Pour cette raison, les droits d'accès au fichier `config.properties` doivent être configurés de telle façon que seul le conteneur d'application puisse accéder à son contenu.
 
 - `net.fenyo.franceconnect.config.oidc.issuer`
 
- - type : chaîne de caractères
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
- - usage : identifiant de l'émetteur des id token JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
+  - type : chaîne de caractères
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+  - usage : identifiant de l'émetteur des id token JWT, attendu dans le claim (au sens 'revendication') *iss* de ces jetons.  Si le claim reçu ne correspond pas à la valeur attendue, l'authentification est rejetée et le message d'erreur suivant est ajouté dans le fichier de traces : `authentication failure exception: [org.springframework.security.authentication.AuthenticationServiceException: Issuers do not match]`.
 
 - `net.fenyo.franceconnect.config.oidc.fcbuttonuri`
 
- - type : URL
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
- - usage :  URL du code JavaScript du bouton FranceConnect.
+  - type : URL
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/js/franceconnect.js
+  - usage :  URL du code JavaScript du bouton FranceConnect.
 
 ##### Configuration du mécanisme de déconnexion
 
 - `net.fenyo.franceconnect.config.oidc.logouturi`
 
- - type : URL
- - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
+  - type : URL
+  - valeur par défaut : https://fcp.integ01.dev-franceconnect.fr/api/v1/logout (valeur utilisée par la plate-forme de développement/intégration de FranceConnect)
  - usage : URL de déconnexion globale (*global logout*). Quand l'utilisateur souhaite se déconnecter du fournisseur de service, ce dernier invalide sa session puis le redirige vers cette URL chez FranceConnect, afin qu'il puisse aussi choisir de se déconnecter de FranceConnect. Il est ensuite redirigé vers le portail du fournisseur de services. Il est à noter que si l'utilisateur fait le choix de se connecter de FranceConnect, il ne sera pas pour autant déconnecté des autres fournisseurs de services auxquels il pourrait être simultanément connecté (hormis le fournisseur de services par lequel il a initié la demande de déconnexion). Ce mécanisme correspond donc un "global logout" partiel.
 
 - `net.fenyo.franceconnect.config.oidc.afterlogouturi`
 
- - type : URL
- - valeur par défaut : http://127.0.0.1/
- - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou non la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
+  - type : URL
+  - valeur par défaut : http://127.0.0.1/
+  - usage : URL où l'utilisateur est renvoyé après déconnexion du service, qu'il ait accepté ou non la déconnexion de FranceConnect. Cette URL ne pointe pas forcément sur le fournisseur de services, elle peut potentiellement correspondre au site institutionnel associé. Cette URI est aussi utilisée en cas d'erreur d'authentification, pour proposer à l'utilisateur de retourner au site institutionnel. **Cette URL doit être déclarée par le fournisseur de services sur le [portail de configuration FranceConnect](https://franceconnect.gouv.fr/client/login) dans la section "Urls de redirection de déconnexion".**
 
 - `net.fenyo.franceconnect.config.oidc.startlogouturi`
 
- - type : URL
- - valeur par défaut : j_spring_security_logout
- - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de déconnexion.
+  - type : URL
+  - valeur par défaut : j_spring_security_logout
+  - usage :  URL de logout utilisée par le bouton FranceConnect ou le fournisseur de services pour initier la séquence de déconnexion.
 
 ##### Configuration du comportement du fournisseur de services
 
 - `net.fenyo.franceconnect.config.oidc.sessiontimeout`
 
- - type : nombre (minutes)
- - valeur par défaut : 240 minutes (4 heures)
- - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
+  - type : nombre (minutes)
+  - valeur par défaut : 240 minutes (4 heures)
+  - usage : sans activité pendant ce délai, la session expire donc l'accès à une page protégée nécessite une nouvelle authentification via FranceConnect. Si cette valeur est inférieure à la durée de session de FranceConnect (30 minutes), la reconnexion pourra être transparente dans certains cas.  
    Exemple de séquence de reconnexion transparente :
     - `sessiontimeout` vaut 10 minutes
     - l'utilisateur se connecte au fournisseur de services et s'authentifie via FranceConnect à t0
@@ -290,11 +290,17 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
 
 - `net.fenyo.franceconnect.config.oidc.authenticationerroruri`
 
- - type : URL
- - valeur par défaut : http://127.0.0.1/authenticationError
- - usage : URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
+  - type : URL
+  - valeur par défaut : http://127.0.0.1/authenticationError
+  - usage : URL ou l'utilisateur est renvoyé en cas d'erreur d'authentification. Si cette URL pointe vers /authenticationError sur le fournisseur de service, l'utilisateur se verra alors proposer de continuer sa navigation sur l'URL définie par `net.fenyo.franceconnect.config.oidc.afterlogouturi`.
 
 #### Paramètres pour la fonction KIF-IdP (Identity Provider)
+
+- `net.fenyo.franceconnect.config.idp.mode`
+
+  - type : chaîne de caractères
+  - valeur par défaut : `AES-256-CBC` pour compatibilité ascendante. La valeur alternative, `AES-256-GCM`, est à privilégier.
+  - usage : type de chiffrement entre l'application à intégrer et KIF-IdP.
 
 - `net.fenyo.franceconnect.config.idp.key`
 
@@ -302,23 +308,17 @@ Quatre endpoints sont déclarés pour la configuration de la cinematique d'authe
   - valeur par défaut : `a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224`
   - usage :  secret partagé permettant le chiffrement entre l'application à intégrer et KIF-IdP.
 
-- `net.fenyo.franceconnect.config.idp.key`
-
- - type : clé AES 256 bits en hexadecimal (generation via openssl : `openssl rand -hex 32`)
- - valeur par défaut : `a6a7ee7abe681c9c4cede8e3366a9ded96b92668ea5e26a31a4b0856341ed224`
- - usage :  secret partagé permettant le chiffrement entre l'application à intégrer et KIF-IdP.
-
 - `net.fenyo.franceconnect.config.idp.iv`
 
- - type : vecteur d'initialisation 128 bits en hexadecimal (generation via openssl : `openssl rand -hex 16`)
- - valeur par défaut : `87b7225d16ea2ae1f41d0b13fdce9bba`
- - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
+  - type : vecteur d'initialisation 128 bits en hexadecimal (generation via openssl : `openssl rand -hex 16`)
+  - valeur par défaut : `87b7225d16ea2ae1f41d0b13fdce9bba`
+  - usage :  vecteur d'initialisation nécessaire pour le chiffrement.
 
 - `net.fenyo.franceconnect.config.idp.redirecturi`
  
- - type : URL
- - valeur par défaut : `https://fenyo.net/fc/identite.cgi?`
- - usage :  début de l'URL de callback de l'application.
+  - type : URL
+  - valeur par défaut : `https://fenyo.net/fc/identite.cgi?`
+  - usage :  début de l'URL de callback de l'application.
 
 Les valeurs par défaut permettent de communiquer avec l'application exemple disponible sur https://fenyo.net/fc/index.cgi
 
