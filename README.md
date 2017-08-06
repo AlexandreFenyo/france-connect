@@ -1124,7 +1124,7 @@ On peut par exemple utiliser openssl pour chiffrer un message en clair à l'aide
 %
 ````
 
-A ce jour (août 2017), openssl ne supporte pas AES-256-GCM en ligne de commande. KIF est donc fourni avec deux programmes développés en C permettant de réaliser respectivement le chiffrement et le déchiffrement AES-256-GCM. Les sources de ces programmes sont situés dans le répertoire `Tools/aes256gcm`. Voici la ligne de commande à substituer à l'invocation d'openssl, pour utilise ce mécanisme de chiffrement :
+A ce jour (août 2017), openssl ne supporte pas AES-256-GCM en ligne de commande. KIF est donc fourni avec deux programmes développés en C permettant de réaliser respectivement le chiffrement et le déchiffrement AES-256-GCM. Les sources de ces programmes sont situées dans le répertoire `Tools/aes256gcm`. Voici la ligne de commande à substituer à l'invocation d'openssl, pour utilise ce mécanisme de chiffrement :
 ````shell
 % echo Texte en clair | aes256gcm $KEY $IV > contenu-chiffre.bin
 ````
