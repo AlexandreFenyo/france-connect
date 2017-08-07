@@ -1050,7 +1050,7 @@ L'application existante est le fournisseur de services, mais au lieu de s'appuye
 
 La relation de confiance entre l'application existante et KIF-IdP est établie à l'aide d'un mécanisme de chiffrement AES-256-CBC (toujours proposé pour compatibilité ascendante), ou du mécanisme de chiffrement authentifié AES-256-GCM. Ces deux entités se partagent donc une clé AES de 256 bits et un vecteur d'authentification de 128 bits.
 
-Le mécanisme AES-256-GCM est à préférer au mécanisme AES-256-CBC, les deux permettant un chiffrement fort mais seule le second intégrant un mécanisme de  signature des échanges. L'implémentation initiale de KIF-IdP proposait uniquement AES-256-CBC, et intégrait une signature propriétaire (intégration des paramètres `state` et `nonce` dans les réponses). L'implémentation courante propose, en plus du mécanisme initial, le mécanisme AES-256-GCM afin de disposer d'une signature standardisée, dont le niveau de sécurité est public.
+Le mécanisme AES-256-GCM est à préférer au mécanisme AES-256-CBC, les deux permettant un chiffrement fort mais seul le second intégrant un mécanisme de  signature des échanges. L'implémentation initiale de KIF-IdP proposait uniquement AES-256-CBC, et intégrait une signature propriétaire (intégration des paramètres `state` et `nonce` dans les réponses). L'implémentation courante propose, en plus du mécanisme initial, le mécanisme AES-256-GCM afin de disposer d'une signature standardisée, dont le niveau de sécurité est public.
 
 Ce mécanisme AES-256-GCM est utilisé avec les options suivantes :
   - pas de données additionnelles (Additional Associated Data)
