@@ -1153,7 +1153,7 @@ Voici la ligne de commande à substituer à l'invocation d'openssl, pour déchif
 
 ### Représentation textuelle d'un message chiffré
 
-Un message chiffré par AES-256-CBC est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
+Un message chiffré par AES-256-CBC ou AES-256-GCM est constitué d'une chaîne d'octets. Sa représentation sous forme d'une chaîne de caractères est la représentation hexadécimale de ces octets, en utilisant des minuscules et en s'appuyant sur la table de correspondances (aussi dénommée *charset* ou *character set*) US-ASCII. Il s'agit donc d'une chaîne de caractères dont la taille est le double de la taille de la chaîne d'octets initiale.
 
 >:information_source:  
 > La représentation textuelle d'un message chiffré peut donc être passée en paramètre d'une URL sans nécessiter de transformation particulière puisqu'une URL ne contient que des caractères de la table de correspondances US-ASCII : cf. [RFC-1738](http://www.ietf.org/rfc/rfc1738.txt).
