@@ -875,7 +875,7 @@ Les dépendances implicites lors de l'intégration d'un composant Java dans un a
 | :------------- | :------------- |---------:|
 | org.springframework | spring-core | 4.2.5 |
 | org.springframework.security | spring-security-config | 4.0.4 |
-| org.springframework.security.oauth | spring-security-oauth2 | 2.0.9 |
+| org.springframework.security.oauth | spring-security-oauth2 | 2.0.16 |
 | org.mitre | openid-connect-client | 1.2.6 |
 | javax.servlet | servlet-api | 2.5 |
 | javax.servlet.jsp | jsp-api | 2.1 |

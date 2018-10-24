@@ -197,7 +197,7 @@
         <dependency>
             <groupId>org.springframework.security.oauth</groupId>
             <artifactId>spring-security-oauth2</artifactId>
-            <version>2.0.9.RELEASE</version>
+            <version>2.0.16.RELEASE</version>
             <!--
                 Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring.
                 On s'affranchit donc de ces dépendances.
