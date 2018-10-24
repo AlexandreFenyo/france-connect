@@ -902,7 +902,7 @@ Les conflits potentiels qui sont résolus par ces choix de version concernaient 
 
 - MITREid Connect s'appuie sur spring-context, ce dernier s'appuyant sur commons-logging. Or MITREid Connect s'appuie sur SLF4J en lieu et place de commons-logging. On exclut donc la dépendance de spring-context vers commons-logging.
 
-- Spring OAuth 2.0.9 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
+- Spring OAuth 2.0.16 induit des dépendances transitives vers des composants anciens du framework Spring. On s'affranchit donc de ces dépendances, en les excluant du traitement Maven pour Spring OAuth :
   - org.springframework/spring-core
   - org.springframework/spring-webmvc
   - org.springframework/spring-context
